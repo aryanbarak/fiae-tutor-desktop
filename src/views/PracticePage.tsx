@@ -5,7 +5,7 @@
 import { PracticeModel } from "../state/model";
 import { Msg } from "../state/actions";
 import { getAllTopicIds, getTopicEntry, getAllowedModes } from "../domain/topicRegistry";
-import { toCoreMode, getModeLabel, UI_MODES, UiMode } from "../domain/modeMap";
+import { toCoreMode, getModeLabel, UI_MODES } from "../domain/modeMap";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import {
   ResultRenderer,

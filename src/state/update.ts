@@ -159,6 +159,20 @@ export function update(
         };
       }
 
+      // Normalize common param name mistakes
+      const normalizedParams = { ...params };
+      if ("array" in normalizedParams && !("arr" in normalizedParams)) {
+        normalizedParams.arr = normalizedParams.array;
+        delete normalizedParams.array;
+        console.log("[UPDATE] Normalized 'array' → 'arr'");
+      }
+      if ("num_questions" in normalizedParams && !("numq" in normalizedParams)) {
+        normalizedParams.numq = normalizedParams.num_questions;
+        delete normalizedParams.num_questions;
+        console.log("[UPDATE] Normalized 'num_questions' → 'numq'");
+      }
+      params = normalizedParams;
+
       // Validate mode is allowed for topic
       const coreMode = toCoreMode(model.practice.mode);
       if (!isModeAllowed(model.practice.topic, coreMode)) {
@@ -184,7 +198,7 @@ export function update(
             practice: {
               ...model.practice,
               status: "error",
-              error: `Parameter validation failed:\n${errors.join("\n")}`,
+              error: `❌ Cannot run: Missing required parameters\n\n${errors.join("\n")}`,
               paramsErrors: errors,
             },
           },
@@ -200,6 +214,13 @@ export function update(
         lang: model.practice.lang,
         params,
       };
+
+      console.log("[UPDATE] Request built:", {
+        topic: request.topic,
+        mode: request.mode,
+        lang: request.lang,
+        paramKeys: Object.keys(request.params),
+      });
 
       return {
         model: {

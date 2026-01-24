@@ -37,6 +37,12 @@ export async function runCmd(
     const logs: string[] = [];
     
     try {
+      // Log request details
+      const requestStr = JSON.stringify(cmd.request, null, 2);
+      logs.push(logMsg(`REQUEST: topic=${cmd.request.topic} mode=${cmd.request.mode} lang=${cmd.request.lang}`));
+      logs.push(logMsg(`PARAMS: ${Object.keys(cmd.request.params).join(", ")}`));
+      console.log("[RUNTIME] Request:", requestStr);
+      
       logs.push(logMsg("INVOKE_START"));
       console.log("[RUNTIME] INVOKE_START");
       console.log("[RUNTIME] Executing RunTutor command...");
@@ -70,8 +76,11 @@ export async function runCmd(
       try {
         response = JSON.parse(trimmed);
         const keys = Object.keys(response);
+        const resultKeys = response.result ? Object.keys(response.result) : [];
         logs.push(logMsg(`PARSE_OK keys=${keys.join(",")}`));
+        logs.push(logMsg(`RESULT_KEYS: ${resultKeys.join(",") || "(none)"}`));
         console.log("[RUNTIME] PARSE_OK keys:", keys);
+        console.log("[RUNTIME] Result keys:", resultKeys);
         console.log("[RUNTIME] JSON parse succeeded");
       } catch (parseError) {
         // JSON parsing failed - show preview

@@ -38,18 +38,32 @@ export function ResultRenderer({ response }: RendererProps) {
     );
   }
 
-  // Explain mode
+  // Explain mode - check FIRST before fallback
   if (result.explain && typeof result.explain === "string") {
     return (
       <div>
         <div style={styles.header}>💡 Explanation</div>
         <div style={styles.explainText}>
-          {result.explain.split("\\n").map((line: string, idx: number) => (
-            <p key={idx} style={{ margin: "0.5rem 0" }}>
-              {line}
-            </p>
-          ))}
+          {result.explain}
         </div>
+        {/* Show other fields if present */}
+        {Object.keys(result).length > 1 && (
+          <details style={{ marginTop: "1rem" }}>
+            <summary style={{ cursor: "pointer", color: "#88ccff" }}>Other Result Fields</summary>
+            <div style={styles.keyValueContainer}>
+              {Object.entries(result).filter(([k]) => k !== "explain").map(([key, value]) => (
+                <div key={key} style={styles.keyValueRow}>
+                  <span style={styles.key}>{key}:</span>
+                  <span style={styles.value}>
+                    {typeof value === "object"
+                      ? JSON.stringify(value, null, 2)
+                      : String(value)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </details>
+        )}
       </div>
     );
   }
@@ -324,7 +338,9 @@ const styles = {
     padding: "16px",
     borderRadius: "0 0 8px 8px",
     fontSize: "14px",
-    lineHeight: "1.6",
+    lineHeight: "1.8",
+    whiteSpace: "pre-wrap" as const,
+    fontFamily: "system-ui, -apple-system, 'Segoe UI', 'Tahoma', 'Arial', sans-serif",
   },
   keyValueContainer: {
     background: "#1a1a1a",
