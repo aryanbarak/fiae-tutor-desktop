@@ -6,6 +6,7 @@ import { Msg } from "./state/actions";
 import { Cmd } from "./state/commands";
 import { runCmd } from "./app/runtime";
 import { PracticePage } from "./views/PracticePage";
+import { ExplainPage } from "./views/explain/ExplainPage";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
 function App() {
@@ -62,9 +63,16 @@ function App() {
     }
   }, [cmdVersion]);
 
+  // Route to ExplainPage if mode is "explain", otherwise PracticePage
+  const isExplainMode = state.practice.mode === "explain";
+
   return (
     <ErrorBoundary>
-      <PracticePage model={state.practice} dispatch={dispatch} />
+      {isExplainMode ? (
+        <ExplainPage model={state.practice} dispatch={dispatch} />
+      ) : (
+        <PracticePage model={state.practice} dispatch={dispatch} />
+      )}
     </ErrorBoundary>
   );
 }
