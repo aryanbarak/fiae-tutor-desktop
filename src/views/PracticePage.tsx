@@ -1,7 +1,8 @@
 /**
- * Practice Page - Production-grade MVU UI with validation
+ * Practice Page - Production-grade MVU UI with 2-column responsive layout
  */
 
+import { useEffect } from "react";
 import { PracticeModel } from "../state/model";
 import { Msg } from "../state/actions";
 import { getAllTopicIds, getTopicEntry, getAllowedModes } from "../domain/topicRegistry";
@@ -27,6 +28,17 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
   const topicEntry = getTopicEntry(model.topic);
   const hasErrors = !model.paramsValid || model.paramsErrors.length > 0;
 
+  // ESC key handler for fullscreen mode
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && model.isFullscreen) {
+        dispatch({ type: "PracticeFullscreenToggle" });
+      }
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [model.isFullscreen, dispatch]);
+
   // Get allowed core modes for current topic, then map to UI modes
   const allowedCoreModes = getAllowedModes(model.topic);
   const allowedUiModes = UI_MODES.filter(uiMode => {
@@ -50,207 +62,276 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
   }
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>🎓 FIAE Tutor Desktop</h1>
+    <div style={styles.pageContainer}>
+      {/* Controls Panel (left side, hidden when fullscreen) */}
+      {!model.isFullscreen && (
+        <div style={styles.controlsPanel}>
+          <h1 style={styles.title}>🎓 FIAE Tutor</h1>
 
-      {/* Controls */}
-      <div style={styles.controlsRow}>
-        <div style={styles.controlGroup}>
-          <label style={styles.label}>Topic:</label>
-          <select
-            value={model.topic}
-            onChange={(e: any) =>
-              dispatch({ type: "PracticeTopicChanged", topic: e.target.value })
-            }
-            style={styles.select}
-            title="Select algorithm topic"
-          >
-            {getAllTopicIds().map((topic) => (
-              <option key={topic} value={topic}>
-                {getTopicEntry(topic).label}
-              </option>
-            ))}
-          </select>
-        </div>
+          {/* Controls */}
+          <div style={styles.controlsSection}>
+            <div style={styles.controlGroup}>
+              <label style={styles.label}>Topic:</label>
+              <select
+                value={model.topic}
+                onChange={(e: any) =>
+                  dispatch({ type: "PracticeTopicChanged", topic: e.target.value })
+                }
+                style={styles.select}
+                title="Select algorithm topic"
+              >
+                {getAllTopicIds().map((topic) => (
+                  <option key={topic} value={topic}>
+                    {getTopicEntry(topic).label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <div style={styles.controlGroup}>
-          <label style={styles.label}>Mode:</label>
-          <select
-            value={model.mode}
-            onChange={(e: any) =>
-              dispatch({ type: "PracticeModeChanged", mode: e.target.value })
-            }
-            style={styles.select}
-            title="Select execution mode"
-          >
-            {allowedUiModes.map((mode) => (
-              <option key={mode} value={mode}>
-                {getModeLabel(mode)}
-              </option>
-            ))}
-          </select>
-        </div>
+            <div style={styles.controlGroup}>
+              <label style={styles.label}>Mode:</label>
+              <select
+                value={model.mode}
+                onChange={(e: any) =>
+                  dispatch({ type: "PracticeModeChanged", mode: e.target.value })
+                }
+                style={styles.select}
+                title="Select execution mode"
+              >
+                {allowedUiModes.map((mode) => (
+                  <option key={mode} value={mode}>
+                    {getModeLabel(mode)}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <div style={styles.controlGroup}>
-          <label style={styles.label}>Language:</label>
-          <select
-            value={model.lang}
-            onChange={(e) =>
-              dispatch({
-                type: "PracticeLangChanged",
-                lang: e.target.value as "de" | "fa" | "bi",
-              })
-            }
-            style={styles.select}
-            title="Select output language"
-          >
-            {LANGUAGES.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Topic Description */}
-      {topicEntry && (
-        <div style={styles.topicInfo}>
-          <strong>{topicEntry.label}:</strong> {topicEntry.description}
-        </div>
-      )}
-
-      {/* Params Editor */}
-      <div style={styles.paramsSection}>
-        <label style={styles.label}>
-          Parameters (JSON):
-          {!model.paramsValid && (
-            <span style={styles.errorLabel}> ⚠️ JSON syntax error</span>
-          )}
-        </label>
-        <textarea
-          value={model.paramsText}
-          onChange={(e) =>
-            dispatch({
-              type: "PracticeParamsChanged",
-              paramsText: e.target.value,
-            })
-          }
-          style={{
-            ...styles.textarea,
-            ...(hasErrors ? styles.textareaError : {}),
-          }}
-          title="Edit request parameters as JSON"
-          placeholder='{"arr": [1, 2, 3]}'
-        />
-        {model.paramsErrors.length > 0 && (
-          <div style={styles.validationErrors}>
-            {model.paramsErrors.map((err, idx) => (
-              <div key={idx} style={styles.validationError}>
-                ❌ {err}
-              </div>
-            ))}
+            <div style={styles.controlGroup}>
+              <label style={styles.label}>Language:</label>
+              <select
+                value={model.lang}
+                onChange={(e) =>
+                  dispatch({
+                    type: "PracticeLangChanged",
+                    lang: e.target.value as "de" | "fa" | "bi",
+                  })
+                }
+                style={styles.select}
+                title="Select output language"
+              >
+                {LANGUAGES.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        )}
-      </div>
 
-      {/* Request Preview Accordion */}
-      <div style={styles.accordion}>
-        <button
-          onClick={() => dispatch({ type: "PracticeRequestPreviewToggle" })}
-          style={styles.accordionButton}
-        >
-          {model.requestPreviewOpen ? "▼" : "▶"} Request Preview (JSON that will be sent)
-        </button>
-        {model.requestPreviewOpen && requestObj && (
-          <pre style={styles.requestPreview}>
-            {JSON.stringify(requestObj, null, 2)}
-          </pre>
-        )}
-      </div>
+          {/* Topic Description */}
+          {topicEntry && (
+            <div style={styles.topicInfo}>
+              <strong>{topicEntry.label}:</strong> {topicEntry.description}
+            </div>
+          )}
 
-      {/* Action Buttons */}
-      <div style={styles.buttonRow}>
-        <button
-          onClick={() => {
-            if (model.status === "running") {
-              console.warn("[VIEW] Run blocked - already running");
-              return;
-            }
-            dispatch({ type: "PracticeRunRequested" });
-          }}
-          disabled={model.status === "running" || hasErrors}
-          style={{
-            ...styles.runButton,
-            ...(model.status === "running" || hasErrors
-              ? styles.buttonDisabled
-              : {}),
-          }}
-        >
-          {model.status === "running" ? "⏳ Running..." : "▶️ Run"}
-        </button>
-
-        <button
-          onClick={() => dispatch({ type: "PracticeCopyRequest" })}
-          style={styles.secondaryButton}
-          disabled={hasErrors}
-        >
-          📋 Copy Request
-        </button>
-
-        {model.raw && (
-          <button
-            onClick={() => dispatch({ type: "PracticeCopyResult" })}
-            style={styles.secondaryButton}
-          >
-            📋 Copy Result
-          </button>
-        )}
-
-        <button
-          onClick={() => dispatch({ type: "PracticeSelfTest" })}
-          style={styles.secondaryButton}
-        >
-          🧪 Self Test
-        </button>
-
-        <span style={styles.statusLabel}>
-          Status:{" "}
-          <span
-            style={{
-              ...styles.statusBadge,
-              ...(model.status === "success"
-                ? styles.statusSuccess
-                : model.status === "error"
-                ? styles.statusError
-                : model.status === "running"
-                ? styles.statusRunning
-                : {}),
-            }}
-          >
-            {model.status}
-          </span>
-        </span>
-      </div>
-
-      {/* Error Display */}
-      {model.status === "error" && model.error && (
-        <div style={styles.errorPanel}>
-          <div style={styles.errorHeader}>⚠️ ERROR</div>
-          <pre style={styles.errorText}>{model.error}</pre>
-        </div>
-      )}
-
-      {/* Tabs */}
-      <div style={styles.tabsContainer}>
-        {(["result", "events", "questions", "stats", "raw", "logs"] as const).map(
-          (tab) => (
+          {/* Params Editor (Collapsible) */}
+          <div style={styles.paramsSection}>
             <button
-              key={tab}
+              onClick={() => dispatch({ type: "PracticeParamsEditorToggle" })}
+              style={styles.paramsSectionHeader}
+              title={model.paramsEditorOpen ? "Collapse params editor" : "Expand params editor"}
+            >
+              <span style={styles.paramsSectionTitle}>
+                Parameters (JSON)
+                {!model.paramsValid && (
+                  <span style={styles.errorLabel}> ⚠️ Error</span>
+                )}
+              </span>
+              <span style={styles.toggleIcon}>
+                {model.paramsEditorOpen ? "▾" : "▸"}
+              </span>
+            </button>
+
+            {model.paramsEditorOpen && (
+              <>
+                <textarea
+                  value={model.paramsText}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "PracticeParamsChanged",
+                      paramsText: e.target.value,
+                    })
+                  }
+                  style={{
+                    ...styles.textarea,
+                    ...(hasErrors ? styles.textareaError : {}),
+                  }}
+                  title="Edit request parameters as JSON"
+                  placeholder='{"arr": [1, 2, 3]}'
+                />
+                {model.paramsErrors.length > 0 && (
+                  <div style={styles.validationErrors}>
+                    {model.paramsErrors.map((err, idx) => (
+                      <div key={idx} style={styles.validationError}>
+                        ❌ {err}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Request Preview Accordion */}
+          <div style={styles.accordion}>
+            <button
+              onClick={() => dispatch({ type: "PracticeRequestPreviewToggle" })}
+              style={styles.accordionButton}
+            >
+              {model.requestPreviewOpen ? "▼" : "▶"} Request Preview
+            </button>
+            {model.requestPreviewOpen && requestObj && (
+              <pre style={styles.requestPreview}>
+                {JSON.stringify(requestObj, null, 2)}
+              </pre>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div style={styles.buttonSection}>
+            <button
               onClick={() => {
                 if (model.status === "running") {
-                  console.warn("[VIEW] Tab switch blocked - process still running");
+                  console.warn("[VIEW] Run blocked - already running");
                   return;
+                }
+                dispatch({ type: "PracticeRunRequested" });
+              }}
+              disabled={model.status === "running" || hasErrors}
+              style={{
+                ...styles.runButton,
+                ...(model.status === "running" || hasErrors
+                  ? styles.buttonDisabled
+                  : {}),
+              }}
+            >
+              {model.status === "running" ? "⏳ Running..." : "▶️ Run"}
+            </button>
+
+            <button
+              onClick={() => dispatch({ type: "PracticeCopyRequest" })}
+              style={styles.secondaryButton}
+              disabled={hasErrors}
+              title="Copy request JSON to clipboard"
+            >
+              📋 Request
+            </button>
+
+            {model.raw && (
+              <button
+                onClick={() => dispatch({ type: "PracticeCopyResult" })}
+                style={styles.secondaryButton}
+                title="Copy result JSON to clipboard"
+              >
+                📋 Result
+              </button>
+            )}
+
+            <button
+              onClick={() => dispatch({ type: "PracticeSelfTest" })}
+              style={styles.secondaryButton}
+              title="Run self-test"
+            >
+              🧪 Test
+            </button>
+          </div>
+
+          {/* Status Badge */}
+          <div style={styles.statusSection}>
+            <span style={styles.statusLabel}>Status:</span>
+            <span
+              style={{
+                ...styles.statusBadge,
+                ...(model.status === "success"
+                  ? styles.statusSuccess
+                  : model.status === "error"
+                  ? styles.statusError
+                  : model.status === "running"
+                  ? styles.statusRunning
+                  : {}),
+              }}
+            >
+              {model.status}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Output Panel (right side, always visible) */}
+      <div style={{
+        ...styles.outputPanel,
+        ...(model.isFullscreen ? styles.outputPanelFullscreen : {}),
+      }}>
+        {/* Fullscreen mode header */}
+        {model.isFullscreen && (
+          <div style={styles.fullscreenHeader}>
+            <h2 style={styles.fullscreenTitle}>🎓 FIAE Tutor</h2>
+            <div style={styles.fullscreenControls}>
+              <button
+                onClick={() => dispatch({ type: "PracticeRunRequested" })}
+                disabled={model.status === "running" || hasErrors}
+                style={{
+                  ...styles.runButton,
+                  ...(model.status === "running" || hasErrors
+                    ? styles.buttonDisabled
+                    : {}),
+                }}
+              >
+                {model.status === "running" ? "⏳ Running..." : "▶️ Run"}
+              </button>
+              <button
+                onClick={() => dispatch({ type: "PracticeFullscreenToggle" })}
+                style={styles.secondaryButton}
+                title="Exit fullscreen (ESC)"
+              >
+                ⛶ Exit Fullscreen
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Fullscreen toggle button (normal mode) */}
+        {!model.isFullscreen && (
+          <div style={styles.outputHeader}>
+            <button
+              onClick={() => dispatch({ type: "PracticeFullscreenToggle" })}
+              style={styles.fullscreenToggleButton}
+              title="Toggle fullscreen output"
+            >
+              ⛶ Fullscreen
+            </button>
+          </div>
+        )}
+
+        {/* Error Display */}
+        {model.status === "error" && model.error && (
+          <div style={styles.errorPanel}>
+            <div style={styles.errorHeader}>⚠️ ERROR</div>
+            <pre style={styles.errorText}>{model.error}</pre>
+          </div>
+        )}
+
+        {/* Tabs */}
+        <div style={styles.tabsContainer}>
+          {(["result", "events", "questions", "stats", "raw", "logs"] as const).map(
+            (tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  if (model.status === "running") {
+                    console.warn("[VIEW] Tab switch blocked - process still running");
+                    return;
                 }
                 dispatch({ type: "PracticeTabChanged", tab });
               }}
@@ -273,6 +354,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
           {renderTabContent(model, dispatch)}
         </ErrorBoundary>
       </div>
+    </div>
     </div>
   );
 }
@@ -388,21 +470,78 @@ function renderTabContent(model: PracticeModel, dispatch: (msg: Msg) => void) {
 
 // Styles
 const styles = {
-  container: {
+  pageContainer: {
+    display: "flex",
+    flexDirection: "row" as const,
+    height: "100vh",
+    overflow: "hidden",
+  },
+  controlsPanel: {
+    width: "350px",
+    minWidth: "320px",
+    maxWidth: "380px",
+    height: "100vh",
+    overflowY: "auto" as const,
+    background: "#0a0a0a",
+    borderRight: "1px solid #333",
     padding: "1rem",
-    maxWidth: "1400px",
-    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: "1rem",
+  },
+  outputPanel: {
+    flex: 1,
+    height: "100vh",
+    overflowY: "auto" as const,
+    background: "#000",
+    display: "flex",
+    flexDirection: "column" as const,
+  },
+  outputPanelFullscreen: {
+    width: "100vw",
+  },
+  outputHeader: {
+    padding: "0.5rem 1rem",
+    borderBottom: "1px solid #333",
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+  fullscreenHeader: {
+    padding: "1rem",
+    borderBottom: "1px solid #333",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    background: "#0a0a0a",
+  },
+  fullscreenTitle: {
+    margin: 0,
+    color: "#00ff88",
+    fontSize: "20px",
+  },
+  fullscreenControls: {
+    display: "flex",
+    gap: "0.5rem",
+  },
+  fullscreenToggleButton: {
+    padding: "6px 12px",
+    fontSize: "13px",
+    background: "#333",
+    color: "#aaa",
+    border: "1px solid #555",
+    borderRadius: "4px",
+    cursor: "pointer" as const,
   },
   title: {
     margin: "0 0 1rem 0",
     color: "#00ff88",
-    textAlign: "center" as const,
+    fontSize: "18px",
+    fontWeight: "bold" as const,
   },
-  controlsRow: {
+  controlsSection: {
     display: "flex",
-    gap: "1rem",
-    marginBottom: "1rem",
-    flexWrap: "wrap" as const,
+    flexDirection: "column" as const,
+    gap: "0.75rem",
   },
   controlGroup: {
     display: "flex",
@@ -410,13 +549,13 @@ const styles = {
     gap: "0.25rem",
   },
   label: {
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "bold" as const,
     color: "#ccc",
   },
   select: {
-    padding: "6px 12px",
-    fontSize: "14px",
+    padding: "6px 10px",
+    fontSize: "13px",
     background: "#222",
     color: "#fff",
     border: "1px solid #444",
@@ -424,26 +563,51 @@ const styles = {
   },
   topicInfo: {
     background: "#1a2a1a",
-    padding: "12px",
+    padding: "10px",
     borderRadius: "6px",
-    marginBottom: "1rem",
     color: "#aaffaa",
-    fontSize: "14px",
+    fontSize: "13px",
+    lineHeight: "1.5",
   },
   paramsSection: {
-    marginBottom: "1rem",
+    display: "flex",
+    flexDirection: "column" as const,
+  },
+  paramsSectionHeader: {
+    width: "100%",
+    padding: "10px",
+    background: "#2a2a2a",
+    color: "#ccc",
+    border: "1px solid #444",
+    borderRadius: "4px",
+    cursor: "pointer" as const,
+    textAlign: "left" as const,
+    fontSize: "13px",
+    fontWeight: "bold" as const,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  paramsSectionTitle: {
+    flex: 1,
+  },
+  toggleIcon: {
+    fontSize: "16px",
+    color: "#888",
   },
   textarea: {
     width: "100%",
-    minHeight: "100px",
+    minHeight: "120px",
+    maxHeight: "300px",
     fontFamily: "monospace",
-    fontSize: "13px",
+    fontSize: "12px",
     padding: "8px",
     background: "#222",
     color: "#00ff88",
     border: "1px solid #444",
     borderRadius: "4px",
     resize: "vertical" as const,
+    marginTop: "8px",
   },
   textareaError: {
     borderColor: "#ff6666",
@@ -451,7 +615,7 @@ const styles = {
   },
   errorLabel: {
     color: "#ff6666",
-    fontSize: "12px",
+    fontSize: "11px",
     marginLeft: "8px",
   },
   validationErrors: {
@@ -463,42 +627,41 @@ const styles = {
   },
   validationError: {
     color: "#ff9999",
-    fontSize: "13px",
+    fontSize: "12px",
     marginBottom: "4px",
   },
   accordion: {
-    marginBottom: "1rem",
+    display: "flex",
+    flexDirection: "column" as const,
   },
   accordionButton: {
     width: "100%",
-    padding: "10px",
+    padding: "8px",
     background: "#2a2a2a",
     color: "#aaa",
     border: "1px solid #444",
     borderRadius: "4px",
     cursor: "pointer" as const,
     textAlign: "left" as const,
-    fontSize: "14px",
+    fontSize: "12px",
   },
   requestPreview: {
     background: "#1a1a1a",
     color: "#66ccff",
-    padding: "12px",
+    padding: "10px",
     borderRadius: "4px",
-    fontSize: "13px",
+    fontSize: "11px",
     overflowX: "auto" as const,
-    marginTop: "8px",
+    marginTop: "6px",
   },
-  buttonRow: {
+  buttonSection: {
     display: "flex",
-    gap: "1rem",
-    marginBottom: "1rem",
-    alignItems: "center" as const,
     flexWrap: "wrap" as const,
+    gap: "0.5rem",
   },
   runButton: {
-    padding: "10px 24px",
-    fontSize: "16px",
+    padding: "10px 20px",
+    fontSize: "14px",
     background: "#0066cc",
     color: "#fff",
     border: "none",
@@ -507,8 +670,8 @@ const styles = {
     fontWeight: "bold" as const,
   },
   secondaryButton: {
-    padding: "8px 16px",
-    fontSize: "14px",
+    padding: "8px 14px",
+    fontSize: "13px",
     background: "#444",
     color: "#fff",
     border: "1px solid #666",
@@ -519,15 +682,20 @@ const styles = {
     opacity: 0.5,
     cursor: "not-allowed" as const,
   },
+  statusSection: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+  },
   statusLabel: {
-    fontSize: "14px",
+    fontSize: "13px",
     color: "#aaa",
   },
   statusBadge: {
     padding: "4px 8px",
     borderRadius: "4px",
     fontWeight: "bold" as const,
-    fontSize: "12px",
+    fontSize: "11px",
     textTransform: "uppercase" as const,
   },
   statusSuccess: {
@@ -547,7 +715,7 @@ const styles = {
     border: "2px solid #ff6666",
     borderRadius: "8px",
     padding: "16px",
-    marginBottom: "1rem",
+    margin: "1rem",
   },
   errorHeader: {
     color: "#ff6666",
@@ -563,19 +731,20 @@ const styles = {
   },
   tabsContainer: {
     borderBottom: "2px solid #444",
-    marginBottom: "1rem",
     display: "flex",
     gap: "4px",
     flexWrap: "wrap" as const,
+    padding: "0 1rem",
+    background: "#0a0a0a",
   },
   tab: {
-    padding: "10px 20px",
+    padding: "10px 18px",
     background: "#1a1a1a",
     color: "#888",
     border: "none",
     borderBottom: "3px solid transparent",
     cursor: "pointer" as const,
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "bold" as const,
   },
   tabActive: {
@@ -588,10 +757,10 @@ const styles = {
     cursor: "not-allowed" as const,
   },
   tabContent: {
-    minHeight: "400px",
+    flex: 1,
     padding: "1rem",
-    background: "#1a1a1a",
-    borderRadius: "8px",
+    background: "#000",
+    overflowY: "auto" as const,
   },
   loadingPanel: {
     textAlign: "center" as const,

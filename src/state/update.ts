@@ -527,6 +527,43 @@ export function update(
         cmd: { type: "SelfTest" },
       };
 
+    case "PracticeParamsEditorToggle": {
+      const newState = !model.practice.paramsEditorOpen;
+      localStorage.setItem("fiae-paramsEditorOpen", String(newState));
+      return {
+        model: {
+          ...model,
+          practice: {
+            ...model.practice,
+            paramsEditorOpen: newState,
+            logs: [
+              ...model.practice.logs,
+              `[UI] Params editor ${newState ? "expanded" : "collapsed"}`,
+            ],
+          },
+        },
+        cmd: { type: "none" },
+      };
+    }
+
+    case "PracticeFullscreenToggle": {
+      const newState = !model.practice.isFullscreen;
+      return {
+        model: {
+          ...model,
+          practice: {
+            ...model.practice,
+            isFullscreen: newState,
+            logs: [
+              ...model.practice.logs,
+              `[UI] Fullscreen ${newState ? "enabled" : "disabled"}`,
+            ],
+          },
+        },
+        cmd: { type: "none" },
+      };
+    }
+
     default:
       console.warn("[UPDATE] Unknown message:", msg);
       return { model, cmd: { type: "none" } };

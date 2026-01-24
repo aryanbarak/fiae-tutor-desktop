@@ -1,0 +1,25 @@
+/**
+ * Responsive layout for Practice Page
+ * Stack layout vertically on small screens
+ */
+
+@media (max-width: 900px) {
+  /* Override inline styles for responsive layout */
+  div[class*="pageContainer"] {
+    flex-direction: column !important;
+    height: auto !important;
+  }
+
+  div[class*="controlsPanel"] {
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid #333 !important;
+  }
+
+  div[class*="outputPanel"] {
+    height: auto !important;
+    min-height: 60vh;
+  }
+}

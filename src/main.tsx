@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import "./responsive.css"; // Responsive layout styles
 
 // ===== GLOBAL ERROR STORE =====
 // Module-level store for fatal errors that must be visible

@@ -27,6 +27,8 @@ export type Msg =
   | { type: "PracticeCopyRequest" }
   | { type: "PracticeCopyResult" }
   | { type: "PracticeSelfTest" }
+  | { type: "PracticeParamsEditorToggle" }
+  | { type: "PracticeFullscreenToggle" }
   | { type: "PingSelfTest" }
   | { type: "PingSucceeded"; result: string }
   | { type: "PingFailed"; error: string };

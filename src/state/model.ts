@@ -22,6 +22,8 @@ export type PracticeModel = {
   eventFilter: string | null; // filter events by type
   logs: string[]; // debug log ring buffer
   requestPreviewOpen: boolean; // accordion state for request preview
+  paramsEditorOpen: boolean; // whether params editor is expanded (for collapsible UI)
+  isFullscreen: boolean; // fullscreen mode hides controls panel
 };
 
 export type AppModel = {
@@ -37,6 +39,10 @@ export function initialModel(): AppModel {
   const lang = "de";
   const params = getDefaultParams(topic);
 
+  // Load UI preferences from localStorage
+  const paramsEditorOpen = localStorage.getItem("fiae-paramsEditorOpen") !== "false"; // default to open for first-time users
+  const isFullscreen = false; // always start in normal mode
+
   return {
     practice: {
       topic,
@@ -51,6 +57,8 @@ export function initialModel(): AppModel {
       eventFilter: null,
       logs: ["[INIT] App initialized"],
       requestPreviewOpen: false,
+      paramsEditorOpen,
+      isFullscreen,
     },
   };
 }
