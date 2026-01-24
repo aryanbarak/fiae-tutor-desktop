@@ -112,11 +112,9 @@ export function update(
 
     case "PracticeParamsChanged": {
       // Validate JSON syntax
-      let paramsValid = false;
       let parsedParams = null;
       try {
         parsedParams = JSON.parse(msg.paramsText);
-        paramsValid = true;
       } catch (e) {
         // Invalid JSON - don't validate topic params yet
         return {
