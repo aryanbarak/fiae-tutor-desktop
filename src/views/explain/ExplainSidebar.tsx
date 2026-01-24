@@ -12,6 +12,8 @@ interface ExplainSidebarProps {
   lang: "de" | "fa" | "bi";
   paramsText: string;
   paramsOpen: boolean;
+  paramsValid: boolean;
+  paramsErrors: string[];
   status: "idle" | "running" | "success" | "error";
   onTopicChange: (topic: TopicId) => void;
   onModeChange: (mode: UiMode) => void;
@@ -29,6 +31,8 @@ export function ExplainSidebar({
   lang,
   paramsText,
   paramsOpen,
+  paramsValid,
+  paramsErrors,
   status,
   onTopicChange,
   onModeChange,
@@ -43,6 +47,8 @@ export function ExplainSidebar({
     const coreMode = toCoreMode(uiMode);
     return allowedCoreModes.includes(coreMode);
   });
+  
+  const hasErrors = !paramsValid || paramsErrors.length > 0;
 
   return (
     <div style={styles.container}>
@@ -102,25 +108,42 @@ export function ExplainSidebar({
       {/* Collapsible Params */}
       <div style={styles.section}>
         <button onClick={onParamsToggle} style={styles.paramsToggle}>
-          <span>Parameters {paramsOpen ? "▾" : "▸"}</span>
+          <span>
+            Parameters {paramsOpen ? "▾" : "▸"}
+            {hasErrors && <span style={styles.errorBadge}> ⚠️</span>}
+          </span>
         </button>
         {paramsOpen && (
-          <textarea
-            value={paramsText}
-            onChange={(e) => onParamsChange(e.target.value)}
-            style={styles.textarea}
-            placeholder='{"arr": [1, 2, 3]}'
-          />
+          <>
+            <textarea
+              value={paramsText}
+              onChange={(e) => onParamsChange(e.target.value)}
+              style={{
+                ...styles.textarea,
+                ...(hasErrors ? styles.textareaError : {}),
+              }}
+              placeholder='{"arr": [1, 2, 3]}'
+            />
+            {paramsErrors.length > 0 && (
+              <div style={styles.validationErrors}>
+                {paramsErrors.map((err, idx) => (
+                  <div key={idx} style={styles.validationError}>
+                    ❌ {err}
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 
       {/* Run Button */}
       <button
         onClick={onRun}
-        disabled={status === "running"}
+        disabled={status === "running" || hasErrors}
         style={{
           ...styles.runButton,
-          ...(status === "running" ? styles.runButtonDisabled : {}),
+          ...(status === "running" || hasErrors ? styles.runButtonDisabled : {}),
         }}
       >
         {status === "running" ? "⏳ Loading..." : "▶️ Run"}
@@ -220,6 +243,27 @@ const styles = {
     border: "1px solid #444",
     borderRadius: "6px",
     resize: "vertical" as const,
+  },
+  textareaError: {
+    borderColor: "#ff4444",
+    background: "#2a1a1a",
+  },
+  errorBadge: {
+    color: "#ff8844",
+    fontSize: "14px",
+  },
+  validationErrors: {
+    marginTop: "0.5rem",
+    padding: "8px",
+    background: "#2a1a1a",
+    border: "1px solid #ff4444",
+    borderRadius: "6px",
+    fontSize: "12px",
+    color: "#ff8844",
+  },
+  validationError: {
+    marginBottom: "4px",
+    lineHeight: "1.4",
   },
   runButton: {
     padding: "12px",

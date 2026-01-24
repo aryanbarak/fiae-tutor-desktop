@@ -38,6 +38,8 @@ export function ExplainPage({ model, dispatch }: ExplainPageProps) {
       lang={model.lang}
       paramsText={model.paramsText}
       paramsOpen={model.paramsEditorOpen}
+      paramsValid={model.paramsValid}
+      paramsErrors={model.paramsErrors}
       status={model.status}
       onTopicChange={(topic) => dispatch({ type: "PracticeTopicChanged", topic })}
       onModeChange={(mode) => dispatch({ type: "PracticeModeChanged", mode })}

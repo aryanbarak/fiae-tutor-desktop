@@ -8,6 +8,11 @@ import {
   getAllowedModes 
 } from "../domain/topicRegistry";
 import { toCoreMode } from "../domain/modeMap";
+import { 
+  normalizeAndValidateParams, 
+  autoPopulateParams,
+  formatValidationErrors 
+} from "../domain/paramValidator";
 
 /**
  * Update function - pure state transitions (MVU pattern)
@@ -28,9 +33,21 @@ export function update(
       const modeAllowed = isModeAllowed(msg.topic, coreMode);
       const newMode = modeAllowed ? model.practice.mode : allowedModes[0] as any; // fallback to first allowed
       
-      const newParams = getDefaultParams(msg.topic);
-      const paramsText = JSON.stringify(newParams, null, 2);
-      const errors = validateTopicParams(msg.topic, newParams);
+      // Auto-populate params with mode defaults, preserving matching user values
+      let currentParams: Record<string, any> = {};
+      try {
+        currentParams = JSON.parse(model.practice.paramsText);
+      } catch {
+        // If current params invalid, start fresh
+      }
+      
+      const newCoreMode = toCoreMode(newMode);
+      const populatedParams = autoPopulateParams(msg.topic, newCoreMode, currentParams);
+      const paramsText = JSON.stringify(populatedParams, null, 2);
+      
+      // Validate the populated params
+      const validation = normalizeAndValidateParams(msg.topic, newCoreMode, populatedParams);
+      
       return {
         model: {
           ...model,
@@ -39,8 +56,8 @@ export function update(
             topic: msg.topic,
             mode: newMode,
             paramsText,
-            paramsValid: true,
-            paramsErrors: errors,
+            paramsValid: validation.ok,
+            paramsErrors: validation.errors,
           },
         },
         cmd: { type: "none" },
@@ -55,9 +72,20 @@ export function update(
         return { model, cmd: { type: "none" } };
       }
       
-      const newParams = getDefaultParams(model.practice.topic);
-      const paramsText = JSON.stringify(newParams, null, 2);
-      const errors = validateTopicParams(model.practice.topic, newParams);
+      // Auto-populate params with new mode defaults, preserving user values
+      let currentParams: Record<string, any> = {};
+      try {
+        currentParams = JSON.parse(model.practice.paramsText);
+      } catch {
+        // If current params invalid, start fresh
+      }
+      
+      const populatedParams = autoPopulateParams(model.practice.topic, coreMode, currentParams);
+      const paramsText = JSON.stringify(populatedParams, null, 2);
+      
+      // Validate the populated params
+      const validation = normalizeAndValidateParams(model.practice.topic, coreMode, populatedParams);
+      
       return {
         model: {
           ...model,
@@ -65,8 +93,8 @@ export function update(
             ...model.practice,
             mode: msg.mode,
             paramsText,
-            paramsValid: true,
-            paramsErrors: errors,
+            paramsValid: validation.ok,
+            paramsErrors: validation.errors,
           },
         },
         cmd: { type: "none" },
@@ -105,16 +133,18 @@ export function update(
         };
       }
 
-      // Validate topic-specific params
-      const errors = validateTopicParams(model.practice.topic, parsedParams);
+      // Validate and normalize topic-specific params
+      const coreMode = toCoreMode(model.practice.mode);
+      const validation = normalizeAndValidateParams(model.practice.topic, coreMode, parsedParams);
+      
       return {
         model: {
           ...model,
           practice: {
             ...model.practice,
             paramsText: msg.paramsText,
-            paramsValid,
-            paramsErrors: errors,
+            paramsValid: validation.ok,
+            paramsErrors: validation.errors,
           },
         },
         cmd: { type: "none" },
@@ -159,20 +189,6 @@ export function update(
         };
       }
 
-      // Normalize common param name mistakes
-      const normalizedParams = { ...params };
-      if ("array" in normalizedParams && !("arr" in normalizedParams)) {
-        normalizedParams.arr = normalizedParams.array;
-        delete normalizedParams.array;
-        console.log("[UPDATE] Normalized 'array' → 'arr'");
-      }
-      if ("num_questions" in normalizedParams && !("numq" in normalizedParams)) {
-        normalizedParams.numq = normalizedParams.num_questions;
-        delete normalizedParams.num_questions;
-        console.log("[UPDATE] Normalized 'num_questions' → 'numq'");
-      }
-      params = normalizedParams;
-
       // Validate mode is allowed for topic
       const coreMode = toCoreMode(model.practice.mode);
       if (!isModeAllowed(model.practice.topic, coreMode)) {
@@ -189,22 +205,26 @@ export function update(
         };
       }
 
-      // Validate params before run
-      const errors = validateTopicParams(model.practice.topic, params);
-      if (errors.length > 0) {
+      // Normalize and validate params BEFORE calling core
+      const validation = normalizeAndValidateParams(model.practice.topic, coreMode, params);
+      if (!validation.ok) {
+        const errorMsg = formatValidationErrors(validation.errors);
         return {
           model: {
             ...model,
             practice: {
               ...model.practice,
               status: "error",
-              error: `❌ Cannot run: Missing required parameters\n\n${errors.join("\n")}`,
-              paramsErrors: errors,
+              error: `Parameter validation failed:\n${errorMsg}`,
+              paramsErrors: validation.errors,
             },
           },
           cmd: { type: "none" },
         };
       }
+
+      // Use normalized params for the core call
+      const normalizedParams = validation.normalizedParams;
 
       // Build request with core mode (map trace_learn → trace)
       const request = {
@@ -212,7 +232,7 @@ export function update(
         topic: model.practice.topic,
         mode: coreMode, // ✅ Send core mode, not UI mode
         lang: model.practice.lang,
-        params,
+        params: normalizedParams, // ✅ Use normalized params
       };
 
       console.log("[UPDATE] Request built:", {
