@@ -83,8 +83,7 @@ export function ResultRenderer({
     
     // Pseudocode mode with variants
     if (selectedVariant.pseudocode) {
-      const isRTL = lang === "fa";
-      const explainVariant = selectedVariant.explain_variant?.[lang] || selectedVariant.explain_variant?.fa;
+      const persianExplanation = selectedVariant.explain_variant?.fa;
       
       return (
         <div>
@@ -94,23 +93,7 @@ export function ResultRenderer({
             📝 {result.topic || "Algorithm"} - {selectedVariant.title || selectedVariant.id}
           </div>
           
-          {/* Variant-specific explanation (Persian/German) */}
-          {explainVariant && (
-            <div style={{
-              ...styles.variantExplain,
-              direction: isRTL ? "rtl" : "ltr",
-              textAlign: isRTL ? "right" : "left",
-              unicodeBidi: "plaintext",
-            }}>
-              <div style={styles.variantExplainLabel}>
-                {isRTL ? "💡 توضیح این نسخه:" : "💡 Varianten-Erklärung:"}
-              </div>
-              <div style={styles.variantExplainText}>
-                {explainVariant}
-              </div>
-            </div>
-          )}
-          
+          {/* Pseudocode Block */}
           <pre style={styles.codeBlock}>{selectedVariant.pseudocode}</pre>
           <button
             onClick={() => navigator.clipboard.writeText(selectedVariant.pseudocode)}
@@ -118,6 +101,23 @@ export function ResultRenderer({
           >
             📋 Copy Code
           </button>
+          
+          {/* Persian Variant Explanation (shown below pseudocode when available) */}
+          {persianExplanation && (
+            <div style={{
+              ...styles.variantExplain,
+              direction: "rtl",
+              textAlign: "right",
+              unicodeBidi: "plaintext",
+            }}>
+              <div style={styles.variantExplainLabel}>
+                📘 توضیح فارسی این Variant
+              </div>
+              <div style={styles.variantExplainText}>
+                {persianExplanation}
+              </div>
+            </div>
+          )}
         </div>
       );
     }
@@ -796,7 +796,7 @@ const styles = {
     cursor: "pointer" as const,
   },
   variantExplain: {
-    marginBottom: "16px",
+    marginTop: "16px",
     padding: "16px",
     background: "#1a2a1a",
     borderRadius: "8px",
