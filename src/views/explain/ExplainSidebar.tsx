@@ -2,7 +2,7 @@
  * Compact sidebar for Explain Mode controls
  */
 
-import React from "react";
+
 import { TopicId, getAllTopicIds, getTopicEntry, getAllowedModes } from "../../domain/topicRegistry";
 import { UiMode, toCoreMode, getModeLabel, UI_MODES } from "../../domain/modeMap";
 

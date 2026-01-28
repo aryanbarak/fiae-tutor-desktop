@@ -2,7 +2,7 @@
  * Error display for Explain Mode
  */
 
-import React from "react";
+
 
 interface ExplainErrorProps {
   error: string;

@@ -2,7 +2,7 @@
  * Section cards for Explain Mode reader
  */
 
-import React from "react";
+
 import { ExplainSection } from "./explainParser";
 import { getSectionStyle } from "./explainTheme";
 
@@ -39,6 +39,7 @@ export function ExplainSections({ sections, lang }: ExplainSectionsProps) {
             style={{
               ...styles.sectionContent,
               textAlign: isRTL ? "right" : "left",
+              unicodeBidi: "plaintext",
             }}
           >
             {section.content}

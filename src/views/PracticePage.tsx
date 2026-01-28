@@ -318,7 +318,33 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
         {model.status === "error" && model.error && (
           <div style={styles.errorPanel}>
             <div style={styles.errorHeader}>⚠️ ERROR</div>
-            <pre style={styles.errorText}>{model.error}</pre>
+            {model.error.includes("E_NOT_TAURI") || 
+             model.error.includes("npm run tauri dev") ? (
+              // Friendly error for browser environment
+              <div style={styles.errorText}>
+                <div style={{ fontWeight: "bold", marginBottom: "12px" }}>
+                  🌐 You're running in a browser
+                </div>
+                <div style={{ marginBottom: "12px" }}>
+                  This app requires the Tauri desktop environment to communicate with the Python backend.
+                </div>
+                <div style={{ 
+                  backgroundColor: "#2a2a2a", 
+                  padding: "12px", 
+                  borderRadius: "4px",
+                  fontFamily: "monospace",
+                  marginBottom: "12px"
+                }}>
+                  npm run tauri dev
+                </div>
+                <div style={{ fontSize: "0.9em", opacity: 0.8 }}>
+                  💡 Tip: Close this browser tab and use the desktop window that opens.
+                </div>
+              </div>
+            ) : (
+              // Standard error display
+              <pre style={styles.errorText}>{model.error}</pre>
+            )}
           </div>
         )}
 
@@ -390,7 +416,13 @@ function renderTabContent(model: PracticeModel, dispatch: (msg: Msg) => void) {
             </div>
           }
         >
-          <ResultRenderer response={model.response} lang={model.lang} />
+          <ResultRenderer 
+            response={model.response} 
+            lang={model.lang}
+            availableVariants={model.availableVariants}
+            selectedVariantId={model.selectedVariantId}
+            onVariantSelect={(variantId) => dispatch({ type: "PracticeVariantSelected", variantId })}
+          />
         </ErrorBoundary>
       ) : (
         <div style={styles.emptyPanel}>No result</div>

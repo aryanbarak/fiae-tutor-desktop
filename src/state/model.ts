@@ -6,6 +6,13 @@ export type RunStatus = "idle" | "running" | "success" | "error";
 
 export type ViewTab = "result" | "events" | "questions" | "stats" | "raw" | "logs";
 
+export type VariantInfo = {
+  id: string;
+  title: string;
+  labels?: Record<string, string>;
+  [key: string]: any; // Allow other variant-specific data
+};
+
 export type PracticeModel = {
   topic: TopicId;
   mode: UiMode; // UI can use trace_learn, gets mapped to trace when sent to core
@@ -24,6 +31,9 @@ export type PracticeModel = {
   requestPreviewOpen: boolean; // accordion state for request preview
   paramsEditorOpen: boolean; // whether params editor is expanded (for collapsible UI)
   isFullscreen: boolean; // fullscreen mode hides controls panel
+  // Variant management (separate from response to persist across selections)
+  availableVariants: VariantInfo[]; // All variants for current topic/mode
+  selectedVariantId: string | null; // Currently selected variant ID
 };
 
 export type AppModel = {
@@ -59,6 +69,8 @@ export function initialModel(): AppModel {
       requestPreviewOpen: false,
       paramsEditorOpen,
       isFullscreen,
+      availableVariants: [],
+      selectedVariantId: null,
     },
   };
 }

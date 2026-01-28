@@ -58,6 +58,13 @@ export function update(
             paramsText,
             paramsValid: validation.ok,
             paramsErrors: validation.errors,
+            // Clear variants when topic changes - they'll reload on next run
+            availableVariants: [],
+            selectedVariantId: null,
+            logs: [
+              ...model.practice.logs,
+              `[TOPIC] Changed to ${msg.topic}, cleared variants`,
+            ],
           },
         },
         cmd: { type: "none" },
@@ -95,6 +102,13 @@ export function update(
             paramsText,
             paramsValid: validation.ok,
             paramsErrors: validation.errors,
+            // Clear variants when mode changes - they'll reload on next run
+            availableVariants: [],
+            selectedVariantId: null,
+            logs: [
+              ...model.practice.logs,
+              `[MODE] Changed to ${msg.mode}, cleared variants`,
+            ],
           },
         },
         cmd: { type: "none" },
@@ -125,6 +139,9 @@ export function update(
               paramsText: msg.paramsText,
               paramsValid: false,
               paramsErrors: [`JSON syntax error: ${e instanceof Error ? e.message : String(e)}`],
+              // Preserve variant state
+              availableVariants: model.practice.availableVariants,
+              selectedVariantId: model.practice.selectedVariantId,
             },
           },
           cmd: { type: "none" },
@@ -143,6 +160,9 @@ export function update(
             paramsText: msg.paramsText,
             paramsValid: validation.ok,
             paramsErrors: validation.errors,
+            // Preserve variant state
+            availableVariants: model.practice.availableVariants,
+            selectedVariantId: model.practice.selectedVariantId,
           },
         },
         cmd: { type: "none" },
@@ -181,6 +201,9 @@ export function update(
               ...model.practice,
               status: "error",
               error: `Invalid JSON in params: ${e instanceof Error ? e.message : String(e)}`,
+              // Preserve variant state
+              availableVariants: model.practice.availableVariants,
+              selectedVariantId: model.practice.selectedVariantId,
             },
           },
           cmd: { type: "none" },
@@ -197,6 +220,9 @@ export function update(
               ...model.practice,
               status: "error",
               error: `Mode '${model.practice.mode}' (core: '${coreMode}') is not allowed for topic '${model.practice.topic}'`,
+              // Preserve variant state
+              availableVariants: model.practice.availableVariants,
+              selectedVariantId: model.practice.selectedVariantId,
             },
           },
           cmd: { type: "none" },
@@ -215,6 +241,9 @@ export function update(
               status: "error",
               error: `Parameter validation failed:\n${errorMsg}`,
               paramsErrors: validation.errors,
+              // Preserve variant state
+              availableVariants: model.practice.availableVariants,
+              selectedVariantId: model.practice.selectedVariantId,
             },
           },
           cmd: { type: "none" },
@@ -250,6 +279,9 @@ export function update(
             response: undefined,
             raw: undefined,
             eventIndex: 0,
+            // CRITICAL: Preserve variant state when running
+            availableVariants: model.practice.availableVariants,
+            selectedVariantId: model.practice.selectedVariantId,
           },
         },
         cmd: {
@@ -259,7 +291,42 @@ export function update(
       };
     }
 
-    case "PracticeRunSucceeded":
+    case "PracticeRunSucceeded": {
+      // Extract variants from response if present (for pseudocode/explain modes)
+      const result = msg.response?.result as any;
+      const variants = result?.variants as any[] | undefined;
+      
+      // SAFE: Initialize with existing values, never undefined
+      let availableVariants = model.practice?.availableVariants || [];
+      let selectedVariantId = model.practice?.selectedVariantId || null;
+      
+      // If response contains variants, update our variant state
+      if (Array.isArray(variants) && variants.length > 0) {
+        availableVariants = variants.map(v => ({
+          id: v.id || `variant_${variants.indexOf(v)}`,
+          title: v.title || v.id || `Variant ${variants.indexOf(v) + 1}`,
+          labels: v.labels,
+          ...v, // Include all variant data
+        }));
+        
+        // If no variant selected, or selected variant not in new list, select first
+        const selectedExists = selectedVariantId 
+          ? availableVariants.some(v => v.id === selectedVariantId)
+          : false;
+        
+        if (!selectedVariantId || !selectedExists) {
+          selectedVariantId = availableVariants[0]?.id || null;
+        }
+        
+        console.log(`[VARIANTS] Loaded ${availableVariants.length} variants, selected: ${selectedVariantId}`);
+      }
+      // If no variants in response, clear them (switching to non-variant mode)
+      else if (!variants) {
+        console.log("[VARIANTS] No variants in response, clearing variant state");
+        availableVariants = [];
+        selectedVariantId = null;
+      }
+      
       return {
         model: {
           ...model,
@@ -269,14 +336,21 @@ export function update(
             response: msg.response,
             raw: msg.raw,
             eventIndex: 0,
+            availableVariants,
+            selectedVariantId,
             logs: [
               ...model.practice.logs,
               `[SUCCESS] ${new Date().toLocaleTimeString()}`,
+              ...(availableVariants.length > 0 
+                ? [`[VARIANTS] ${availableVariants.length} variants available`]
+                : []
+              ),
             ],
           },
         },
         cmd: { type: "none" },
       };
+    }
 
     case "PracticeRunFailed":
       return {
@@ -290,10 +364,69 @@ export function update(
               ...model.practice.logs,
               `[ERROR] ${new Date().toLocaleTimeString()} - ${msg.error}`,
             ],
+            // Preserve variant state
+            availableVariants: model.practice.availableVariants,
+            selectedVariantId: model.practice.selectedVariantId,
           },
         },
         cmd: { type: "none" },
       };
+
+    case "PracticeVariantSelected": {
+      // When user selects a different variant, update params with variant defaults
+      // and trigger a new run with that variant
+      const availableVariants = model.practice?.availableVariants || [];
+      const variant = availableVariants.find(v => v.id === msg.variantId);
+      
+      if (!variant) {
+        console.warn(`[VARIANTS] Variant ${msg.variantId} not found in ${availableVariants.length} available variants`);
+        return { model, cmd: { type: "none" } };
+      }
+      
+      console.log(`[VARIANTS] Selected: ${model.practice?.selectedVariantId || 'none'} -> ${msg.variantId}`);
+      console.log(`[VARIANTS] Available variants count: ${availableVariants.length}`);
+      
+      // Parse current params
+      let currentParams: Record<string, any> = {};
+      try {
+        currentParams = JSON.parse(model.practice.paramsText);
+      } catch {
+        // If current params invalid, use defaults
+      }
+      
+      // Update params with variant ID
+      const updatedParams = {
+        ...currentParams,
+        variant: msg.variantId,
+      };
+      
+      const paramsText = JSON.stringify(updatedParams, null, 2);
+      
+      // Validate params
+      const coreMode = toCoreMode(model.practice.mode);
+      const validation = normalizeAndValidateParams(model.practice.topic, coreMode, updatedParams);
+      
+      // Update selected variant and params, then trigger run
+      return {
+        model: {
+          ...model,
+          practice: {
+            ...model.practice,
+            selectedVariantId: msg.variantId,
+            availableVariants: availableVariants, // Preserve variants!
+            paramsText,
+            paramsValid: validation.ok,
+            paramsErrors: validation.errors,
+            logs: [
+              ...model.practice.logs,
+              `[VARIANTS] Switched to variant: ${variant.title}`,
+            ],
+          },
+        },
+        // Automatically trigger a run with the new variant
+        cmd: { type: "none" }, // User can manually run if needed
+      };
+    }
 
     case "PracticeEventFirst":
       return {

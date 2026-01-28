@@ -2,7 +2,7 @@
  * Metadata bar with topic info and fullscreen toggle
  */
 
-import React from "react";
+
 import { TopicId, getTopicEntry } from "../../domain/topicRegistry";
 
 interface ExplainMetaBarProps {

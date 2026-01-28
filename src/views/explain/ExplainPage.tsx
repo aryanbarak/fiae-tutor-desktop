@@ -2,7 +2,7 @@
  * Explain Mode main page - Reader/textbook layout
  */
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { PracticeModel } from "../../state/model";
 import { Msg } from "../../state/actions";
 import { ExplainLayout } from "./ExplainLayout";
@@ -27,8 +27,8 @@ export function ExplainPage({ model, dispatch }: ExplainPageProps) {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [model.isFullscreen, dispatch]);
 
-  // Extract explain text from response
-  const explainText = model.response?.result?.explain || null;
+  // Pass full response to reader for variant support
+  const response = model.response || null;
   const error = model.status === "error" ? model.error || "Unknown error" : null;
 
   const sidebar = (
@@ -65,7 +65,7 @@ export function ExplainPage({ model, dispatch }: ExplainPageProps) {
 
   const reader = (
     <ExplainReader
-      explainText={explainText}
+      response={response}
       error={error}
       status={model.status}
       lang={model.lang}

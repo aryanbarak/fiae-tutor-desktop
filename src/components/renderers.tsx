@@ -4,23 +4,231 @@
 
 import React from "react";
 import { CoreResponse } from "../domain/types";
+import { VariantInfo } from "../state/model";
 
-interface RendererProps {
+/**
+ * Debug UI flag - enables inspector panels for developers
+ */
+const DEBUG_UI = import.meta.env.VITE_DEBUG_UI === "true";
+
+/**
+ * Check if a language requires RTL (Right-to-Left) rendering
+ */
+function isRtlLang(lang: string): boolean {
+  return lang === "fa" || lang === "ar" || lang === "he";
+}
+
+interface BaseRendererProps {
   response: CoreResponse;
   lang: "de" | "fa" | "bi";
 }
 
+interface ResultRendererProps extends BaseRendererProps {
+  availableVariants: VariantInfo[];
+  selectedVariantId: string | null;
+  onVariantSelect: (variantId: string) => void;
+}
+
 /**
  * Render Result tab - shows pseudocode, explain text, or structured data
+ * Now supports multi-variant display with stable state
  */
-export function ResultRenderer({ response }: RendererProps) {
+export function ResultRenderer({ 
+  response, 
+  lang, 
+  availableVariants, 
+  selectedVariantId, 
+  onVariantSelect 
+}: ResultRendererProps) {
   const result = response?.result as any;
 
   if (!result) {
     return <div style={styles.empty}>No result data</div>;
   }
 
-  // Pseudocode mode
+  // Use variants from model state (stable) instead of response
+  const hasVariants = availableVariants.length > 0;
+  
+  // Variant Selector Component (reusable)
+  const VariantSelector = () => {
+    if (!hasVariants) return null;
+    
+    const selectedVariant = selectedVariantId 
+      ? availableVariants.find(v => v.id === selectedVariantId) || availableVariants[0]
+      : availableVariants[0];
+    
+    return (
+      <div style={styles.variantSelector}>
+        <span style={styles.variantLabel}>📚 Variants ({availableVariants.length}):</span>
+        <select
+          value={selectedVariant?.id || availableVariants[0]?.id}
+          onChange={(e) => onVariantSelect(e.target.value)}
+          style={styles.variantDropdown}
+        >
+          {availableVariants.map((v) => (
+            <option key={v.id} value={v.id}>
+              {v.title || v.id}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+
+  if (hasVariants) {
+    // Find the selected variant, or default to first
+    const selectedVariant = selectedVariantId 
+      ? availableVariants.find(v => v.id === selectedVariantId) || availableVariants[0]
+      : availableVariants[0];
+    
+    // Pseudocode mode with variants
+    if (selectedVariant.pseudocode) {
+      const isRTL = lang === "fa";
+      const explainVariant = selectedVariant.explain_variant?.[lang] || selectedVariant.explain_variant?.fa;
+      
+      return (
+        <div>
+          <VariantSelector />
+          {/* Selected Variant Content */}
+          <div style={styles.header}>
+            📝 {result.topic || "Algorithm"} - {selectedVariant.title || selectedVariant.id}
+          </div>
+          
+          {/* Variant-specific explanation (Persian/German) */}
+          {explainVariant && (
+            <div style={{
+              ...styles.variantExplain,
+              direction: isRTL ? "rtl" : "ltr",
+              textAlign: isRTL ? "right" : "left",
+              unicodeBidi: "plaintext",
+            }}>
+              <div style={styles.variantExplainLabel}>
+                {isRTL ? "💡 توضیح این نسخه:" : "💡 Varianten-Erklärung:"}
+              </div>
+              <div style={styles.variantExplainText}>
+                {explainVariant}
+              </div>
+            </div>
+          )}
+          
+          <pre style={styles.codeBlock}>{selectedVariant.pseudocode}</pre>
+          <button
+            onClick={() => navigator.clipboard.writeText(selectedVariant.pseudocode)}
+            style={styles.copyButton}
+          >
+            📋 Copy Code
+          </button>
+        </div>
+      );
+    }
+
+    // Explain mode with variants
+    if (selectedVariant.explain) {
+      const isRTL = lang === "fa";
+      return (
+        <div>
+          <VariantSelector />
+          {/* Selected Variant Content */}
+          <div style={styles.header}>💡 {selectedVariant.title || selectedVariant.id}</div>
+          <div style={{
+            ...styles.explainText, 
+            direction: isRTL ? "rtl" : "ltr", 
+            textAlign: isRTL ? "right" : "left",
+            unicodeBidi: "plaintext",
+          }}>
+            {selectedVariant.explain}
+          </div>
+
+          {/* Goal */}
+          {selectedVariant.goal && (
+            <div style={{marginTop: "1rem"}}>
+              <strong>🎯 {isRTL ? "هدف" : "Ziel"}:</strong> {selectedVariant.goal}
+            </div>
+          )}
+
+          {/* Notes */}
+          {selectedVariant.notes && (
+            <div style={{marginTop: "0.5rem", fontStyle: "italic"}}>
+              <strong>💡 {isRTL ? "نکته" : "Hinweis"}:</strong> {selectedVariant.notes}
+            </div>
+          )}
+
+          {/* Exercises */}
+          {selectedVariant.exercises && selectedVariant.exercises.length > 0 && (
+            <div style={{marginTop: "1.5rem"}}>
+              <strong>📝 {isRTL ? "تمرینات" : "Übungen"}:</strong>
+              {selectedVariant.exercises.map((ex: any, idx: number) => (
+                <div key={idx} style={styles.exerciseCard}>
+                  <div style={styles.exerciseTitle}>
+                    {ex.title?.[lang] || ex.title?.de || ex.id}
+                  </div>
+                  <div style={styles.exerciseTask}>
+                    <strong>{isRTL ? "سوال:" : "Aufgabe:"}</strong> {ex.task?.[lang] || ex.task?.de}
+                  </div>
+                  {ex.solution && (
+                    <details style={{marginTop: "0.5rem"}}>
+                      <summary style={{cursor: "pointer", color: "#4CAF50"}}>
+                        {isRTL ? "نمایش جواب" : "Lösung anzeigen"}
+                      </summary>
+                      <div style={{marginTop: "0.5rem", padding: "0.5rem", background: "#1a1a1a", borderRadius: "4px"}}>
+                        {ex.solution?.[lang] || ex.solution?.de}
+                      </div>
+                    </details>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    // If variant has no content, show fallback WITH variant selector still visible
+    return (
+      <div>
+        <VariantSelector />
+        <div style={styles.empty}>
+          Variant "{selectedVariant.title || selectedVariant.id}" has no content
+        </div>
+      </div>
+    );
+  }
+
+  // NEW: Explain Core v1.0 - structured sections rendering
+  if (result.sections && Array.isArray(result.sections)) {
+    const isRtl = isRtlLang(lang);
+    return (
+      <div>
+        <div style={styles.header}>💡 {result.title || "Explanation"}</div>
+        <div style={styles.sectionsContainer}>
+          {result.sections.map((section: any, idx: number) => {
+            const sectionRtl = section.rtl ?? isRtl;
+            return (
+              <div key={section.id || idx} style={styles.section}>
+                <h3 style={{
+                  ...styles.sectionTitle,
+                  direction: sectionRtl ? "rtl" : "ltr",
+                  textAlign: sectionRtl ? "right" : "left",
+                }}>
+                  {section.title}
+                </h3>
+                <div style={{
+                  ...styles.sectionBody,
+                  direction: sectionRtl ? "rtl" : "ltr",
+                  textAlign: sectionRtl ? "right" : "left",
+                  unicodeBidi: "plaintext",
+                }}>
+                  {section.body}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Legacy single-variant pseudocode mode
   if (result.pseudocode && typeof result.pseudocode === "string") {
     return (
       <div>
@@ -38,16 +246,22 @@ export function ResultRenderer({ response }: RendererProps) {
     );
   }
 
-  // Explain mode - check FIRST before fallback
+  // Legacy explain mode - check FIRST before fallback
   if (result.explain && typeof result.explain === "string") {
+    const isRtl = isRtlLang(lang);
     return (
       <div>
         <div style={styles.header}>💡 Explanation</div>
-        <div style={styles.explainText}>
+        <div style={{
+          ...styles.explainText,
+          direction: isRtl ? "rtl" : "ltr",
+          textAlign: isRtl ? "right" : "left",
+          unicodeBidi: "plaintext",
+        }}>
           {result.explain}
         </div>
-        {/* Show other fields if present */}
-        {Object.keys(result).length > 1 && (
+        {/* Debug inspector - only visible in DEBUG_UI mode */}
+        {DEBUG_UI && Object.keys(result).length > 1 && (
           <details style={{ marginTop: "1rem" }}>
             <summary style={{ cursor: "pointer", color: "#88ccff" }}>Other Result Fields</summary>
             <div style={styles.keyValueContainer}>
@@ -96,7 +310,7 @@ export function EventsRenderer({
   lang,
   eventIndex,
   onEventChange,
-}: RendererProps & {
+}: BaseRendererProps & {
   eventIndex: number;
   onEventChange: (index: number) => void;
 }) {
@@ -178,7 +392,7 @@ export function EventsRenderer({
 /**
  * Render Questions tab - shows quiz questions as cards
  */
-export function QuestionsRenderer({ response }: RendererProps) {
+export function QuestionsRenderer({ response }: BaseRendererProps) {
   const result = response?.result as any;
   const questions = result?.questions || [];
 
@@ -243,7 +457,7 @@ function QuestionCard({ question, index }: { question: any; index: number }) {
 /**
  * Render Stats tab - shows statistics as cards
  */
-export function StatsRenderer({ response }: RendererProps) {
+export function StatsRenderer({ response }: BaseRendererProps) {
   const stats = response?.stats || {};
 
   if (typeof stats !== "object" || Object.keys(stats).length === 0) {
@@ -339,6 +553,30 @@ const styles = {
     borderRadius: "0 0 8px 8px",
     fontSize: "16px",
     lineHeight: "1.6",
+    whiteSpace: "pre-wrap" as const,
+    fontFamily: "system-ui, -apple-system, 'Segoe UI', 'Tahoma', 'Arial', sans-serif",
+  },
+  sectionsContainer: {
+    background: "#1a1a2a",
+    borderRadius: "0 0 8px 8px",
+    padding: "12px",
+  },
+  section: {
+    marginBottom: "24px",
+    paddingBottom: "16px",
+    borderBottom: "1px solid #333",
+  },
+  sectionTitle: {
+    color: "#88ff88",
+    fontSize: "18px",
+    fontWeight: "bold" as const,
+    marginBottom: "12px",
+    fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
+  },
+  sectionBody: {
+    color: "#e0e0ff",
+    fontSize: "15px",
+    lineHeight: "1.7",
     whiteSpace: "pre-wrap" as const,
     fontFamily: "system-ui, -apple-system, 'Segoe UI', 'Tahoma', 'Arial', sans-serif",
   },
@@ -531,5 +769,66 @@ const styles = {
     cursor: "pointer" as const,
     marginBottom: "12px",
     fontWeight: "bold" as const,
+  },
+  variantSelector: {
+    display: "flex",
+    alignItems: "center" as const,
+    gap: "12px",
+    marginBottom: "16px",
+    padding: "12px",
+    background: "#1a1a2a",
+    borderRadius: "8px",
+    border: "1px solid #4488ff",
+  },
+  variantLabel: {
+    color: "#88ccff",
+    fontWeight: "bold" as const,
+    fontSize: "14px",
+  },
+  variantDropdown: {
+    flex: 1,
+    padding: "8px 12px",
+    background: "#0d1a2a",
+    color: "#fff",
+    border: "1px solid #555",
+    borderRadius: "4px",
+    fontSize: "14px",
+    cursor: "pointer" as const,
+  },
+  variantExplain: {
+    marginBottom: "16px",
+    padding: "16px",
+    background: "#1a2a1a",
+    borderRadius: "8px",
+    border: "2px solid #66bb66",
+  },
+  variantExplainLabel: {
+    color: "#88ff88",
+    fontWeight: "bold" as const,
+    fontSize: "14px",
+    marginBottom: "8px",
+  },
+  variantExplainText: {
+    color: "#ccffcc",
+    fontSize: "14px",
+    lineHeight: "1.6",
+    whiteSpace: "pre-wrap" as const,
+  },
+  exerciseCard: {
+    background: "#1a1a2a",
+    padding: "12px",
+    marginTop: "12px",
+    borderRadius: "6px",
+    border: "1px solid #555",
+  },
+  exerciseTitle: {
+    color: "#88ccff",
+    fontWeight: "bold" as const,
+    fontSize: "15px",
+    marginBottom: "8px",
+  },
+  exerciseTask: {
+    color: "#e0e0ff",
+    lineHeight: "1.6",
   },
 };

@@ -14,6 +14,7 @@ export type TopicId =
   | "insertionsort"
   | "bubblesort"
   | "binarysearch"
+  | "linearsearch"
   | "search_contains"
   | "count_condition"
   | "minmax_avg"
@@ -76,6 +77,15 @@ export const TOPIC_REGISTRY: Record<TopicId, TopicRegistryEntry> = {
     allowedModes: ["pseudocode", "trace", "trace_exam", "explain", "quiz"],
     requiredParams: ["arr", "target"],
     defaultParams: { arr: [1, 3, 5, 7, 9, 11], target: 7 },
+  },
+
+  linearsearch: {
+    id: "linearsearch",
+    label: "Linear Search",
+    description: "Search for target in array using linear search",
+    allowedModes: ["pseudocode", "trace", "trace_exam", "explain", "quiz"],
+    requiredParams: ["arr", "x"],
+    defaultParams: { arr: [64, 25, 12, 22, 11], x: 22 },
   },
 
   search_contains: {

@@ -2,14 +2,13 @@
  * Main reader area for Explain Mode
  */
 
-import React from "react";
-import { ExplainSections } from "./ExplainSections";
+
+import { ResultRenderer } from "../../components/renderers";
 import { ExplainError } from "./ExplainError";
-import { parseExplainSections } from "./explainParser";
 import { explainTheme } from "./explainTheme";
 
 interface ExplainReaderProps {
-  explainText: string | null;
+  response: any;
   error: string | null;
   status: "idle" | "running" | "success" | "error";
   lang: "de" | "fa" | "bi";
@@ -17,7 +16,7 @@ interface ExplainReaderProps {
 }
 
 export function ExplainReader({
-  explainText,
+  response,
   error,
   status,
   lang,
@@ -36,7 +35,7 @@ export function ExplainReader({
     );
   }
 
-  if (!explainText && status !== "running") {
+  if (!response && (status === "idle" || status === "error")) {
     return (
       <div style={styles.empty}>
         <div style={styles.emptyIcon}>📚</div>
@@ -47,12 +46,16 @@ export function ExplainReader({
     );
   }
 
-  const sections = parseExplainSections(explainText || "");
-
   return (
     <div style={styles.container}>
       <div style={styles.content}>
-        <ExplainSections sections={sections} lang={lang} />
+        <ResultRenderer 
+          response={response} 
+          lang={lang}
+          availableVariants={[]}
+          selectedVariantId={null}
+          onVariantSelect={() => {}}
+        />
       </div>
     </div>
   );

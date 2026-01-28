@@ -89,6 +89,20 @@ export const PARAM_SCHEMAS: Record<TopicId, {
     },
   },
 
+  linearsearch: {
+    params: [
+      { key: "arr", labelDe: "Array", labelFa: "آرایه", type: "array", aliases: ["array"] },
+      { key: "x", labelDe: "Suchelem ent", labelFa: "هدف", type: "number" },
+    ],
+    modeDefaults: {
+      trace: { arr: [64, 25, 12, 22, 11], x: 22 },
+      trace_exam: { arr: [64, 25, 12, 22, 11], x: 22 },
+      pseudocode: { arr: [64, 25, 12, 22, 11], x: 22 },
+      explain: { arr: [64, 25, 12, 22, 11], x: 22 },
+      quiz: { arr: [64, 25, 12, 22, 11], x: 22 },
+    },
+  },
+
   search_contains: {
     params: [
       { key: "case", labelDe: "Fall", labelFa: "نوع", type: "string" },

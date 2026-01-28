@@ -15,6 +15,7 @@ export type Msg =
   | { type: "PracticeRunRequested" }
   | { type: "PracticeRunSucceeded"; response: CoreResponse; raw: string; logs: string[] }
   | { type: "PracticeRunFailed"; error: string; raw?: string; logs?: string[] }
+  | { type: "PracticeVariantSelected"; variantId: string } // Select a variant from available variants
   | { type: "PracticeEventFirst" }
   | { type: "PracticeEventPrev" }
   | { type: "PracticeEventNext" }
