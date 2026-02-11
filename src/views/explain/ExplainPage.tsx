@@ -2,7 +2,7 @@
  * Explain Mode main page - Reader/textbook layout
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PracticeModel } from "../../state/model";
 import { Msg } from "../../state/actions";
 import { ExplainLayout } from "./ExplainLayout";
@@ -16,6 +16,8 @@ interface ExplainPageProps {
 }
 
 export function ExplainPage({ model, dispatch }: ExplainPageProps) {
+  const [viewMode, setViewMode] = useState<"algorithms" | "patterns">("algorithms");
+
   // ESC key handler for fullscreen
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -26,6 +28,12 @@ export function ExplainPage({ model, dispatch }: ExplainPageProps) {
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
   }, [model.isFullscreen, dispatch]);
+
+  useEffect(() => {
+    if (viewMode === "patterns" && model.topic !== "master_patterns") {
+      dispatch({ type: "PracticeTopicChanged", topic: "master_patterns" });
+    }
+  }, [viewMode, model.topic, dispatch]);
 
   // Pass full response to reader for variant support
   const response = model.response || null;
@@ -41,11 +49,13 @@ export function ExplainPage({ model, dispatch }: ExplainPageProps) {
       paramsValid={model.paramsValid}
       paramsErrors={model.paramsErrors}
       status={model.status}
+      viewMode={viewMode}
       onTopicChange={(topic) => dispatch({ type: "PracticeTopicChanged", topic })}
       onModeChange={(mode) => dispatch({ type: "PracticeModeChanged", mode })}
       onLangChange={(lang) => dispatch({ type: "PracticeLangChanged", lang })}
       onParamsChange={(paramsText) => dispatch({ type: "PracticeParamsChanged", paramsText })}
       onParamsToggle={() => dispatch({ type: "PracticeParamsEditorToggle" })}
+      onViewModeChange={(nextViewMode) => setViewMode(nextViewMode)}
       onRun={() => {
         if (model.status !== "running") {
           dispatch({ type: "PracticeRunRequested" });
@@ -65,10 +75,24 @@ export function ExplainPage({ model, dispatch }: ExplainPageProps) {
 
   const reader = (
     <ExplainReader
+      topic={model.topic}
+      viewMode={viewMode}
       response={response}
       error={error}
       status={model.status}
       lang={model.lang}
+      availableVariants={model.availableVariants}
+      selectedVariantId={model.selectedVariantId}
+      onVariantSelect={(variantId) => dispatch({ type: "PracticeVariantSelected", variantId })}
+      onVariantRunRequested={() => {
+        if (model.status !== "running") {
+          dispatch({ type: "PracticeRunRequested" });
+        }
+      }}
+      onRelatedTopicSelect={(topic) => {
+        setViewMode("algorithms");
+        dispatch({ type: "PracticeTopicChanged", topic });
+      }}
       onRetry={() => dispatch({ type: "PracticeRunRequested" })}
     />
   );
