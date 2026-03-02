@@ -1,4 +1,4 @@
-﻿import { MouseEvent, useMemo, useRef } from "react";
+import { MouseEvent, useMemo, useRef } from "react";
 import dagre from "dagre";
 import ReactFlow, {
   Background,
@@ -20,17 +20,18 @@ type GraphEdgeInput = {
 };
 
 type PatternAlgorithmGraphProps = {
-  selectedPatternId: string | null;
+  focusedPatternId: string | null;
   patternItems: { id: string; label: string }[];
   algorithmIds: TopicId[];
   edges: GraphEdgeInput[];
   onPatternSelect: (patternId: string) => void;
   onAlgorithmSelect: (topicId: TopicId) => void;
+  onResetFocus: () => void;
 };
 
 type GraphNodeData =
-  | { kind: "pattern"; id: string }
-  | { kind: "algorithm"; id: string };
+  | { kind: "pattern"; machineId: string; label: string }
+  | { kind: "algorithm"; machineId: string; label: string };
 
 const NODE_WIDTH = 230;
 const NODE_HEIGHT = 46;
@@ -41,7 +42,7 @@ function GraphNodeView({ data }: NodeProps<GraphNodeData>) {
   return (
     <>
       <Handle type="target" position={targetPosition} style={styles.hiddenHandle} />
-      <span>{data.id}</span>
+      <span>{data.label}</span>
       <Handle type="source" position={sourcePosition} style={styles.hiddenHandle} />
     </>
   );
@@ -55,7 +56,7 @@ function createNode(kind: "pattern" | "algorithm", machineId: string, label: str
   return {
     id: nodeKey(kind, machineId),
     type: "graphNode",
-    data: { kind, id: label },
+    data: { kind, machineId, label },
     position: { x: 0, y: 0 },
     style:
       kind === "pattern"
@@ -126,19 +127,34 @@ function layoutGraph(nodes: Node<GraphNodeData>[], edges: Edge[]): Node<GraphNod
 }
 
 export function PatternAlgorithmGraph({
-  selectedPatternId,
+  focusedPatternId,
   patternItems,
   algorithmIds,
   edges,
   onPatternSelect,
   onAlgorithmSelect,
+  onResetFocus,
 }: PatternAlgorithmGraphProps) {
   const didFitViewRef = useRef(false);
   const nodeTypes = useMemo(() => ({ graphNode: GraphNodeView }), []);
+  const focusedSourceId = focusedPatternId ? nodeKey("pattern", focusedPatternId) : null;
+
+  const focusedAlgorithmIds = useMemo(() => {
+    if (!focusedPatternId) return new Set<string>();
+    const related = edges
+      .filter((edge) => edge.fromPatternId === focusedPatternId)
+      .map((edge) => nodeKey("algorithm", edge.toAlgorithmId));
+    return new Set(related);
+  }, [edges, focusedPatternId]);
+
+  const visibleEdgesInput = useMemo(() => {
+    if (!focusedPatternId) return edges;
+    return edges.filter((edge) => edge.fromPatternId === focusedPatternId);
+  }, [edges, focusedPatternId]);
 
   const graphEdges: Edge[] = useMemo(
     () =>
-      edges.map((edge) => ({
+      visibleEdgesInput.map((edge) => ({
         id: `edge:${edge.fromPatternId}->${edge.toAlgorithmId}`,
         source: nodeKey("pattern", edge.fromPatternId),
         target: nodeKey("algorithm", edge.toAlgorithmId),
@@ -150,7 +166,7 @@ export function PatternAlgorithmGraph({
           strokeWidth: 2,
         },
       })),
-    [edges]
+    [visibleEdgesInput]
   );
 
   const nodes: Node<GraphNodeData>[] = useMemo(() => {
@@ -158,38 +174,55 @@ export function PatternAlgorithmGraph({
     const algorithmNodes = algorithmIds.map((algorithmId) => createNode("algorithm", algorithmId, algorithmId));
 
     return layoutGraph([...patternNodes, ...algorithmNodes], graphEdges).map((node) => {
-      const isSelectedPattern =
-        node.data.kind === "pattern" &&
-        selectedPatternId !== null &&
-        node.id === nodeKey("pattern", selectedPatternId);
-
-      if (!isSelectedPattern) {
+      if (!focusedPatternId) {
         return node;
+      }
+
+      if (node.data.kind === "pattern" && node.id === focusedSourceId) {
+        return {
+          ...node,
+          style: {
+            ...node.style,
+            border: "1px solid #d8ffe5",
+            boxShadow: "0 0 0 3px rgba(132, 214, 165, 0.35)",
+          },
+        };
+      }
+
+      if (node.data.kind === "algorithm" && focusedAlgorithmIds.has(node.id)) {
+        return {
+          ...node,
+          style: {
+            ...node.style,
+            border: "1px solid #d9ecff",
+            boxShadow: "0 0 0 3px rgba(95, 141, 190, 0.3)",
+          },
+        };
       }
 
       return {
         ...node,
         style: {
           ...node.style,
-          border: "1px solid #b8f7d0",
-          boxShadow: "0 0 0 2px rgba(132, 214, 165, 0.25)",
+          opacity: 0.2,
         },
       };
     });
-  }, [algorithmIds, graphEdges, patternItems, selectedPatternId]);
+  }, [algorithmIds, focusedAlgorithmIds, focusedPatternId, focusedSourceId, graphEdges, patternItems]);
 
   const onNodeClick = (_: MouseEvent, node: Node<GraphNodeData>) => {
     if (node.data.kind === "pattern") {
-      const patternId = node.id.replace(/^pattern:/, "");
-      onPatternSelect(patternId);
+      onPatternSelect(node.data.machineId);
       return;
     }
-    const algorithmId = node.id.replace(/^algorithm:/, "") as TopicId;
-    onAlgorithmSelect(algorithmId);
+    onAlgorithmSelect(node.data.machineId as TopicId);
   };
 
   return (
     <div style={styles.container}>
+      <button type="button" style={styles.resetButton} onClick={onResetFocus}>
+        Reset Focus
+      </button>
       <ReactFlow
         nodes={nodes}
         edges={graphEdges}
@@ -220,7 +253,7 @@ export function PatternAlgorithmGraph({
         <Controls />
         <Background color="#1f2a3a" gap={20} size={1} />
       </ReactFlow>
-      {graphEdges.length === 0 && <div style={styles.noLinks}>No links found</div>}
+      {visibleEdgesInput.length === 0 && <div style={styles.noLinks}>No links found</div>}
     </div>
   );
 }
@@ -243,6 +276,19 @@ const styles = {
     color: "#f0c988",
     fontSize: "12px",
     pointerEvents: "none" as const,
+  },
+  resetButton: {
+    position: "absolute" as const,
+    top: "12px",
+    right: "12px",
+    zIndex: 5,
+    border: "1px solid #446280",
+    background: "#162231",
+    color: "#d9ecff",
+    borderRadius: "6px",
+    padding: "0.35rem 0.6rem",
+    fontSize: "12px",
+    cursor: "pointer" as const,
   },
   hiddenHandle: {
     width: 1,

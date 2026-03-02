@@ -142,6 +142,20 @@ export const PARAM_SCHEMAS: Record<TopicId, {
     },
   },
 
+  master_patterns: {
+    params: [
+      { key: "text", labelDe: "Aufgabentext", labelFa: "متن سوال", type: "string" },
+    ],
+    modeDefaults: {
+      pseudocode: {
+        text: "Ein Verfahren durchsucht eine sortierte Liste mit low/high/mid und halbiert den Suchraum in jeder Runde. Ordnen Sie das Muster ein und nennen Sie typische Fehlerquellen.",
+      },
+      explain: {
+        text: "Ein Verfahren durchsucht eine sortierte Liste mit low/high/mid und halbiert den Suchraum in jeder Runde. Ordnen Sie das Muster ein und nennen Sie typische Fehlerquellen.",
+      },
+    },
+  },
+
   maxperiod: {
     params: [
       { key: "arr", labelDe: "Array (binär)", labelFa: "آرایه (دودویی)", type: "array", aliases: ["array"] },
@@ -167,12 +181,24 @@ export const PARAM_SCHEMAS: Record<TopicId, {
       explain: { case: "compute", code: "12345", weights: [2, 1, 2, 1, 2] },
     },
   },
+
+  software_testing: {
+    params: [],
+    modeDefaults: {
+      explain: {},
+      pseudocode: {},
+      quiz: {},
+    },
+  },
 };
 
 /**
  * Get mode-specific defaults for a topic
  */
 export function getModeDefaults(topicId: TopicId, mode: CoreMode): Record<string, any> {
+  if (mode === "exam_session") {
+    return { seed: 1 };
+  }
   const schema = PARAM_SCHEMAS[topicId];
   if (!schema) return {};
   

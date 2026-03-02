@@ -3,6 +3,7 @@
  */
 
 import { useEffect } from "react";
+import { FileText } from "lucide-react";
 import { PracticeModel } from "../state/model";
 import { Msg } from "../state/actions";
 import { getAllTopicIds, getTopicEntry, getAllowedModes } from "../domain/topicRegistry";
@@ -11,6 +12,7 @@ import { ErrorBoundary } from "../components/ErrorBoundary";
 import {
   ResultRenderer,
   EventsRenderer,
+  SchreibtischtestRenderer,
   QuestionsRenderer,
   StatsRenderer,
   RawJsonRenderer,
@@ -149,7 +151,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
                 )}
               </span>
               <span style={styles.toggleIcon}>
-                {model.paramsEditorOpen ? "▾" : "▸"}
+                {model.paramsEditorOpen ? "v" : ">"}
               </span>
             </button>
 
@@ -189,7 +191,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
               onClick={() => dispatch({ type: "PracticeRequestPreviewToggle" })}
               style={styles.accordionButton}
             >
-              {model.requestPreviewOpen ? "▼" : "▶"} Request Preview
+              {model.requestPreviewOpen ? "Hide" : "Show"} Request Preview
             </button>
             {model.requestPreviewOpen && requestObj && (
               <pre style={styles.requestPreview}>
@@ -216,7 +218,25 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
                   : {}),
               }}
             >
-              {model.status === "running" ? "⏳ Running..." : "▶️ Run"}
+              {model.status === "running" ? "Running..." : "Run"}
+            </button>
+
+            <button
+              onClick={() => {
+                const exportUrl = `/export/${encodeURIComponent(
+                  model.topic
+                )}?lang=${encodeURIComponent(
+                  model.lang
+                )}&includeExplain=1&includePseudocode=1`;
+                window.location.assign(exportUrl);
+              }}
+              style={styles.secondaryButton}
+              title="Export all variants as a print-ready PDF"
+            >
+              <span style={styles.buttonWithIcon}>
+                <FileText size={14} aria-hidden="true" />
+                <span>Export PDF</span>
+              </span>
             </button>
 
             <button
@@ -225,7 +245,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
               disabled={hasErrors}
               title="Copy request JSON to clipboard"
             >
-              📋 Request
+              Request
             </button>
 
             {model.raw && (
@@ -234,7 +254,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
                 style={styles.secondaryButton}
                 title="Copy result JSON to clipboard"
               >
-                📋 Result
+                Result
               </button>
             )}
 
@@ -243,7 +263,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
               style={styles.secondaryButton}
               title="Run self-test"
             >
-              🧪 Test
+              Test
             </button>
           </div>
 
@@ -288,14 +308,14 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
                     : {}),
                 }}
               >
-                {model.status === "running" ? "⏳ Running..." : "▶️ Run"}
+                {model.status === "running" ? "Running..." : "Run"}
               </button>
               <button
                 onClick={() => dispatch({ type: "PracticeFullscreenToggle" })}
                 style={styles.secondaryButton}
                 title="Exit fullscreen (ESC)"
               >
-                ⛶ Exit Fullscreen
+                Exit Fullscreen
               </button>
             </div>
           </div>
@@ -309,7 +329,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
               style={styles.fullscreenToggleButton}
               title="Toggle fullscreen output"
             >
-              ⛶ Fullscreen
+              Fullscreen
             </button>
           </div>
         )}
@@ -350,7 +370,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
 
         {/* Tabs */}
         <div style={styles.tabsContainer}>
-          {(["result", "events", "questions", "stats", "raw", "logs"] as const).map(
+          {(["result", "events", "schreibtischtest", "questions", "stats", "raw", "logs"] as const).map(
             (tab) => (
               <button
                 key={tab}
@@ -389,7 +409,7 @@ function renderTabContent(model: PracticeModel, dispatch: (msg: Msg) => void) {
   if (model.status === "running") {
     return (
       <div style={styles.loadingPanel}>
-        <div style={styles.spinner}>⏳</div>
+        <div style={styles.spinner}>...</div>
         <div>Running core...</div>
       </div>
     );
@@ -469,6 +489,24 @@ function renderTabContent(model: PracticeModel, dispatch: (msg: Msg) => void) {
         </ErrorBoundary>
       ) : (
         <div style={styles.emptyPanel}>No questions</div>
+      );
+
+    case "schreibtischtest":
+      return model.response ? (
+        <ErrorBoundary
+          fallback={
+            <div>
+              <div style={styles.errorHeader}>Rendering error</div>
+              <pre style={styles.jsonFallback}>
+                {JSON.stringify(model.response.events, null, 2)}
+              </pre>
+            </div>
+          }
+        >
+          <SchreibtischtestRenderer response={model.response} lang={model.lang} />
+        </ErrorBoundary>
+      ) : (
+        <div style={styles.emptyPanel}>No data for Schreibtischtest</div>
       );
 
     case "stats":
@@ -690,6 +728,11 @@ const styles = {
     display: "flex",
     flexWrap: "wrap" as const,
     gap: "0.5rem",
+  },
+  buttonWithIcon: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.4rem",
   },
   runButton: {
     padding: "10px 20px",

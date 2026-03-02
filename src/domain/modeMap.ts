@@ -6,7 +6,7 @@
 import type { CoreMode } from "./topicRegistry";
 
 // UI modes (for backwards compatibility with existing UI)
-export type UiMode = "explain" | "pseudocode" | "trace_learn" | "trace" | "trace_exam" | "quiz" | "debug";
+export type UiMode = "explain" | "pseudocode" | "trace_learn" | "trace" | "trace_exam" | "quiz" | "debug" | "exam_session";
 
 /**
  * Map UI mode to Core mode
@@ -22,6 +22,7 @@ export function toCoreMode(uiMode: UiMode | CoreMode): CoreMode {
     case "trace_exam":
     case "quiz":
     case "debug":
+    case "exam_session":
       return uiMode as CoreMode;
     default:
       // Fallback to pseudocode for unknown modes
@@ -42,6 +43,7 @@ export function getModeLabel(mode: UiMode | CoreMode): string {
     trace_exam: "Trace (Exam)",
     quiz: "Quiz",
     debug: "Debug",
+    exam_session: "Exam Session",
   };
   return labels[mode] || mode;
 }
@@ -57,4 +59,5 @@ export const UI_MODES: UiMode[] = [
   "trace_exam",
   "quiz",
   "debug",
+  "exam_session",
 ];

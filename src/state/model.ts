@@ -4,7 +4,14 @@ import { UiMode } from "../domain/modeMap";
 
 export type RunStatus = "idle" | "running" | "success" | "error";
 
-export type ViewTab = "result" | "events" | "questions" | "stats" | "raw" | "logs";
+export type ViewTab =
+  | "result"
+  | "events"
+  | "schreibtischtest"
+  | "questions"
+  | "stats"
+  | "raw"
+  | "logs";
 
 export type VariantInfo = {
   id: string;

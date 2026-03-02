@@ -18,7 +18,7 @@ export function ExplainError({ error, onRetry }: ExplainErrorProps) {
         <pre style={styles.message}>{error}</pre>
         {onRetry && (
           <button onClick={onRetry} style={styles.retryButton}>
-            🔄 Retry
+            Retry
           </button>
         )}
       </div>

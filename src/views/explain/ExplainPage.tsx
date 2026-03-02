@@ -17,6 +17,11 @@ interface ExplainPageProps {
 
 export function ExplainPage({ model, dispatch }: ExplainPageProps) {
   const [viewMode, setViewMode] = useState<"algorithms" | "patterns">("algorithms");
+  const requestRunIfIdle = () => {
+    if (model.status !== "running") {
+      dispatch({ type: "PracticeRunRequested" });
+    }
+  };
 
   // ESC key handler for fullscreen
   useEffect(() => {
@@ -84,14 +89,24 @@ export function ExplainPage({ model, dispatch }: ExplainPageProps) {
       availableVariants={model.availableVariants}
       selectedVariantId={model.selectedVariantId}
       onVariantSelect={(variantId) => dispatch({ type: "PracticeVariantSelected", variantId })}
-      onVariantRunRequested={() => {
-        if (model.status !== "running") {
-          dispatch({ type: "PracticeRunRequested" });
+      onVariantRunRequested={(variantId) => {
+        if (model.topic !== "master_patterns") {
+          setViewMode("patterns");
+          dispatch({ type: "PracticeTopicChanged", topic: "master_patterns" });
+          return;
         }
+        if (model.selectedVariantId === variantId) {
+          return;
+        }
+        dispatch({ type: "PracticeVariantSelected", variantId });
+        requestRunIfIdle();
       }}
       onRelatedTopicSelect={(topic) => {
         setViewMode("algorithms");
-        dispatch({ type: "PracticeTopicChanged", topic });
+        if (model.topic !== topic) {
+          dispatch({ type: "PracticeTopicChanged", topic });
+        }
+        requestRunIfIdle();
       }}
       onRetry={() => dispatch({ type: "PracticeRunRequested" })}
     />

@@ -53,54 +53,77 @@ export function normalizeAndValidateParams(
   const requiredParams = topicEntry.requiredParams || [];
 
   // Step 5: Validate required params exist
-  for (const param of requiredParams) {
-    if (!(param in mergedParams)) {
-      errors.push(`Missing required parameter: ${param}`);
-    } else {
-      const value = mergedParams[param];
-      
-      // Check for empty/null values
-      if (value === null || value === undefined || value === "") {
-        errors.push(`Parameter '${param}' cannot be empty`);
-      }
-      
-      // Array-specific validation
-      if (Array.isArray(value)) {
-        if (value.length === 0) {
-          errors.push(`Parameter '${param}' array cannot be empty`);
+  if (mode !== "exam_session") {
+    for (const param of requiredParams) {
+      if (!(param in mergedParams)) {
+        errors.push(`Missing required parameter: ${param}`);
+      } else {
+        const value = mergedParams[param];
+        
+        // Check for empty/null values
+        if (value === null || value === undefined || value === "") {
+          errors.push(`Parameter '${param}' cannot be empty`);
+        }
+        
+        // Array-specific validation
+        if (Array.isArray(value)) {
+          if (value.length === 0) {
+            errors.push(`Parameter '${param}' array cannot be empty`);
+          }
         }
       }
     }
   }
 
   // Step 6: Type validation based on schema
-  const schema = PARAM_SCHEMAS[topicId];
-  if (schema) {
-    for (const paramDef of schema.params) {
-      const key = paramDef.key;
-      if (key in mergedParams) {
-        const value = mergedParams[key];
-        
-        // Type-specific validation
-        switch (paramDef.type) {
-          case "array":
-            if (!Array.isArray(value)) {
-              errors.push(`Parameter '${key}' must be an array, got: ${typeof value}`);
-            }
-            break;
+  if (mode !== "exam_session") {
+    const schema = PARAM_SCHEMAS[topicId];
+    if (schema) {
+      for (const paramDef of schema.params) {
+        const key = paramDef.key;
+        if (key in mergedParams) {
+          const value = mergedParams[key];
           
-          case "number":
-            if (typeof value !== "number" || isNaN(value)) {
-              errors.push(`Parameter '${key}' must be a number, got: ${typeof value}`);
-            }
-            break;
-          
-          case "string":
-            if (typeof value !== "string") {
-              errors.push(`Parameter '${key}' must be a string, got: ${typeof value}`);
-            }
-            break;
+          // Type-specific validation
+          switch (paramDef.type) {
+            case "array":
+              if (!Array.isArray(value)) {
+                errors.push(`Parameter '${key}' must be an array, got: ${typeof value}`);
+              }
+              break;
+            
+            case "number":
+              if (typeof value !== "number" || isNaN(value)) {
+                errors.push(`Parameter '${key}' must be a number, got: ${typeof value}`);
+              }
+              break;
+            
+            case "string":
+              if (typeof value !== "string") {
+                errors.push(`Parameter '${key}' must be a string, got: ${typeof value}`);
+              }
+              break;
+          }
         }
+      }
+    }
+  }
+
+  // Step 6b: Topic-specific semantic validation
+  if (mode !== "exam_session" && topicId === "binarysearch") {
+    const arr = mergedParams["arr"];
+    if (Array.isArray(arr) && arr.length > 1) {
+      const isNonDecreasing = arr.every(
+        (v, i) => i === 0 || arr[i - 1] <= v
+      );
+      const isNonIncreasing = arr.every(
+        (v, i) => i === 0 || arr[i - 1] >= v
+      );
+
+      if (!isNonDecreasing && !isNonIncreasing) {
+        errors.push(
+          "Parameter 'arr' must be sorted for binary search (ascending or descending)"
+        );
       }
     }
   }
@@ -154,5 +177,5 @@ export function formatValidationErrors(errors: string[]): string {
     return errors[0];
   }
   
-  return `${errors.length} validation errors:\n` + errors.map(e => `• ${e}`).join("\n");
+  return `${errors.length} validation errors:\n` + errors.map(e => `- ${e}`).join("\n");
 }

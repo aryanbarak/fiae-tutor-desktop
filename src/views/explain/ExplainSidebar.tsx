@@ -10,6 +10,7 @@ interface ExplainSidebarProps {
   topic: TopicId;
   mode: UiMode;
   lang: "de" | "fa" | "bi";
+  viewMode: "algorithms" | "patterns";
   paramsText: string;
   paramsOpen: boolean;
   paramsValid: boolean;
@@ -20,6 +21,7 @@ interface ExplainSidebarProps {
   onLangChange: (lang: "de" | "fa" | "bi") => void;
   onParamsChange: (params: string) => void;
   onParamsToggle: () => void;
+  onViewModeChange: (viewMode: "algorithms" | "patterns") => void;
   onRun: () => void;
 }
 
@@ -29,6 +31,7 @@ export function ExplainSidebar({
   topic,
   mode,
   lang,
+  viewMode,
   paramsText,
   paramsOpen,
   paramsValid,
@@ -39,6 +42,7 @@ export function ExplainSidebar({
   onLangChange,
   onParamsChange,
   onParamsToggle,
+  onViewModeChange,
   onRun,
 }: ExplainSidebarProps) {
   const topicEntry = getTopicEntry(topic);
@@ -49,11 +53,38 @@ export function ExplainSidebar({
   });
   
   const hasErrors = !paramsValid || paramsErrors.length > 0;
+  const topics = viewMode === "patterns" ? (["master_patterns"] as TopicId[]) : getAllTopicIds();
 
   return (
     <div style={styles.container}>
       <div style={styles.header}>
         <h2 style={styles.title}>📚 Explain Mode</h2>
+      </div>
+
+      <div style={styles.section}>
+        <label style={styles.label}>View:</label>
+        <div style={styles.toggleGroup}>
+          <button
+            type="button"
+            onClick={() => onViewModeChange("algorithms")}
+            style={{
+              ...styles.toggleButton,
+              ...(viewMode === "algorithms" ? styles.toggleButtonActive : {}),
+            }}
+          >
+            Algorithms
+          </button>
+          <button
+            type="button"
+            onClick={() => onViewModeChange("patterns")}
+            style={{
+              ...styles.toggleButton,
+              ...(viewMode === "patterns" ? styles.toggleButtonActive : {}),
+            }}
+          >
+            Patterns
+          </button>
+        </div>
       </div>
 
       <div style={styles.section}>
@@ -63,7 +94,7 @@ export function ExplainSidebar({
           onChange={(e) => onTopicChange(e.target.value as TopicId)}
           style={styles.select}
         >
-          {getAllTopicIds().map((t) => (
+          {topics.map((t) => (
             <option key={t} value={t}>
               {getTopicEntry(t).label}
             </option>
@@ -109,8 +140,8 @@ export function ExplainSidebar({
       <div style={styles.section}>
         <button onClick={onParamsToggle} style={styles.paramsToggle}>
           <span>
-            Parameters {paramsOpen ? "▾" : "▸"}
-            {hasErrors && <span style={styles.errorBadge}> ⚠️</span>}
+            Parameters {paramsOpen ? "v" : ">"}
+            {hasErrors && <span style={styles.errorBadge}> !</span>}
           </span>
         </button>
         {paramsOpen && (
@@ -146,7 +177,7 @@ export function ExplainSidebar({
           ...(status === "running" || hasErrors ? styles.runButtonDisabled : {}),
         }}
       >
-        {status === "running" ? "⏳ Loading..." : "▶️ Run"}
+        {status === "running" ? "Loading..." : "Run"}
       </button>
 
       {/* Status Badge */}
@@ -211,6 +242,26 @@ const styles = {
     color: "#fff",
     border: "1px solid #444",
     borderRadius: "6px",
+  },
+  toggleGroup: {
+    display: "flex",
+    gap: "0.5rem",
+  },
+  toggleButton: {
+    flex: 1,
+    padding: "8px",
+    background: "#1a1a1a",
+    color: "#ccc",
+    border: "1px solid #444",
+    borderRadius: "6px",
+    cursor: "pointer" as const,
+    fontSize: "13px",
+    fontWeight: "bold" as const,
+  },
+  toggleButtonActive: {
+    background: "#003f2b",
+    color: "#00ff88",
+    borderColor: "#00aa66",
   },
   description: {
     fontSize: "13px",

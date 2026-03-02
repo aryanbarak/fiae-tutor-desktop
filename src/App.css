@@ -114,3 +114,74 @@ button {
     background-color: #0f0f0f69;
   }
 }
+
+.rtlText {
+  direction: rtl;
+  text-align: right;
+  unicode-bidi: isolate;
+  white-space: pre-wrap;
+}
+
+.ltrToken {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+.rtl {
+  direction: rtl;
+  text-align: right;
+  font-family: Vazirmatn, IRANSans, system-ui;
+  unicode-bidi: isolate;
+}
+
+.rtl ul,
+.rtl ol {
+  list-style-position: inside;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+.rtl .bidi-ltr {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.traps.rtl {
+  direction: rtl;
+  text-align: right;
+  unicode-bidi: plaintext;
+  font-family: Vazirmatn, IRANSans, system-ui;
+}
+
+.traps.rtl ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.traps.rtl li {
+  position: relative;
+  padding-right: 1.2em;
+}
+
+.traps.rtl li::before {
+  content: "•";
+  position: absolute;
+  right: 0;
+  top: 0.1em;
+}
+
+.ltr {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: plaintext;
+}
+
+pre,
+code {
+  direction: ltr;
+  text-align: left;
+}

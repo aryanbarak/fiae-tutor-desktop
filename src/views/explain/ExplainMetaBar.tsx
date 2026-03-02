@@ -28,7 +28,7 @@ export function ExplainMetaBar({
         <span style={styles.lang}>{lang.toUpperCase()}</span>
       </div>
       <button onClick={onFullscreenToggle} style={styles.fullscreenButton}>
-        {isFullscreen ? "⛶ Exit" : "⛶ Focus"}
+        {isFullscreen ? "Exit" : "Focus"}
       </button>
     </div>
   );

@@ -40,7 +40,7 @@ export function defaultParams(topic: string): Record<string, any> {
       return { arr: [1, 3, 5, 7, 9, 11], target: 7 };
 
     case "search_contains":
-      return { arr: [64, 25, 12, 22, 11], target: 22, case: "contains" };
+      return { arr: [64, 25, 12, 22, 11], target: 22 };
 
     case "count_condition":
       return { arr: [1, 5, 7, 2], threshold: 4, case: "count_gt" };

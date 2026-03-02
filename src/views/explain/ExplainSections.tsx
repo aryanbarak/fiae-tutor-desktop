@@ -11,6 +11,16 @@ interface ExplainSectionsProps {
   lang: "de" | "fa" | "bi";
 }
 
+function pickLocalized(value: any, lang: "de" | "fa" | "bi"): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const byLang = value[lang] ?? value.de ?? value.fa ?? value.text;
+    if (typeof byLang === "string") return byLang;
+  }
+  if (value === null || value === undefined) return "";
+  return String(value);
+}
+
 export function ExplainSections({ sections, lang }: ExplainSectionsProps) {
   const isRTL = lang === "fa";
 
@@ -33,7 +43,7 @@ export function ExplainSections({ sections, lang }: ExplainSectionsProps) {
             }}
           >
             <span style={styles.icon}>{section.icon}</span>
-            {section.title}
+            {pickLocalized((section as any).title, lang)}
           </div>
           <div
             style={{
@@ -42,7 +52,7 @@ export function ExplainSections({ sections, lang }: ExplainSectionsProps) {
               unicodeBidi: "plaintext",
             }}
           >
-            {section.content}
+            {pickLocalized((section as any).content, lang)}
           </div>
         </div>
       ))}

@@ -2,7 +2,7 @@
  * Main reader area for Explain Mode
  */
 
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { TopicId, isTopicId } from "../../domain/topicRegistry";
 import { ResultRenderer } from "../../components/renderers";
 import { ExplainError } from "./ExplainError";
@@ -20,7 +20,7 @@ interface ExplainReaderProps {
   availableVariants: VariantInfo[];
   selectedVariantId: string | null;
   onVariantSelect: (variantId: string) => void;
-  onVariantRunRequested?: () => void;
+  onVariantRunRequested?: (variantId: string) => void;
   onRelatedTopicSelect: (topicId: TopicId) => void;
   onRetry?: () => void;
 }
@@ -33,25 +33,114 @@ const MASTER_PATTERN_FALLBACKS: { id: string; label: string }[] = [
   { id: "p05_sorted_binary_search", label: "P05 Binary Search" },
   { id: "p06_stability", label: "P06 Stability" },
 ];
-function extractRelatedTopicIds(response: any, selectedVariantId: string | null): TopicId[] {
-  const result = response?.result;
-  const variants = Array.isArray(result?.variants) ? result.variants : [];
 
-  if (selectedVariantId && variants.length > 0) {
-    const selected = variants.find((variant: any) => variant?.id === selectedVariantId);
-    const scoped = selected?.related_topics;
-    if (Array.isArray(scoped)) {
-      return scoped
-        .map((item) => String(item).trim().toLowerCase())
-        .filter((item): item is TopicId => isTopicId(item));
+const MASTER_PATTERN_LINKS: Record<string, TopicId[]> = {
+  p01_search_contains: ["linearsearch", "search_contains"],
+  p02_count_filter: ["count_condition"],
+  p03_min_max_avg: ["minmax_avg", "minimum"],
+  p04_two_index_window: ["search_contains"],
+  p05_sorted_binary_search: ["binarysearch"],
+  p06_stability: ["bubblesort", "insertionsort", "selectionsort"],
+};
+
+function pickLocalizedLabel(value: any, lang: "de" | "fa" | "bi"): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const byLang = value[lang] ?? value.de ?? value.fa ?? value.label ?? value.text;
+    if (typeof byLang === "string") return byLang;
+  }
+  if (value === null || value === undefined) return "";
+  return String(value);
+}
+
+function toTopicIds(items: unknown): TopicId[] {
+  if (!Array.isArray(items)) return [];
+  const seen = new Set<TopicId>();
+  const out: TopicId[] = [];
+  for (const item of items) {
+    const normalized = String(item).trim().toLowerCase();
+    if (!isTopicId(normalized)) continue;
+    if (seen.has(normalized)) continue;
+    seen.add(normalized);
+    out.push(normalized);
+  }
+  return out;
+}
+
+function buildStructuredPatternLinks(response: any, availableVariants: VariantInfo[]): Map<string, TopicId[]> {
+  const links = new Map<string, TopicId[]>();
+  const result = response?.result;
+  const responseVariants = Array.isArray(result?.variants) ? result.variants : [];
+
+  for (const variant of responseVariants) {
+    const variantId = String(variant?.id || "");
+    if (!variantId) continue;
+    const topics = toTopicIds(variant?.related_topics);
+    if (topics.length > 0) {
+      links.set(variantId, topics);
     }
   }
 
-  const related = result?.related_topics;
-  if (!Array.isArray(related)) return [];
-  return related
-    .map((item) => String(item).trim().toLowerCase())
-    .filter((item): item is TopicId => isTopicId(item));
+  for (const variant of availableVariants) {
+    const variantId = String((variant as any)?.id || "");
+    if (!variantId || links.has(variantId)) continue;
+    const topics = toTopicIds((variant as any)?.related_topics);
+    if (topics.length > 0) {
+      links.set(variantId, topics);
+    }
+  }
+
+  return links;
+}
+
+function extractRelatedTopicIds(
+  topic: TopicId,
+  response: any,
+  availableVariants: VariantInfo[],
+  selectedVariantId: string | null
+): TopicId[] {
+  const structuredLinks = buildStructuredPatternLinks(response, availableVariants);
+
+  if (topic === "master_patterns") {
+    if (selectedVariantId) {
+      const structured = structuredLinks.get(selectedVariantId);
+      if (structured && structured.length > 0) {
+        return structured;
+      }
+      return MASTER_PATTERN_LINKS[selectedVariantId] || [];
+    }
+    return [];
+  }
+
+  const result = response?.result;
+  return toTopicIds(result?.related_topics);
+}
+
+function buildPatternLinksMap(
+  topic: TopicId,
+  response: any,
+  availableVariants: VariantInfo[],
+  patternItems: { id: string; label: string }[]
+): Map<string, TopicId[]> {
+  const map = new Map<string, TopicId[]>();
+  const structuredLinks = buildStructuredPatternLinks(response, availableVariants);
+
+  if (topic === "master_patterns") {
+    for (const pattern of patternItems) {
+      const structured = structuredLinks.get(pattern.id);
+      if (structured && structured.length > 0) {
+        map.set(pattern.id, structured);
+        continue;
+      }
+      map.set(pattern.id, MASTER_PATTERN_LINKS[pattern.id] || []);
+    }
+    return map;
+  }
+
+  if (patternItems.length > 0) {
+    map.set(patternItems[0].id, extractRelatedTopicIds(topic, response, availableVariants, patternItems[0].id));
+  }
+  return map;
 }
 
 
@@ -63,7 +152,7 @@ function buildPatternItems(
   if (availableVariants.length > 0) {
     return availableVariants.map((variant, idx) => ({
       id: variant.id || `pattern_${idx}`,
-      label: variant.title || variant.id || `Pattern ${idx + 1}`,
+      label: pickLocalizedLabel((variant as any).title, "de") || variant.id || `Pattern ${idx + 1}`,
     }));
   }
 
@@ -72,7 +161,7 @@ function buildPatternItems(
   if (variants.length > 0) {
     return variants.map((variant: any, idx: number) => ({
       id: variant?.id || `pattern_${idx}`,
-      label: variant?.title || variant?.id || `Pattern ${idx + 1}`,
+      label: pickLocalizedLabel(variant?.title, "de") || variant?.id || `Pattern ${idx + 1}`,
     }));
   }
 
@@ -98,7 +187,58 @@ export function ExplainReader({
   onRetry,
 }: ExplainReaderProps) {
   const [activeTab, setActiveTab] = useState<"result" | "graph">("result");
-  const [graphPatternId, setGraphPatternId] = useState<string | null>(null);
+  const patterns = useMemo(
+    () => buildPatternItems(topic, availableVariants, response),
+    [availableVariants, response, topic]
+  );
+  const [focusedPatternId, setFocusedPatternId] = useState<string | null>(null);
+  const previousSelectedVariantRef = useRef<string | null>(null);
+  const effectivePatternId = selectedVariantId || focusedPatternId || patterns[0]?.id || null;
+  const patternLinksMap = useMemo(
+    () => buildPatternLinksMap(topic, response, availableVariants, patterns),
+    [availableVariants, patterns, response, topic]
+  );
+  const allGraphEdges = useMemo(
+    () =>
+      patterns.flatMap((pattern) => {
+        const related = patternLinksMap.get(pattern.id) || [];
+        return related.map((topicId) => ({
+          fromPatternId: pattern.id,
+          toAlgorithmId: topicId,
+        }));
+      }),
+    [patternLinksMap, patterns]
+  );
+  const graphAlgorithmIds = useMemo(() => {
+    const seen = new Set<TopicId>();
+    const out: TopicId[] = [];
+    for (const edge of allGraphEdges) {
+      if (seen.has(edge.toAlgorithmId)) continue;
+      seen.add(edge.toAlgorithmId);
+      out.push(edge.toAlgorithmId);
+    }
+    return out;
+  }, [allGraphEdges]);
+  const relatedTopicIds = useMemo(
+    () => extractRelatedTopicIds(topic, response, availableVariants, effectivePatternId),
+    [availableVariants, effectivePatternId, response, topic]
+  );
+  const showGraphEntry = topic === "master_patterns" || viewMode === "patterns";
+
+  useEffect(() => {
+    if (!selectedVariantId) return;
+    if (selectedVariantId === previousSelectedVariantRef.current) return;
+    setFocusedPatternId(selectedVariantId);
+    previousSelectedVariantRef.current = selectedVariantId;
+  }, [selectedVariantId]);
+
+  useEffect(() => {
+    if (!focusedPatternId) return;
+    const exists = patterns.some((pattern) => pattern.id === focusedPatternId);
+    if (!exists) {
+      setFocusedPatternId(null);
+    }
+  }, [focusedPatternId, patterns]);
 
   if (status === "error" && error) {
     return <ExplainError error={error} onRetry={onRetry} />;
@@ -123,17 +263,6 @@ export function ExplainReader({
       </div>
     );
   }
-
-  const patterns = buildPatternItems(topic, availableVariants, response);
-  const effectivePatternId = selectedVariantId || graphPatternId || patterns[0]?.id || null;
-  const relatedTopicIds = extractRelatedTopicIds(response, effectivePatternId);
-  const graphEdges = effectivePatternId
-    ? relatedTopicIds.map((topicId) => ({
-        fromPatternId: effectivePatternId,
-        toAlgorithmId: topicId,
-      }))
-    : [];
-  const showGraphEntry = topic === "master_patterns" || viewMode === "patterns";
 
   return (
     <div style={styles.container}>
@@ -192,16 +321,20 @@ export function ExplainReader({
         )}
         {showGraphEntry && activeTab === "graph" && (
           <PatternAlgorithmGraph
-            selectedPatternId={effectivePatternId}
+            focusedPatternId={focusedPatternId}
             patternItems={patterns}
-            algorithmIds={relatedTopicIds}
-            edges={graphEdges}
+            algorithmIds={graphAlgorithmIds}
+            edges={allGraphEdges}
             onPatternSelect={(variantId) => {
-              setGraphPatternId(variantId);
+              setFocusedPatternId(variantId);
+              if (onVariantRunRequested) {
+                onVariantRunRequested(variantId);
+                return;
+              }
               onVariantSelect(variantId);
-              onVariantRunRequested?.();
             }}
             onAlgorithmSelect={onRelatedTopicSelect}
+            onResetFocus={() => setFocusedPatternId(null)}
           />
         )}
       </div>
