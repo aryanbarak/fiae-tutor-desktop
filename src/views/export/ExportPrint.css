@@ -1,0 +1,170 @@
+.export-root {
+  min-height: 100vh;
+  background: #f3f2ee;
+  color: #1a1a1a;
+  font-family: "Spectral", "Georgia", "Times New Roman", serif;
+}
+
+.export-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #d9d6cf;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.export-toolbar-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.export-toolbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.export-button {
+  border: 1px solid #2f2f2f;
+  background: transparent;
+  color: #1a1a1a;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.export-button.primary {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+.export-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.export-cover {
+  min-height: 65vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 2px solid #1a1a1a;
+  padding: 40px;
+  background: #ffffff;
+}
+
+.export-cover-title {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.export-cover-subtitle {
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+
+.export-section-title {
+  font-size: 24px;
+  margin: 0 0 16px;
+}
+
+.export-toc {
+  margin-top: 48px;
+}
+
+.export-toc-list {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.7;
+}
+
+.export-variant {
+  margin-top: 48px;
+  padding-top: 8px;
+}
+
+.export-explain {
+  font-size: 16px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.export-pseudocode {
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #111111;
+  color: #f0f0f0;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  direction: ltr;
+  text-align: left;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+.export-loading,
+.export-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.export-status {
+  font-size: 18px;
+}
+
+.export-error-text {
+  color: #b00020;
+}
+
+.rtl {
+  direction: rtl;
+  text-align: right;
+  unicode-bidi: plaintext;
+  font-family: Vazirmatn, IRANSans, system-ui;
+}
+
+.rtl ul,
+.rtl ol {
+  list-style-position: inside;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .export-root {
+    background: #ffffff;
+  }
+
+  .export-content {
+    max-width: none;
+    padding: 0;
+  }
+
+  .export-cover {
+    border: none;
+    min-height: 90vh;
+  }
+
+  .page-break {
+    break-before: page;
+    page-break-before: always;
+    break-after: page;
+    page-break-after: always;
+  }
+}

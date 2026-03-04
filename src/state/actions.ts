@@ -15,6 +15,7 @@ export type Msg =
   | { type: "PracticeRunRequested" }
   | { type: "PracticeRunSucceeded"; response: CoreResponse; raw: string; logs: string[] }
   | { type: "PracticeRunFailed"; error: string; raw?: string; logs?: string[] }
+  | { type: "PracticeVariantSelected"; variantId: string } // Select a variant from available variants
   | { type: "PracticeEventFirst" }
   | { type: "PracticeEventPrev" }
   | { type: "PracticeEventNext" }
@@ -27,6 +28,8 @@ export type Msg =
   | { type: "PracticeCopyRequest" }
   | { type: "PracticeCopyResult" }
   | { type: "PracticeSelfTest" }
+  | { type: "PracticeParamsEditorToggle" }
+  | { type: "PracticeFullscreenToggle" }
   | { type: "PingSelfTest" }
   | { type: "PingSucceeded"; result: string }
   | { type: "PingFailed"; error: string };

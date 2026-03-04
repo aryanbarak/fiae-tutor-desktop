@@ -1,0 +1,149 @@
+[
+  {
+    "id": "classic_minmax_avg",
+    "labels": {
+      "de": "Min/Max/Avg in einem Durchlauf",
+      "fa": "کمینه/بیشینه/میانگین در یک پاس"
+    },
+    "pseudocode": {
+      "de": "FUNKTION MinMaxAvg(arr)\n  n = LAENGE(arr)\n  min = arr[0]\n  max = arr[0]\n  sum = 0\n  FUER i = 0 BIS n-1\n    WENN arr[i] < min DANN min = arr[i]\n    WENN arr[i] > max DANN max = arr[i]\n    sum = sum + arr[i]\n  ENDE\n  avg = sum / n\n  GIB (min, max, avg) ZURUECK\nENDE",
+      "fa": "FUNKTION MinMaxAvg(arr)\n  n = LAENGE(arr)\n  min = arr[0]\n  max = arr[0]\n  sum = 0\n  FUER i = 0 BIS n-1\n    WENN arr[i] < min DANN min = arr[i]\n    WENN arr[i] > max DANN max = arr[i]\n    sum = sum + arr[i]\n  ENDE\n  avg = sum / n\n  GIB (min, max, avg) ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Bestimmt Minimum, Maximum und Durchschnitt in einem linearen Durchlauf.",
+      "fa": "(1) تعریف Variant:\nدر یک پاس خطی هم‌زمان کمینه، بیشینه و میانگین را محاسبه می‌کند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nنسخهٔ پایهٔ Min/Max/Average است؛ هر سه مقدار با هم محاسبه می‌شوند.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nداخل همان حلقهٔ i سه به‌روزرسانی داریم: min/max و sum.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- مقداردهی min/max با arr[0] را فراموش می‌کنند.\n- تقسیم بر n را انجام نمی‌دهند یا n=0 را چک نمی‌کنند.\n- overflow در sum برای داده‌های بزرگ.\n\n(6) نکتهٔ طلایی امتحان:\nهمه چیز با یک پاس حل می‌شود؛ سه متغیر و یک جمع کافی است."
+    },
+    "label": "classic_minmax_avg",
+    "description": "Min/Max/Avg in einem Durchlauf",
+    "is_default": true,
+    "explain_variant": {
+      "fa": "(1) تعریف Variant:\nدر یک پاس خطی هم‌زمان کمینه، بیشینه و میانگین را محاسبه می‌کند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nنسخهٔ پایهٔ Min/Max/Average است؛ هر سه مقدار با هم محاسبه می‌شوند.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nداخل همان حلقهٔ i سه به‌روزرسانی داریم: min/max و sum.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- مقداردهی min/max با arr[0] را فراموش می‌کنند.\n- تقسیم بر n را انجام نمی‌دهند یا n=0 را چک نمی‌کنند.\n- overflow در sum برای داده‌های بزرگ.\n\n(6) نکتهٔ طلایی امتحان:\nهمه چیز با یک پاس حل می‌شود؛ سه متغیر و یک جمع کافی است."
+    }
+  },
+  {
+    "id": "min_only",
+    "labels": {
+      "de": "Nur Minimum finden",
+      "fa": "فقط کمینه"
+    },
+    "pseudocode": {
+      "de": "FUNKTION MinOnly(arr)\n  min = arr[0]\n  FUER i = 1 BIS LAENGE(arr)-1\n    WENN arr[i] < min DANN min = arr[i]\n  ENDE\n  GIB min ZURUECK\nENDE",
+      "fa": "FUNKTION MinOnly(arr)\n  min = arr[0]\n  FUER i = 1 BIS LAENGE(arr)-1\n    WENN arr[i] < min DANN min = arr[i]\n  ENDE\n  GIB min ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Sucht nur das Minimum in linearer Zeit.",
+      "fa": "(1) تعریف Variant:\nفقط کمترین مقدار آرایه را پیدا می‌کند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nهیچ بیشینه یا میانگین محاسبه نمی‌شود؛ فقط min به‌روز می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nفقط شرط arr[i] < min و به‌روزرسانی min وجود دارد.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- مقداردهی min به arr[0] فراموش می‌شود.\n- شروع حلقه از i=0 باعث مقایسهٔ اضافی می‌شود.\n\n(6) نکتهٔ طلایی امتحان:\nیک متغیر min و یک پاس خطی کافی است."
+    },
+    "label": "min_only",
+    "description": "Nur Minimum finden",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعریف Variant:\nفقط کمترین مقدار آرایه را پیدا می‌کند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nهیچ بیشینه یا میانگین محاسبه نمی‌شود؛ فقط min به‌روز می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nفقط شرط arr[i] < min و به‌روزرسانی min وجود دارد.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- مقداردهی min به arr[0] فراموش می‌شود.\n- شروع حلقه از i=0 باعث مقایسهٔ اضافی می‌شود.\n\n(6) نکتهٔ طلایی امتحان:\nیک متغیر min و یک پاس خطی کافی است."
+    }
+  },
+  {
+    "id": "max_only",
+    "labels": {
+      "de": "Nur Maximum finden",
+      "fa": "فقط بیشینه"
+    },
+    "pseudocode": {
+      "de": "FUNKTION MaxOnly(arr)\n  max = arr[0]\n  FUER i = 1 BIS LAENGE(arr)-1\n    WENN arr[i] > max DANN max = arr[i]\n  ENDE\n  GIB max ZURUECK\nENDE",
+      "fa": "FUNKTION MaxOnly(arr)\n  max = arr[0]\n  FUER i = 1 BIS LAENGE(arr)-1\n    WENN arr[i] > max DANN max = arr[i]\n  ENDE\n  GIB max ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Sucht nur das Maximum in linearer Zeit.",
+      "fa": "(1) تعریف Variant:\nفقط بزرگ‌ترین مقدار آرایه را پیدا می‌کند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nهیچ کمینه یا میانگین محاسبه نمی‌شود؛ فقط max به‌روز می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nفقط شرط arr[i] > max و به‌روزرسانی max وجود دارد.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- مقداردهی max به arr[0] فراموش می‌شود.\n- شروع حلقه از i=0 باعث مقایسهٔ اضافی می‌شود.\n\n(6) نکتهٔ طلایی امتحان:\nیک متغیر max و یک پاس خطی کافی است."
+    },
+    "label": "max_only",
+    "description": "Nur Maximum finden",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعریف Variant:\nفقط بزرگ‌ترین مقدار آرایه را پیدا می‌کند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nهیچ کمینه یا میانگین محاسبه نمی‌شود؛ فقط max به‌روز می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nفقط شرط arr[i] > max و به‌روزرسانی max وجود دارد.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- مقداردهی max به arr[0] فراموش می‌شود.\n- شروع حلقه از i=0 باعث مقایسهٔ اضافی می‌شود.\n\n(6) نکتهٔ طلایی امتحان:\nیک متغیر max و یک پاس خطی کافی است."
+    }
+  },
+  {
+    "id": "average_only",
+    "labels": {
+      "de": "Nur Durchschnitt berechnen",
+      "fa": "فقط میانگین"
+    },
+    "pseudocode": {
+      "de": "FUNKTION AvgOnly(arr)\n  sum = 0\n  FUER i = 0 BIS LAENGE(arr)-1\n    sum = sum + arr[i]\n  ENDE\n  avg = sum / LAENGE(arr)\n  GIB avg ZURUECK\nENDE",
+      "fa": "FUNKTION AvgOnly(arr)\n  sum = 0\n  FUER i = 0 BIS LAENGE(arr)-1\n    sum = sum + arr[i]\n  ENDE\n  avg = sum / LAENGE(arr)\n  GIB avg ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Berechnet nur den Durchschnitt (Summe/Länge).",
+      "fa": "(1) تعریف Variant:\nفقط میانگین را محاسبه می‌کند (جمع تقسیم بر تعداد).\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nهیچ کمینه/بیشینه‌ای محاسبه نمی‌شود؛ فقط sum و avg داریم.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nداخل حلقه فقط sum افزایش می‌یابد و در پایان sum/n.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- فراموشی تقسیم بر n.\n- overflow جمع برای داده‌های بزرگ.\n- n=0 را چک نمی‌کنند.\n\n(6) نکتهٔ طلایی امتحان:\nمیانگین یعنی sum/n؛ هیچ شرط مقایسه‌ای ندارد."
+    },
+    "label": "average_only",
+    "description": "Nur Durchschnitt berechnen",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعریف Variant:\nفقط میانگین را محاسبه می‌کند (جمع تقسیم بر تعداد).\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nهیچ کمینه/بیشینه‌ای محاسبه نمی‌شود؛ فقط sum و avg داریم.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nداخل حلقه فقط sum افزایش می‌یابد و در پایان sum/n.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- فراموشی تقسیم بر n.\n- overflow جمع برای داده‌های بزرگ.\n- n=0 را چک نمی‌کنند.\n\n(6) نکتهٔ طلایی امتحان:\nمیانگین یعنی sum/n؛ هیچ شرط مقایسه‌ای ندارد."
+    }
+  },
+  {
+    "id": "minmax_only",
+    "labels": {
+      "de": "Min und Max (ohne Durchschnitt)",
+      "fa": "کمینه و بیشینه (بدون میانگین)"
+    },
+    "pseudocode": {
+      "de": "FUNKTION MinMaxOnly(arr)\n  min = arr[0]\n  max = arr[0]\n  FUER i = 1 BIS LAENGE(arr)-1\n    WENN arr[i] < min DANN min = arr[i]\n    WENN arr[i] > max DANN max = arr[i]\n  ENDE\n  GIB (min, max) ZURUECK\nENDE",
+      "fa": "FUNKTION MinMaxOnly(arr)\n  min = arr[0]\n  max = arr[0]\n  FUER i = 1 BIS LAENGE(arr)-1\n    WENN arr[i] < min DANN min = arr[i]\n    WENN arr[i] > max DANN max = arr[i]\n  ENDE\n  GIB (min, max) ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Findet Minimum und Maximum, aber keinen Durchschnitt.",
+      "fa": "(1) تعریف Variant:\nکمینه و بیشینه را هم‌زمان پیدا می‌کند، بدون میانگین.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nsum/avg حذف شده است؛ فقط min و max به‌روز می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nدو شرط برای min/max داریم و خبری از sum نیست.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- مقداردهی اولیه min/max با arr[0] فراموش می‌شود.\n- نادیده گرفتن اینکه avg وجود ندارد.\n\n(6) نکتهٔ طلایی امتحان:\nاگر فقط min و max خواسته شد، sum را حذف کن تا ساده‌تر شود."
+    },
+    "label": "minmax_only",
+    "description": "Min und Max (ohne Durchschnitt)",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعریف Variant:\nکمینه و بیشینه را هم‌زمان پیدا می‌کند، بدون میانگین.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nsum/avg حذف شده است؛ فقط min و max به‌روز می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nدو شرط برای min/max داریم و خبری از sum نیست.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1).\n\n(5) دام‌های رایج IHK:\n- مقداردهی اولیه min/max با arr[0] فراموش می‌شود.\n- نادیده گرفتن اینکه avg وجود ندارد.\n\n(6) نکتهٔ طلایی امتحان:\nاگر فقط min و max خواسته شد، sum را حذف کن تا ساده‌تر شود."
+    }
+  },
+  {
+    "id": "minmax_avg_by_field",
+    "labels": {
+      "de": "Min/Max/Avg für Objekt-Feld",
+      "fa": "کمینه/بیشینه/میانگین روی فیلد آبجکت"
+    },
+    "pseudocode": {
+      "de": "FUNKTION MinMaxAvgByField(arr, key)\n  n = LAENGE(arr)\n  min = arr[0][key]\n  max = arr[0][key]\n  sum = 0\n  FUER i = 0 BIS n-1\n    v = arr[i][key]\n    WENN v < min DANN min = v\n    WENN v > max DANN max = v\n    sum = sum + v\n  ENDE\n  avg = sum / n\n  GIB (min, max, avg) ZURUECK\nENDE",
+      "fa": "FUNKTION MinMaxAvgByField(arr, key)\n  n = LAENGE(arr)\n  min = arr[0][key]\n  max = arr[0][key]\n  sum = 0\n  FUER i = 0 BIS n-1\n    v = arr[i][key]\n    WENN v < min DANN min = v\n    WENN v > max DANN max = v\n    sum = sum + v\n  ENDE\n  avg = sum / n\n  GIB (min, max, avg) ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Berechnet Min/Max/Avg eines numerischen Feldes in Objekt-Arrays.",
+      "fa": "(1) تعریف Variant:\nبرای آرایهٔ آبجکت‌ها، کمینه/بیشینه/میانگین یک فیلد عددی را محاسبه می‌کند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nبه‌جای arr[i] از arr[i][key] استفاده می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nv = arr[i][key] و سپس مقایسه و جمع روی v انجام می‌شود.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1). دسترسی به فیلد ثابت است.\n\n(5) دام‌های رایج IHK:\n- اشتباه در key یا نوع فیلد.\n- مقایسهٔ رشته‌ای به‌جای عددی.\n- فراموشی مقداردهی اولیه با arr[0][key].\n\n(6) نکتهٔ طلایی امتحان:\nهمیشه روی فیلد عمل کن، نه روی کل آبجکت."
+    },
+    "label": "minmax_avg_by_field",
+    "description": "Min/Max/Avg für Objekt-Feld",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعریف Variant:\nبرای آرایهٔ آبجکت‌ها، کمینه/بیشینه/میانگین یک فیلد عددی را محاسبه می‌کند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nبه‌جای arr[i] از arr[i][key] استفاده می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nv = arr[i][key] و سپس مقایسه و جمع روی v انجام می‌شود.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1). دسترسی به فیلد ثابت است.\n\n(5) دام‌های رایج IHK:\n- اشتباه در key یا نوع فیلد.\n- مقایسهٔ رشته‌ای به‌جای عددی.\n- فراموشی مقداردهی اولیه با arr[0][key].\n\n(6) نکتهٔ طلایی امتحان:\nهمیشه روی فیلد عمل کن، نه روی کل آبجکت."
+    }
+  },
+  {
+    "id": "minmax_with_indices",
+    "labels": {
+      "de": "Min/Max mit Indizes",
+      "fa": "کمینه/بیشینه با اندیس"
+    },
+    "pseudocode": {
+      "de": "FUNKTION MinMaxWithIndex(arr)\n  min = arr[0]\n  max = arr[0]\n  minI = 0\n  maxI = 0\n  FUER i = 1 BIS LAENGE(arr)-1\n    WENN arr[i] < min DANN min = arr[i]; minI = i\n    WENN arr[i] > max DANN max = arr[i]; maxI = i\n  ENDE\n  GIB (min, minI, max, maxI) ZURUECK\nENDE",
+      "fa": "FUNKTION MinMaxWithIndex(arr)\n  min = arr[0]\n  max = arr[0]\n  minI = 0\n  maxI = 0\n  FUER i = 1 BIS LAENGE(arr)-1\n    WENN arr[i] < min DANN min = arr[i]; minI = i\n    WENN arr[i] > max DANN max = arr[i]; maxI = i\n  ENDE\n  GIB (min, minI, max, maxI) ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Findet Min/Max und merkt sich die Positionen.",
+      "fa": "(1) تعریف Variant:\nکمینه و بیشینه را همراه با اندیس‌هایشان برمی‌گرداند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nعلاوه بر مقدار، اندیس min و max هم نگهداری می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nدر زمان به‌روزرسانی min/max، minI و maxI هم تغییر می‌کنند.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1) (چند متغیر اضافه).\n\n(5) دام‌های رایج IHK:\n- فراموشی به‌روزرسانی اندیس بعد از تغییر مقدار.\n- مقداردهی اولیه اندیس‌ها را صفر نمی‌گذارند.\n\n(6) نکتهٔ طلایی امتحان:\nاگر سؤال «کجا قرار دارد؟» داشت، باید اندیس را هم نگه داری."
+    },
+    "label": "minmax_with_indices",
+    "description": "Min/Max mit Indizes",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعریف Variant:\nکمینه و بیشینه را همراه با اندیس‌هایشان برمی‌گرداند.\n\n(2) تفاوت دقیق با نسخهٔ کلاسیک:\nعلاوه بر مقدار، اندیس min و max هم نگهداری می‌شود.\n\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود:\nدر زمان به‌روزرسانی min/max، minI و maxI هم تغییر می‌کنند.\n\n(4) رفتار و پیچیدگی زمانی/فضایی:\nزمان: O(n). حافظه: O(1) (چند متغیر اضافه).\n\n(5) دام‌های رایج IHK:\n- فراموشی به‌روزرسانی اندیس بعد از تغییر مقدار.\n- مقداردهی اولیه اندیس‌ها را صفر نمی‌گذارند.\n\n(6) نکتهٔ طلایی امتحان:\nاگر سؤال «کجا قرار دارد؟» داشت، باید اندیس را هم نگه داری."
+    }
+  }
+]

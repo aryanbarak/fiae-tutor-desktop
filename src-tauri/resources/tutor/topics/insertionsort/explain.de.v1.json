@@ -1,0 +1,262 @@
+{
+  "version": "1.0",
+  "topic": "insertionsort",
+  "lang": "de",
+  "schema_name": "insertionsort.explain.de.v1",
+  "schema_kind": "explain_content",
+  "title": "InsertionSort (Einfügesortierung) — FIAE Explain Core v1.0",
+  "audience": "IHK FIAE AP2 (Algorithmen) — prüfungsorientiert",
+  "meta": {
+    "canonical_topic": "insertionsort",
+    "difficulty": "basic",
+    "tags": [
+      "sorting",
+      "insert",
+      "shift",
+      "O(n^2)",
+      "adaptive",
+      "stable",
+      "IHK"
+    ],
+    "rtl_enabled": false,
+    "last_updated": "2026-01-28"
+  },
+  "sections_order": [
+    "definition",
+    "idea",
+    "procedure",
+    "example",
+    "complexity",
+    "ihk_traps",
+    "variants"
+  ],
+  "sections": [
+    {
+      "id": "definition",
+      "title": "Definition",
+      "format": "md",
+      "rtl": false,
+      "body": "**InsertionSort (Einfügesortierung)** ist ein Sortieralgorithmus, der in jedem Durchlauf das **nächste Element aus dem unsortierten Teil** nimmt und es an der **richtigen Position im bereits sortierten Teil** einfügt.\n\n**Kernprinzip:**\n- Array wird in zwei Bereiche geteilt: **sortiert** (links) und **unsortiert** (rechts)\n- Pro Durchlauf i (startet bei i=1):\n  - Element a[i] wird herausgenommen (key)\n  - Größere Elemente werden um eine Position nach rechts **verschoben** (nicht getauscht)\n  - key wird an freier Stelle eingefügt\n- Sortierter Bereich wächst schrittweise\n\n**IHK-Fokus:** Array-Zustand nach jedem Durchlauf, Loop-Invariante, Unterschied Shift vs Swap, Best-Case O(n) für fast sortierte Arrays (adaptiv)."
+    },
+    {
+      "id": "idea",
+      "title": "Grundidee",
+      "format": "md",
+      "rtl": false,
+      "body": "Sortierter Bereich beginnt links und wächst schrittweise.\n\n**Ablauf:**\n1. **Start:** Erstes Element (i=0) ist bereits sortiert → Schleife startet bei i=1\n2. **Durchlauf i:** Element a[i] herausnehmen (key)\n3. **Suche:** Von rechts nach links im sortierten Bereich (0..i-1):\n   - Solange a[j] > key: Element a[j] um eine Position nach rechts verschieben\n   - Wenn a[j] ≤ key oder j < 0: richtige Position gefunden\n4. **Einfügen:** key an Position j+1 einsetzen\n5. **Wiederholen** bis alle Elemente verarbeitet\n\n**Merke:** Nach Durchlauf i sind die ersten i+1 Elemente sortiert (Loop-Invariante)."
+    },
+    {
+      "id": "procedure",
+      "title": "Pseudocode",
+      "format": "md",
+      "rtl": false,
+      "body": "```text\nPROZEDUR InsertionSort(a)\n  n = LAENGE(a)\n  FUER i = 1 BIS n-1\n    key = a[i]\n    j = i - 1\n    SOLANGE j >= 0 UND a[j] > key\n      a[j+1] = a[j]  // Shift\n      j = j - 1\n    ENDE\n    a[j+1] = key  // Einfügen\n  ENDE\n  GIB a ZURUECK\nENDE\n```"
+    },
+    {
+      "id": "example",
+      "title": "Beispiel",
+      "format": "md",
+      "rtl": false,
+      "body": "**Beispiel:** a = [12, 11, 13, 5, 6]\n\n**Start:** Sortierter Bereich = [12]\n\n**i = 1:** key = 11\n- a[0]=12 > 11 → verschiebe 12: a[1] = 12\n- Füge key ein: a[0] = 11\n- **Ergebnis:** [11, 12, 13, 5, 6]\n\n**i = 2:** key = 13\n- a[1]=12 < 13 → keine Verschiebung\n- **Ergebnis:** [11, 12, 13, 5, 6]\n\n**i = 3:** key = 5\n- Verschiebe 13, 12, 11 nach rechts\n- Füge key ein: a[0] = 5\n- **Ergebnis:** [5, 11, 12, 13, 6]\n\n**i = 4:** key = 6\n- Verschiebe 13, 12, 11 nach rechts\n- Füge key ein: a[1] = 6\n- **Endergebnis:** [5, 6, 11, 12, 13]"
+    },
+    {
+      "id": "complexity",
+      "title": "Komplexität (IHK)",
+      "format": "md",
+      "rtl": false,
+      "body": "**Zeit:**\n- **Best-Case:** O(n) — bei (fast) sortiertem Array (adaptiv!)\n- **Average-Case:** O(n²)\n- **Worst-Case:** O(n²) — bei umgekehrt sortiertem Array\n\n**Speicher:** O(1) — In-Place\n\n**Stabilität:** Ja — Bedingung `>` (nicht `>=`) erhält relative Reihenfolge gleicher Elemente"
+    },
+    {
+      "id": "ihk_traps",
+      "title": "Prüfungsfallen",
+      "format": "md",
+      "rtl": false,
+      "body": "1) **Schleife bei i=0 starten:** Falsch! Muss bei i=1 starten\n2) **Vergleich mit a[i] statt key:** key ist herausgenommenes Element\n3) **Swap statt Shift:** InsertionSort verschiebt (a[j+1] = a[j]), tauscht nicht\n4) **Best-Case falsch:** O(n) für fast sortierte Arrays, nicht O(n²)\n5) **j-Bedingung:** Muss `j >= 0 UND a[j] > key` sein\n6) **Einfügeposition:** key an j+1, nicht an j\n7) **Stabilität:** Bedingung `>` (nicht `>=`) ist entscheidend\n8) **Binary InsertionSort:** Vergleiche O(n log n), aber Shifts bleiben O(n²) — Gesamtlaufzeit unverändert!"
+    },
+    {
+      "id": "variants",
+      "title": "Varianten (7)",
+      "format": "md",
+      "rtl": false,
+      "body": "**classic_int_asc**\nZiel: Klassisch aufsteigend einf?gen (Shift statt Swap).\nPseudocode: `InsertionSort(a)`.\nKomplexit?t: Best `O(n)`, Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- `i` startet bei 1.\n- Shift statt Swap.\n\n**optimized_shift**\nZiel: Inneren Shift fr?h stoppen bei `a[j] <= key`.\nPseudocode: `InsertionSort(a)` (early stop in innerer Schleife).\nKomplexit?t: Best `O(n)`, Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Best-Case nicht als immer `O(n)` missverstehen.\n- key am Ende bei `j+1` einsetzen.\n\n**comparator_f**\nZiel: Einf?gen mit Vergleichsfunktion `f(a,b)`.\nPseudocode: `InsertionSort(a, f)`.\nKomplexit?t: Best `O(n)`, Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Bedingung: `f(a[j], key) > 0`.\n- Parameterreihenfolge nicht vertauschen.\n\n**strings_lex**\nZiel: Lexikografisches Einf?gen von Strings.\nPseudocode: `InsertionSort_Strings(a)`.\nKomplexit?t: Best `O(n)`, Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Case/Locale beachten.\n- Stringvergleich nicht numerisch interpretieren.\n\n**objects_by_field**\nZiel: Objekte nach Feld `key` einf?gen (ganze Objekte verschieben).\nPseudocode: `InsertionSort_Objects(a, key)`.\nKomplexit?t: Best `O(n)`, Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Shift muss das ganze Objekt bewegen.\n- Falscher `key`/Typ.\n\n**generic_concept**\nZiel: Generisch mit Comparator, Algorithmus bleibt gleich.\nPseudocode: `InsertionSort_Generic(a, cmp)`.\nKomplexit?t: Best `O(n)`, Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Comparator-Richtung vertauscht.\n- Gleichheit falsch definiert.\n\n**binary_insertion_bonus**\nZiel: Einf?geposition per Binary Search finden.\nPseudocode: `BinaryInsertionSort(a)`.\nKomplexit?t: Vergleiche `O(n log n)`, Shifts `O(n^2)`, Space `O(1)`.\nTraps:\n- Gesamtlaufzeit bleibt `O(n^2)` wegen Shifts.\n- Bin?rsuche nur im sortierten Teil.\n"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex01_trace_passes",
+      "task": "F?hre InsertionSort auf arr = [7, 2, 6, 3] aus. Gib den Array-Zustand nach jedem i an.",
+      "input": {
+        "arr": [
+          7,
+          2,
+          6,
+          3
+        ]
+      },
+      "expected": "i=1: [2,7,6,3]; i=2: [2,6,7,3]; i=3: [2,3,6,7]",
+      "solution": "i=1: key=2, 7 nach rechts -> [2,7,6,3]. i=2: key=6, 7 nach rechts -> [2,6,7,3]. i=3: key=3, 7 und 6 nach rechts -> [2,3,6,7].",
+      "traps": [
+        "Nicht swappen, sondern shiften",
+        "i startet bei 1",
+        "key am Ende bei j+1 einfuegen"
+      ]
+    },
+    {
+      "id": "ex02_trace_after_i2",
+      "task": "InsertionSort auf arr = [4, 3, 2, 1]. Wie lautet der Zustand nach i=2?",
+      "input": {
+        "arr": [
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      "expected": "[2,3,4,1]",
+      "solution": "i=1: [3,4,2,1]; i=2: key=2, 4 und 3 nach rechts -> [2,3,4,1].",
+      "traps": [
+        "i=2 bedeutet drittes Element",
+        "Shifts bis j<0 oder a[j] <= key",
+        "key nicht vergessen"
+      ]
+    },
+    {
+      "id": "ex03_trace_insert_pos",
+      "task": "InsertionSort auf arr = [2, 5, 4, 1]. Gib den Zustand nach i=1 und i=2 an.",
+      "input": {
+        "arr": [
+          2,
+          5,
+          4,
+          1
+        ]
+      },
+      "expected": "i=1: [2,5,4,1]; i=2: [2,4,5,1]",
+      "solution": "i=1: key=5, keine Verschiebung. i=2: key=4, 5 nach rechts -> [2,4,5,1].",
+      "traps": [
+        "Nur bis zum sortierten Teil vergleichen",
+        "Vergleich ist a[j] > key",
+        "Nicht mit SelectionSort verwechseln"
+      ]
+    },
+    {
+      "id": "ex04_complexity_best",
+      "task": "Wie viele Vergleiche im Best-Case fuer n=5?",
+      "input": {
+        "n": 5
+      },
+      "expected": "4",
+      "solution": "Best-Case: Array sortiert, pro i genau 1 Vergleich -> n-1 = 4.",
+      "traps": [
+        "Best-Case ist O(n)",
+        "Vergleiche nicht mit Shifts verwechseln",
+        "i laeuft von 1 bis n-1"
+      ]
+    },
+    {
+      "id": "ex05_complexity_worst",
+      "task": "Wie viele Vergleiche im Worst-Case fuer n=5?",
+      "input": {
+        "n": 5
+      },
+      "expected": "10",
+      "solution": "Worst-Case: Summe 1+2+3+4 = 10 = n(n-1)/2.",
+      "traps": [
+        "Worst-Case bei umgekehrt sortiert",
+        "Formel n(n-1)/2",
+        "Nicht O(n) angeben"
+      ]
+    },
+    {
+      "id": "ex06_trap_condition",
+      "task": "Welche while-Bedingung ist korrekt (aufsteigend)?",
+      "input": {},
+      "expected": "j >= 0 UND a[j] > key",
+      "solution": "Nur wenn a[j] > key wird nach rechts verschoben; bei Gleichheit stoppt die Schleife.",
+      "traps": [
+        "Nicht a[i] statt key vergleichen",
+        "j kann -1 werden",
+        "Nicht >= verwenden"
+      ]
+    },
+    {
+      "id": "ex07_trap_stability",
+      "task": "Warum ist InsertionSort stabil?",
+      "input": {},
+      "expected": "Weil nur bei > verschoben wird",
+      "solution": "Gleiche Elemente werden nicht vertauscht, da die Bedingung streng > ist.",
+      "traps": [
+        "Stabilitaet h?ngt an >",
+        "Nicht mit SelectionSort verwechseln",
+        "Gleichheit nicht verschieben"
+      ]
+    },
+    {
+      "id": "ex08_invariant",
+      "task": "Welche Invariante gilt nach Durchlauf i?",
+      "input": {},
+      "expected": "Die ersten i+1 Elemente sind sortiert",
+      "solution": "Nach jedem i ist der linke Teil 0..i sortiert und enthaelt die kleinsten Elemente in korrekter Reihenfolge.",
+      "traps": [
+        "Nicht den rechten Teil als sortiert angeben",
+        "i beginnt bei 1",
+        "Invariante ist Pruefungsstandard"
+      ]
+    },
+    {
+      "id": "ex09_comparator",
+      "task": "InsertionSort mit Comparator f(x,y) (f<0 bedeutet x vor y). Welche Bedingung in der while-Schleife?",
+      "input": {},
+      "expected": "f(key, a[j]) < 0",
+      "solution": "Wenn key vor a[j] stehen soll, gilt f(key, a[j]) < 0 und es wird verschoben.",
+      "traps": [
+        "Parameterreihenfolge beachten",
+        "Nicht f(a[j], key) < 0",
+        "Vergleichszeichen korrekt"
+      ]
+    },
+    {
+      "id": "ex10_edge_position",
+      "task": "Was passiert, wenn j auf -1 faellt? Wo wird key eingefuegt?",
+      "input": {},
+      "expected": "An Position 0 (j+1)",
+      "solution": "Wenn j=-1, ist key kleiner als alle Elemente und wird an Index 0 eingefuegt.",
+      "traps": [
+        "Einsetzen an j+1, nicht j",
+        "j darf -1 werden",
+        "Off-by-one"
+      ]
+    }
+  ],
+  "exam_tips": [
+    "Schleife startet bei i=1, nicht i=0",
+    "InsertionSort ist adaptiv: Best-Case O(n)",
+    "Shift (a[j+1]=a[j]), nicht Swap",
+    "Stabilität durch > (nicht >=)",
+    "Loop-Invariante: Nach i sind erste i+1 Elemente sortiert",
+    "Einfügen an j+1",
+    "Bedingung: j >= 0 UND a[j] > key"
+  ],
+  "glossary": [
+    {
+      "term": "key",
+      "definition": "Herausgenommenes Element a[i]"
+    },
+    {
+      "term": "Shift",
+      "definition": "Verschieben: a[j+1] = a[j]"
+    },
+    {
+      "term": "Adaptive",
+      "definition": "Passt sich an Eingabe an; schnell bei fast sortierten Arrays"
+    },
+    {
+      "term": "Stable",
+      "definition": "Gleiche Schlüssel behalten relative Reihenfolge"
+    },
+    {
+      "term": "In-Place",
+      "definition": "Sortierung im Array selbst, O(1) Speicher"
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "de",
+  "question_count": 10,
+  "questions": [
+    {
+      "expected": "min=2, max=9, avg=5.2",
+      "id": "ex01_trace_classic",
+      "input": {
+        "arr": [
+          7,
+          2,
+          9,
+          3,
+          5
+        ]
+      },
+      "solution": "sum=26, avg=26/5=5.2, min=2, max=9.",
+      "task": "Berechne min, max und avg fuer arr = [7, 2, 9, 3, 5].",
+      "traps": [
+        "Initialisierung mit arr[0]",
+        "Avg als sum/n",
+        "Nicht mit ganzzahliger Division verwechseln"
+      ]
+    },
+    {
+      "expected": "min=-8, max=-2, avg=-4.5",
+      "id": "ex02_trace_negative",
+      "input": {
+        "arr": [
+          -5,
+          -2,
+          -8,
+          -3
+        ]
+      },
+      "solution": "sum=-18, avg=-18/4=-4.5, min=-8, max=-2.",
+      "task": "Berechne min, max und avg fuer arr = [-5, -2, -8, -3].",
+      "traps": [
+        "min/max nicht mit 0 initialisieren",
+        "Negative Werte beachten",
+        "Avg als float"
+      ]
+    },
+    {
+      "expected": "min=1, max=6, avg=3.666...",
+      "id": "ex03_trace_small",
+      "input": {
+        "arr": [
+          4,
+          1,
+          6
+        ]
+      },
+      "solution": "sum=11, avg=11/3, min=1, max=6.",
+      "task": "Gegeben arr = [4, 1, 6]. Gib min, max, avg an.",
+      "traps": [
+        "Avg kann nicht ganzzahlig sein",
+        "sum korrekt bilden",
+        "Index nicht mit Wert verwechseln"
+      ]
+    },
+    {
+      "expected": "8",
+      "id": "ex04_complexity_comparisons",
+      "input": {
+        "n": 5
+      },
+      "solution": "Nach Initialisierung werden pro Element zwei Vergleiche gemacht: 2*(n-1)=8.",
+      "task": "Wie viele Vergleiche fuer min+max in einem Durchlauf bei n=5 (klassisch mit zwei IFs)?",
+      "traps": [
+        "Vergleiche nicht mit sum",
+        "Zwei IFs, keine else-if",
+        "Formel 2*(n-1)"
+      ]
+    },
+    {
+      "expected": "Best/Worst O(n)",
+      "id": "ex05_complexity_big",
+      "input": {},
+      "solution": "Es wird jedes Element genau einmal betrachtet, daher immer O(n).",
+      "task": "Zeitkomplexitaet fuer min/max/avg (Best/Worst).",
+      "traps": [
+        "Kein Early-Exit",
+        "Nicht O(log n)",
+        "Linear bleibt linear"
+      ]
+    },
+    {
+      "expected": "Bei negativen Arrays falsch",
+      "id": "ex06_trap_init",
+      "input": {},
+      "solution": "Wenn alle Werte negativ sind, wuerde 0 als min/max bleiben. Richtig: min=max=arr[0].",
+      "task": "Warum ist min = max = 0 falsch als Initialisierung?",
+      "traps": [
+        "Initialisierung mit arr[0]",
+        "Negative Werte",
+        "Keine Konstante"
+      ]
+    },
+    {
+      "expected": "Integer-Division",
+      "id": "ex07_trap_integer_div",
+      "input": {},
+      "solution": "sum/n muss als float/double gerechnet werden, sonst wird gerundet.",
+      "task": "Was ist die typische Falle beim Durchschnitt in Java/C?",
+      "traps": [
+        "Typcasting noetig",
+        "sum/n nicht als int",
+        "Avg sonst falsch"
+      ]
+    },
+    {
+      "expected": "Weil ein Wert gleichzeitig min oder max sein kann",
+      "id": "ex08_trap_if_blocks",
+      "input": {},
+      "solution": "Mit else-if wuerde ein Wert, der z.B. neues min ist, nicht mehr auf max gepr?ft (oder umgekehrt).",
+      "task": "Warum braucht man zwei getrennte IF-Bloecke fuer min und max?",
+      "traps": [
+        "Kein else-if",
+        "Beide Vergleiche ausfuehren",
+        "Logik nicht verwechseln"
+      ]
+    },
+    {
+      "expected": "Fehler/Exception oder spezieller Rueckgabewert",
+      "id": "ex09_trap_empty",
+      "input": {},
+      "solution": "Bei n=0 darf nicht durch n geteilt werden und arr[0] existiert nicht.",
+      "task": "Wie behandelt man ein leeres Array?",
+      "traps": [
+        "Division durch 0",
+        "arr[0] unzulaessig",
+        "Edge-Case pruefen"
+      ]
+    },
+    {
+      "expected": "minIndex ist die Position, min der Wert",
+      "id": "ex10_trap_index_value",
+      "input": {},
+      "solution": "minIndex speichert die Position des kleinsten Werts, min speichert den Wert selbst.",
+      "task": "Was ist der Unterschied zwischen minIndex und min?",
+      "traps": [
+        "Index nicht mit Wert verwechseln",
+        "Rueckgabewert klar benennen",
+        "SelectionSort braucht Index"
+      ]
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "Min/Max/Average (Min/Max/Durchschnitt) — FIAE Explain Core v1.0",
+  "topic": "minmax_avg",
+  "version": "1.0"
+}

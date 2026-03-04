@@ -1,0 +1,81 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "fa",
+  "question_count": 3,
+  "questions": [
+    {
+      "expected_example": "count = 3 (عناصر 7، 9، 5)",
+      "hints": [
+        "فقط عناصری که > 4 هستند بشمار",
+        "3 و 2 کوچک‌تر هستند"
+      ],
+      "id": "ex1_count_gt",
+      "input_example": {
+        "arr": [
+          3,
+          7,
+          2,
+          9,
+          5
+        ],
+        "threshold": 4
+      },
+      "level": "exam_like",
+      "task": "داده شده: arr = [3, 7, 2, 9, 5], threshold = 4. چند عنصر بزرگ‌تر از 4 هستند؟",
+      "title": "شمارش بزرگ‌تر از آستانه"
+    },
+    {
+      "expected_example": "count = 2",
+      "hints": [
+        "دسترسی به فیلد: student[\"note\"] یا student.note",
+        "شرط برابری: == (نه >)"
+      ],
+      "id": "ex2_count_has_note",
+      "input_example": {
+        "students": [
+          {
+            "note": 2
+          },
+          {
+            "note": 1
+          },
+          {
+            "note": 2
+          },
+          {
+            "note": 3
+          }
+        ]
+      },
+      "level": "exam_like",
+      "task": "داده شده: students = [{note: 2}, {note: 1}, {note: 2}, {note: 3}]. چند دانشجو نمره 2 دارند؟",
+      "title": "شمارش آبجکت‌ها با نمره 2"
+    },
+    {
+      "expected_example": "filtered = [7, 9, 5]",
+      "hints": [
+        "لیست خالی ایجاد کن",
+        "عناصری که > 4 هستند اضافه کن"
+      ],
+      "id": "ex3_build_filtered",
+      "input_example": {
+        "arr": [
+          3,
+          7,
+          2,
+          9,
+          5
+        ],
+        "threshold": 4
+      },
+      "level": "exam_like",
+      "task": "داده شده: arr = [3, 7, 2, 9, 5], threshold = 4. لیست filtered چیست؟",
+      "title": "ساخت لیست فیلتر شده"
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "Count Condition (شمارش با شرط) — FIAE Explain Core v1.0",
+  "topic": "count_condition",
+  "version": "1.0"
+}

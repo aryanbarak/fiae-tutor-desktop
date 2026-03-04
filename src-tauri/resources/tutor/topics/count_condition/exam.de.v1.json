@@ -1,0 +1,53 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "de",
+  "question_count": 2,
+  "questions": [
+    {
+      "expected_example": "count = 3 (Elemente 7, 9, 5)",
+      "hints": [
+        "Nur Elemente > 4 zählen"
+      ],
+      "id": "ex1_count_gt",
+      "input_example": {
+        "arr": [
+          3,
+          7,
+          2,
+          9,
+          5
+        ],
+        "threshold": 4
+      },
+      "level": "exam_like",
+      "task": "Gegeben: arr = [3, 7, 2, 9, 5], threshold = 4. Wie viele Elemente sind größer als 4?",
+      "title": "Zähle größer als Schwellwert"
+    },
+    {
+      "expected_example": "filtered = [7, 9, 5]",
+      "hints": [
+        "Leere Liste erstellen",
+        "Elemente > 4 hinzufügen"
+      ],
+      "id": "ex2_filtered",
+      "input_example": {
+        "arr": [
+          3,
+          7,
+          2,
+          9,
+          5
+        ],
+        "threshold": 4
+      },
+      "level": "exam_like",
+      "task": "Gegeben: arr = [3, 7, 2, 9, 5], threshold = 4. Was ist filtered?",
+      "title": "Baue gefilterte Liste"
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "Count Condition (Zählen mit Bedingung) — FIAE Explain Core v1.0",
+  "topic": "count_condition",
+  "version": "1.0"
+}

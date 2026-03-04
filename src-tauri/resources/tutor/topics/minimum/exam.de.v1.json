@@ -1,0 +1,169 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "de",
+  "question_count": 10,
+  "questions": [
+    {
+      "expected": "minIndex=3, min=1",
+      "id": "ex01_trace_full",
+      "input": {
+        "arr": [
+          7,
+          3,
+          9,
+          1,
+          5
+        ]
+      },
+      "solution": "Start min=7 (Index0). 3<7 -> min=3 (1), 9 kein Update, 1<3 -> min=1 (3), 5 kein Update.",
+      "task": "Minimumsuche auf arr = [7, 3, 9, 1, 5]. Gib minIndex und min am Ende an.",
+      "traps": [
+        "Index vs Wert unterscheiden",
+        "Start bei arr[0]",
+        "Alle Elemente pruefen"
+      ]
+    },
+    {
+      "expected": "minIndex=3, min=1",
+      "id": "ex02_trace_start_index",
+      "input": {
+        "arr": [
+          7,
+          3,
+          9,
+          1,
+          5
+        ],
+        "start_index": 2
+      },
+      "solution": "Start bei Index2 (Wert 9). Vergleiche 1 und 5, Minimum wird 1 bei Index3.",
+      "task": "Minimumsuche mit start_index=2 auf arr = [7, 3, 9, 1, 5]. Gib Ergebnis (Index und Wert).",
+      "traps": [
+        "Nur Bereich ab start_index",
+        "Vergleiche = n-start-1",
+        "Nicht bei 0 starten"
+      ]
+    },
+    {
+      "expected": "minIndex=2, min=-8",
+      "id": "ex03_trace_negative",
+      "input": {
+        "arr": [
+          -5,
+          -2,
+          -8,
+          -3
+        ]
+      },
+      "solution": "Start min=-5 (Index0), -2 kein Update, -8 Update (Index2), -3 kein Update.",
+      "task": "Minimumsuche auf arr = [-5, -2, -8, -3]. Was ist minIndex und min?",
+      "traps": [
+        "min nicht mit 0 initialisieren",
+        "Negative Werte beachten",
+        "Index korrekt"
+      ]
+    },
+    {
+      "expected": "4",
+      "id": "ex04_complexity_comparisons",
+      "input": {
+        "n": 5,
+        "start_index": 0
+      },
+      "solution": "Vergleiche = n - start_index - 1 = 5-0-1 = 4.",
+      "task": "Wie viele Vergleiche bei n=5 und start_index=0?",
+      "traps": [
+        "Formel korrekt",
+        "Best-Case bleibt O(n)",
+        "Vergleiche nicht mit Updates verwechseln"
+      ]
+    },
+    {
+      "expected": "79",
+      "id": "ex05_complexity_big",
+      "input": {
+        "n": 100,
+        "start_index": 20
+      },
+      "solution": "Vergleiche = 100-20-1 = 79.",
+      "task": "Array mit n=100, start_index=20. Wie viele Vergleiche?",
+      "traps": [
+        "Nicht 99 angeben",
+        "Start_index beachten",
+        "Keine Early-Exit"
+      ]
+    },
+    {
+      "expected": "Bei nur negativen Zahlen waere 0 falsch",
+      "id": "ex06_trap_init",
+      "input": {},
+      "solution": "Wenn alle Werte negativ sind, bleibt min f?lschlich 0. Richtig ist min = arr[start_index].",
+      "task": "Warum ist min = 0 als Initialisierung falsch?",
+      "traps": [
+        "Initialisierung mit erstem Element",
+        "Negative Zahlen",
+        "Keine Konstante"
+      ]
+    },
+    {
+      "expected": "Index des Minimums",
+      "id": "ex07_trap_return",
+      "input": {},
+      "solution": "Die Minimumsuche gibt den Index zurueck; der Wert ist arr[minIndex].",
+      "task": "Was gibt der Algorithmus zurueck: Wert oder Index?",
+      "traps": [
+        "Index vs Wert",
+        "SelectionSort braucht den Index",
+        "Nicht Wert zurueckgeben"
+      ]
+    },
+    {
+      "expected": "Fehler/Exception oder spezieller Rueckgabewert",
+      "id": "ex08_trap_empty",
+      "input": {},
+      "solution": "Bei n=0 darf nicht auf arr[0] zugegriffen werden; man gibt z.B. -1 oder eine Exception zurueck.",
+      "task": "Wie muss ein leeres Array behandelt werden?",
+      "traps": [
+        "Out-of-bounds vermeiden",
+        "Edge-Case pruefen",
+        "Division durch 0 vermeiden"
+      ]
+    },
+    {
+      "expected": "Index 1",
+      "id": "ex09_trap_tie",
+      "input": {
+        "arr": [
+          5,
+          2,
+          8,
+          2
+        ]
+      },
+      "solution": "Mit Bedingung < bleibt das erste Minimum erhalten; das zweite 2 fuehrt zu keinem Update.",
+      "task": "Array = [5, 2, 8, 2]. Welcher Index wird als Minimum geliefert?",
+      "traps": [
+        "< statt <=",
+        "Erstes Vorkommen bleibt",
+        "Stabilitaet beachten"
+      ]
+    },
+    {
+      "expected": "Weil arr[start_index] bereits als min gesetzt ist",
+      "id": "ex10_trap_bounds",
+      "input": {},
+      "solution": "Das Start-Element ist initialer Kandidat; es waere ein ueberfluessiger Vergleich.",
+      "task": "Warum beginnt die Schleife bei start_index+1 und nicht bei start_index?",
+      "traps": [
+        "Off-by-one",
+        "Start-Element bereits verarbeitet",
+        "Vergleichsanzahl korrekt"
+      ]
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "Minimum (Minimumsuche) — FIAE Explain Core v1.0",
+  "topic": "minimum",
+  "version": "1.0"
+}

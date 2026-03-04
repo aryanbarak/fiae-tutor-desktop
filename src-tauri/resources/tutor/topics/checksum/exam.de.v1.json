@@ -1,0 +1,77 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "de",
+  "question_count": 3,
+  "questions": [
+    {
+      "expected_example": "sum = 1×2 + 2×1 + 3×2 + 4×1 + 5×2 = 2+2+6+4+10 = 24\nrest = 24 % 10 = 4\ncheck = (10-4) % 10 = 6\nErgebnis: \"123456\"",
+      "hints": [
+        "Gewichte sind zyklisch: weights[i % 2]",
+        "Zweites Modulo stellt sicher, Ergebnis ist 0-9",
+        "Vollständige Formel: (10 - sum % 10) % 10"
+      ],
+      "id": "ex1_mod10_build",
+      "input_example": {
+        "code": "12345",
+        "weights": [
+          2,
+          1
+        ]
+      },
+      "level": "exam_like",
+      "task": "Gegeben: code = \"12345\", weights = [2, 1]. Berechne die Prüfziffer mit Formel (10 - sum % 10) % 10.",
+      "title": "Mod-10 Prüfziffer erstellen"
+    },
+    {
+      "expected_example": "sum = 0×10 + 1×9 + 2×8 + 3×7 + 4×6 + 5×5 + 6×4 + 7×3 + 8×2\n    = 0+9+16+21+24+25+24+21+16 = 156\nrest = 156 % 11 = 2\ncheck = (11-2) % 11 = 9\nErgebnis: \"0123456789\"",
+      "hints": [
+        "Mod-11 für ISBN-10",
+        "Gewichte absteigend von 10 bis 2",
+        "Wenn check = 10 → Rückgabe 'X'"
+      ],
+      "id": "ex2_isbn10_build",
+      "input_example": {
+        "code": "012345678",
+        "weights": [
+          10,
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2
+        ]
+      },
+      "level": "exam_like",
+      "task": "Code: \"012345678\". Gewichte: [10,9,8,7,6,5,4,3,2]. Berechne Prüfziffer (wenn 10 → 'X').",
+      "title": "ISBN-10 Prüfziffer erstellen"
+    },
+    {
+      "expected_example": "prefix = \"12345\"\ngiven_check = 6\nBerechnung aus prefix: expected_check = 6\n6 == 6 → Gültig ✓",
+      "hints": [
+        "prefix = code[:-1]",
+        "given_check = int(code[-1])",
+        "Neuberechnung nur aus prefix",
+        "Vergleich: given == expected"
+      ],
+      "id": "ex3_validate",
+      "input_example": {
+        "code": "123456",
+        "weights": [
+          2,
+          1
+        ]
+      },
+      "level": "exam_like",
+      "task": "Vollständiger Code: \"123456\". weights = [2, 1]. Ist er gültig?",
+      "title": "Code validieren"
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "Prüfziffer (Checksum) — FIAE Explain Core v1.0",
+  "topic": "checksum",
+  "version": "1.0"
+}

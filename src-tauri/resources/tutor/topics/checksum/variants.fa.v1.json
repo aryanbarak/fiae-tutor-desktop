@@ -1,0 +1,128 @@
+[
+  {
+    "id": "checksum_sum_digits",
+    "labels": {
+      "de": "Quersumme (einfache Digitensumme)",
+      "fa": "جمع رقم\u200cها (کوئرسومه ساده)"
+    },
+    "pseudocode": {
+      "de": "FUNKTION ChecksumSumDigits(code)\n  sum = 0\n  FUER i = 0 BIS LAENGE(code)-1\n    digit = TOINT(code[i])\n    sum = sum + digit\n  ENDE\n  GIB sum ZURUECK\nENDE",
+      "fa": "FUNKTION ChecksumSumDigits(code)\n  sum = 0\n  FUER i = 0 BIS LAENGE(code)-1\n    digit = TOINT(code[i])\n    sum = sum + digit\n  ENDE\n  GIB sum ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Addiert alle Ziffern einer Zahl und liefert die einfache Quersumme.",
+      "fa": "(1) تعريف Variant:\nاين نسخه فقط جمع ساده\u200cی رقم\u200cها را حساب مي\u200cكند (Quersumme).\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nهيچ وزن\u200cدهی يا مدول ندارد؛ فقط مجموع رقم\u200cها خروجی است.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nدر حلقه فقط digit خوانده می\u200cشود و sum += digit؛ هيچ وزن يا mod ديده نمی\u200cشود.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n) با n تعداد رقم\u200cها، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- تبديل نكردن كاراكتر به عدد.\n- جمع اشتباه به خاطر نوع داده\u200cی رشته.\n- فراموشی اينكه اين فقط «جمع رقم\u200cها» است نه رقم كنترل.\n\n(6) نكته\u200cی طلايی امتحان:\nاگر وزن يا مدول ذكر نشده باشد، Quersumme ساده همان پاسخ است."
+    },
+    "label": "checksum_sum_digits",
+    "description": "Einfache Quersumme",
+    "is_default": true,
+    "explain_variant": {
+      "fa": "(1) تعريف Variant:\nاين نسخه فقط جمع ساده\u200cی رقم\u200cها را حساب مي\u200cكند (Quersumme).\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nهيچ وزن\u200cدهی يا مدول ندارد؛ فقط مجموع رقم\u200cها خروجی است.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nدر حلقه فقط digit خوانده می\u200cشود و sum += digit؛ هيچ وزن يا mod ديده نمی\u200cشود.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n) با n تعداد رقم\u200cها، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- تبديل نكردن كاراكتر به عدد.\n- جمع اشتباه به خاطر نوع داده\u200cی رشته.\n- فراموشی اينكه اين فقط «جمع رقم\u200cها» است نه رقم كنترل.\n\n(6) نكته\u200cی طلايی امتحان:\nاگر وزن يا مدول ذكر نشده باشد، Quersumme ساده همان پاسخ است."
+    }
+  },
+  {
+    "id": "checksum_mod_10",
+    "labels": {
+      "de": "Mod-10 Prüfziffer (ohne Gewichtung)",
+      "fa": "رقم كنترل Mod-10 (بدون وزن\u200cدهی)"
+    },
+    "pseudocode": {
+      "de": "FUNKTION CheckDigitMod10(code)\n  sum = 0\n  FUER i = 0 BIS LAENGE(code)-1\n    sum = sum + TOINT(code[i])\n  ENDE\n  check = (10 - (sum % 10)) % 10\n  GIB check ZURUECK\nENDE",
+      "fa": "FUNKTION CheckDigitMod10(code)\n  sum = 0\n  FUER i = 0 BIS LAENGE(code)-1\n    sum = sum + TOINT(code[i])\n  ENDE\n  check = (10 - (sum % 10)) % 10\n  GIB check ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Berechnet eine Mod-10 Prüfziffer ohne Gewichte.",
+      "fa": "(1) تعريف Variant:\nمحاسبه\u200cی رقم كنترل بر اساس جمع رقم\u200cها و مدول 10.\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nبعد از sum، از فرمول check = (10 - sum % 10) % 10 استفاده می\u200cشود.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nپس از حلقه، محاسبه\u200cی check با دو mod انجام می\u200cشود.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n)، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- فراموشی %10 دوم (برای وقتی sum%10 = 0).\n- اشتباه در ترتيب پرانتزها.\n- اشتباه در اينكه خروجی «رقم كنترل» است نه جمع.\n\n(6) نكته\u200cی طلايی امتحان:\nاگر sum%10 = 0 باشد، رقم كنترل بايد 0 شود (به همين دليل %10 دوباره داريم)."
+    },
+    "label": "checksum_mod_10",
+    "description": "Mod-10 Prüfziffer ohne Gewichtung",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعريف Variant:\nمحاسبه\u200cی رقم كنترل بر اساس جمع رقم\u200cها و مدول 10.\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nبعد از sum، از فرمول check = (10 - sum % 10) % 10 استفاده می\u200cشود.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nپس از حلقه، محاسبه\u200cی check با دو mod انجام می\u200cشود.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n)، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- فراموشی %10 دوم (برای وقتی sum%10 = 0).\n- اشتباه در ترتيب پرانتزها.\n- اشتباه در اينكه خروجی «رقم كنترل» است نه جمع.\n\n(6) نكته\u200cی طلايی امتحان:\nاگر sum%10 = 0 باشد، رقم كنترل بايد 0 شود (به همين دليل %10 دوباره داريم)."
+    }
+  },
+  {
+    "id": "checksum_weighted_mod_11",
+    "labels": {
+      "de": "Gewichtete Mod-11 Prüfziffer (ISBN-10 Style)",
+      "fa": "رقم كنترل Mod-11 وزن\u200cدار (سبك ISBN-10)"
+    },
+    "pseudocode": {
+      "de": "FUNKTION CheckDigitMod11Weighted(code, weights)\n  sum = 0\n  FUER i = 0 BIS LAENGE(code)-1\n    digit = TOINT(code[i])\n    sum = sum + digit * weights[i]\n  ENDE\n  check = sum % 11\n  GIB check ZURUECK\nENDE",
+      "fa": "FUNKTION CheckDigitMod11Weighted(code, weights)\n  sum = 0\n  FUER i = 0 BIS LAENGE(code)-1\n    digit = TOINT(code[i])\n    sum = sum + digit * weights[i]\n  ENDE\n  check = sum % 11\n  GIB check ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Gewichtete Summe, dann Mod-11. Typisch für ISBN-10.",
+      "fa": "(1) تعريف Variant:\nرقم كنترل بر اساس مجموع وزن\u200cدار و مدول 11.\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nهر رقم با وزن ضرب می\u200cشود؛ سپس sum % 11 خروجی است.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nsum = sum + digit * weights[i] و در پايان check = sum % 11.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n)، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- وزن\u200cها با انديس اشتباه اعمال شوند.\n- طول weights با طول كد برابر نباشد.\n- اشتباه گرفتن Mod-11 با Mod-10.\n\n(6) نكته\u200cی طلايی امتحان:\nهميشه ترتيب وزن\u200cها مهم است؛ يك شيفت كوچك نتيجه را عوض می\u200cكند."
+    },
+    "label": "checksum_weighted_mod_11",
+    "description": "Gewichtete Mod-11 Prüfziffer",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعريف Variant:\nرقم كنترل بر اساس مجموع وزن\u200cدار و مدول 11.\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nهر رقم با وزن ضرب می\u200cشود؛ سپس sum % 11 خروجی است.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nsum = sum + digit * weights[i] و در پايان check = sum % 11.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n)، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- وزن\u200cها با انديس اشتباه اعمال شوند.\n- طول weights با طول كد برابر نباشد.\n- اشتباه گرفتن Mod-11 با Mod-10.\n\n(6) نكته\u200cی طلايی امتحان:\nهميشه ترتيب وزن\u200cها مهم است؛ يك شيفت كوچك نتيجه را عوض می\u200cكند."
+    }
+  },
+  {
+    "id": "checksum_luhn_like",
+    "labels": {
+      "de": "Luhn-ähnlicher Algorithmus (Kreditkarten-Style)",
+      "fa": "الگوريتم شبيه Luhn (سبك كارت بانكی)"
+    },
+    "pseudocode": {
+      "de": "FUNKTION CheckDigitLuhnLike(code)\n  sum = 0\n  pos = 0\n  FUER i = LAENGE(code)-1 BIS 0 SCHRITT -1\n    digit = TOINT(code[i])\n    WENN pos % 2 = 0 DANN\n      digit = digit * 2\n      WENN digit > 9 DANN\n        digit = digit - 9\n      ENDE\n    ENDE\n    sum = sum + digit\n    pos = pos + 1\n  ENDE\n  check = (10 - (sum % 10)) % 10\n  GIB check ZURUECK\nENDE",
+      "fa": "FUNKTION CheckDigitLuhnLike(code)\n  sum = 0\n  pos = 0\n  FUER i = LAENGE(code)-1 BIS 0 SCHRITT -1\n    digit = TOINT(code[i])\n    WENN pos % 2 = 0 DANN\n      digit = digit * 2\n      WENN digit > 9 DANN\n        digit = digit - 9\n      ENDE\n    ENDE\n    sum = sum + digit\n    pos = pos + 1\n  ENDE\n  check = (10 - (sum % 10)) % 10\n  GIB check ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Luhn-ähnliche Berechnung mit alternierender Verdopplung.",
+      "fa": "(1) تعريف Variant:\nنسخه\u200cی شبيه Luhn كه از سمت راست هر رقم دوم را دوبرابر می\u200cكند.\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nوزن\u200cدهی متناوب (۲ و ۱) با قانون جمع رقمی برای اعداد > 9.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nحلقه از راست به چپ و شرط pos % 2 = 0 برای دوبرابر كردن.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n)، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- شروع وزن\u200cدهی از سمت اشتباه.\n- فراموشی كم\u200cكردن 9 وقتی digit > 9.\n- اشتباه در ترتيب pos.\n\n(6) نكته\u200cی طلايی امتحان:\nدر Luhn جهت حركت و اينكه كدام رقم\u200cها دوبرابر می\u200cشوند حياتی است."
+    },
+    "label": "checksum_luhn_like",
+    "description": "Luhn-ähnlicher Algorithmus",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعريف Variant:\nنسخه\u200cی شبيه Luhn كه از سمت راست هر رقم دوم را دوبرابر می\u200cكند.\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nوزن\u200cدهی متناوب (۲ و ۱) با قانون جمع رقمی برای اعداد > 9.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nحلقه از راست به چپ و شرط pos % 2 = 0 برای دوبرابر كردن.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n)، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- شروع وزن\u200cدهی از سمت اشتباه.\n- فراموشی كم\u200cكردن 9 وقتی digit > 9.\n- اشتباه در ترتيب pos.\n\n(6) نكته\u200cی طلايی امتحان:\nدر Luhn جهت حركت و اينكه كدام رقم\u200cها دوبرابر می\u200cشوند حياتی است."
+    }
+  },
+  {
+    "id": "checksum_build_and_validate",
+    "labels": {
+      "de": "Prüfziffer berechnen und validieren (Mod-10 komplett)",
+      "fa": "محاسبه و اعتبارسنجی رقم كنترل (Mod-10 كامل)"
+    },
+    "pseudocode": {
+      "de": "FUNKTION BuildCodeWithCheck(code)\n  check = CheckDigitMod10(code)\n  GIB code + check ZURUECK\nENDE\n\nFUNKTION ValidateCode(fullCode)\n  code = fullCode[0..LAENGE-2]\n  given = TOINT(fullCode[LAENGE-1])\n  expected = CheckDigitMod10(code)\n  GIB (given = expected) ZURUECK\nENDE",
+      "fa": "FUNKTION BuildCodeWithCheck(code)\n  check = CheckDigitMod10(code)\n  GIB code + check ZURUECK\nENDE\n\nFUNKTION ValidateCode(fullCode)\n  code = fullCode[0..LAENGE-2]\n  given = TOINT(fullCode[LAENGE-1])\n  expected = CheckDigitMod10(code)\n  GIB (given = expected) ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Zeigt Erzeugen und Prüfen der Prüfziffer in einem Ablauf.",
+      "fa": "(1) تعريف Variant:\nدو بخش دارد: ساخت كد با رقم كنترل و سپس اعتبارسنجی كد كامل.\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nبه\u200cجای فقط محاسبه\u200cی check، يك مرحله\u200cی validate با مقايسه\u200cی expected/given دارد.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nدو تابع جدا: BuildCodeWithCheck و ValidateCode.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nهر كدام O(n) زمان و O(1) حافظه.\n\n(5) دام\u200cهای رايج IHK:\n- جدا نكردن رقم كنترل از كد.\n- مقايسه\u200cی رشته\u200cای به\u200cجای عددی.\n- فراموشی اينكه check آخرين رقم است.\n\n(6) نكته\u200cی طلايی امتحان:\nدر اعتبارسنجی، expected بايد از «بدون رقم كنترل» محاسبه شود."
+    },
+    "label": "checksum_build_and_validate",
+    "description": "Erzeugen und Validieren (Mod-10)",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعريف Variant:\nدو بخش دارد: ساخت كد با رقم كنترل و سپس اعتبارسنجی كد كامل.\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nبه\u200cجای فقط محاسبه\u200cی check، يك مرحله\u200cی validate با مقايسه\u200cی expected/given دارد.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nدو تابع جدا: BuildCodeWithCheck و ValidateCode.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nهر كدام O(n) زمان و O(1) حافظه.\n\n(5) دام\u200cهای رايج IHK:\n- جدا نكردن رقم كنترل از كد.\n- مقايسه\u200cی رشته\u200cای به\u200cجای عددی.\n- فراموشی اينكه check آخرين رقم است.\n\n(6) نكته\u200cی طلايی امتحان:\nدر اعتبارسنجی، expected بايد از «بدون رقم كنترل» محاسبه شود."
+    }
+  },
+  {
+    "id": "checksum_weighted_alternating",
+    "labels": {
+      "de": "Alternierende Gewichtung (EAN-Style)",
+      "fa": "وزن\u200cدهی متناوب (سبك EAN)"
+    },
+    "pseudocode": {
+      "de": "FUNKTION CheckDigitAlternating(code)\n  sum = 0\n  pos = 0\n  FUER i = LAENGE(code)-1 BIS 0 SCHRITT -1\n    digit = TOINT(code[i])\n    WENN pos % 2 = 0 DANN\n      sum = sum + digit * 3\n    SONST\n      sum = sum + digit * 1\n    ENDE\n    pos = pos + 1\n  ENDE\n  check = (10 - (sum % 10)) % 10\n  GIB check ZURUECK\nENDE",
+      "fa": "FUNKTION CheckDigitAlternating(code)\n  sum = 0\n  pos = 0\n  FUER i = LAENGE(code)-1 BIS 0 SCHRITT -1\n    digit = TOINT(code[i])\n    WENN pos % 2 = 0 DANN\n      sum = sum + digit * 3\n    SONST\n      sum = sum + digit * 1\n    ENDE\n    pos = pos + 1\n  ENDE\n  check = (10 - (sum % 10)) % 10\n  GIB check ZURUECK\nENDE"
+    },
+    "explain": {
+      "de": "Alternierende Gewichte (3,1) wie bei EAN/UPC.",
+      "fa": "(1) تعريف Variant:\nوزن\u200cدهی متناوب 3 و 1 (مانند EAN/UPC).\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nهر رقم بسته به موقعيت از راست با 3 يا 1 ضرب می\u200cشود.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nشرط pos % 2 برای اعمال وزن 3 يا 1.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n)، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- شروع وزن\u200cدهی از سمت اشتباه (چپ به\u200cجای راست).\n- جابه\u200cجايی 3 و 1.\n- فراموشی mod-10 نهايی.\n\n(6) نكته\u200cی طلايی امتحان:\nابتدا تعيين كن «از راست» وزن 3 شروع می\u200cشود يا 1؛ سپس كل محاسبه درست می\u200cشود."
+    },
+    "label": "checksum_weighted_alternating",
+    "description": "Alternierende Gewichtung (3/1)",
+    "is_default": false,
+    "explain_variant": {
+      "fa": "(1) تعريف Variant:\nوزن\u200cدهی متناوب 3 و 1 (مانند EAN/UPC).\n\n(2) تفاوت دقيق با نسخه\u200cی كلاسيك:\nهر رقم بسته به موقعيت از راست با 3 يا 1 ضرب می\u200cشود.\n\n(3) اين تفاوت در شبه\u200cكد كجا ديده می\u200cشود:\nشرط pos % 2 برای اعمال وزن 3 يا 1.\n\n(4) رفتار و پيچيدگی زمانی/فضايی:\nزمان O(n)، حافظه O(1).\n\n(5) دام\u200cهای رايج IHK:\n- شروع وزن\u200cدهی از سمت اشتباه (چپ به\u200cجای راست).\n- جابه\u200cجايی 3 و 1.\n- فراموشی mod-10 نهايی.\n\n(6) نكته\u200cی طلايی امتحان:\nابتدا تعيين كن «از راست» وزن 3 شروع می\u200cشود يا 1؛ سپس كل محاسبه درست می\u200cشود."
+    }
+  }
+]

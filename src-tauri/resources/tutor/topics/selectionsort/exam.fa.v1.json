@@ -1,0 +1,160 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "fa",
+  "question_count": 10,
+  "questions": [
+    {
+      "expected": "i=0: [2,7,6,3]؛ i=1: [2,3,6,7]؛ i=2: [2,3,6,7]",
+      "id": "ex01_trace_passes",
+      "input": {
+        "arr": [
+          7,
+          2,
+          6,
+          3
+        ]
+      },
+      "solution": "i=0: کمینه 2 (Index1) → [2,7,6,3]. i=1: کمینه 3 (Index3) → [2,3,6,7]. i=2 بدون تغییر.",
+      "task": "SelectionSort را روی arr = [7, 2, 6, 3] اجرا کن و بعد از هر i وضعیت آرایه را بنویس.",
+      "traps": [
+        "minIndex از i شروع می‌شود",
+        "در هر i حداکثر یک Swap",
+        "دامنه i..n-1"
+      ]
+    },
+    {
+      "expected": "[1,2,4,5]",
+      "id": "ex02_trace_after_i1",
+      "input": {
+        "arr": [
+          5,
+          1,
+          4,
+          2
+        ]
+      },
+      "solution": "i=0: 1 به جلو → [1,5,4,2]. i=1: 2 به Index1 → [1,2,4,5].",
+      "task": "SelectionSort روی arr = [5, 1, 4, 2]. بعد از i=1 چه می‌شود؟",
+      "traps": [
+        "i=1 یعنی دور دوم",
+        "کمینه از بخش باقی‌مانده",
+        "همه عناصر Swap نمی‌شوند"
+      ]
+    },
+    {
+      "expected": "[4,1,3,2]",
+      "id": "ex03_trace_desc",
+      "input": {
+        "arr": [
+          3,
+          1,
+          4,
+          2
+        ],
+        "order": "desc"
+      },
+      "solution": "نزولی یعنی بیشینه انتخاب می‌شود؛ 4 به ابتدا می‌آید.",
+      "task": "SelectionSort نزولی روی arr = [3, 1, 4, 2]، بعد از i=0؟",
+      "traps": [
+        "برای نزولی بیشینه را بگیر",
+        "جهت مقایسه را برعکس کن",
+        "یک Swap کافی است"
+      ]
+    },
+    {
+      "expected": "10",
+      "id": "ex04_complexity_comparisons",
+      "input": {
+        "n": 5
+      },
+      "solution": "(n-1)+...+1 = n(n-1)/2 = 10.",
+      "task": "SelectionSort برای n=5 چند مقایسه دارد؟",
+      "traps": [
+        "Best-Case هم O(n^2)",
+        "فرمول درست",
+        "Swap با مقایسه فرق دارد"
+      ]
+    },
+    {
+      "expected": "4",
+      "id": "ex05_complexity_swaps",
+      "input": {
+        "n": 5
+      },
+      "solution": "در هر i حداکثر یک Swap؛ پس n-1 = 4.",
+      "task": "حداکثر Swap برای n=5؟",
+      "traps": [
+        "Swap != مقایسه",
+        "حداکثر n-1",
+        "Best-Case می‌تواند 0 باشد"
+      ]
+    },
+    {
+      "expected": "خیر",
+      "id": "ex06_trap_stability",
+      "input": {},
+      "solution": "Swap می‌تواند ترتیب عناصر برابر را عوض کند؛ پس پایدار نیست.",
+      "task": "آیا SelectionSort کلاسیک پایدار است؟",
+      "traps": [
+        "پایداری با > تضمین نمی‌شود",
+        "Swap ترتیب را عوض می‌کند",
+        "با InsertionSort اشتباه نکن"
+      ]
+    },
+    {
+      "expected": "چون فقط بخش i..n-1 جستجو می‌شود",
+      "id": "ex07_trap_minindex_init",
+      "input": {},
+      "solution": "minIndex باید ابتدای بخش باقی‌مانده باشد تا بخش مرتب دست نخورَد.",
+      "task": "چرا minIndex باید در هر دور با i مقداردهی شود؟",
+      "traps": [
+        "minIndex را 0 نگذار",
+        "دامنه درست",
+        "Off-by-one"
+      ]
+    },
+    {
+      "expected": "i=0..n-2 ، j=i+1..n-1",
+      "id": "ex08_trap_bounds",
+      "input": {
+        "n": 5
+      },
+      "solution": "حلقه بیرونی تا n-2 و حلقه داخلی از i+1 تا n-1.",
+      "task": "بازه‌های حلقه درست چیست؟",
+      "traps": [
+        "j از i+1 شروع می‌شود",
+        "i تا n-2",
+        "بخش مرتب را دوباره نگرد"
+      ]
+    },
+    {
+      "expected": "اگر f(a[j], a[minIndex]) < 0",
+      "id": "ex09_trap_comparator",
+      "input": {},
+      "solution": "اگر عنصر j طبق comparator جلوتر باشد، minIndex عوض می‌شود.",
+      "task": "SelectionSort با Comparator f(a,b) (f<0 یعنی a قبل از b). شرط بروزرسانی minIndex چیست؟",
+      "traps": [
+        "ترتیب پارامترها مهم است",
+        "f(minIndex,j) اشتباه است",
+        "علامت مقایسه درست"
+      ]
+    },
+    {
+      "expected": "چون در هر دور باید کمینه جستجو شود",
+      "id": "ex10_trap_bestcase",
+      "input": {},
+      "solution": "حتی اگر آرایه مرتب باشد، باید بخش باقی‌مانده کامل بررسی شود.",
+      "task": "چرا Best-Case در SelectionSort همچنان O(n^2) است؟",
+      "traps": [
+        "Early-Exit ندارد",
+        "با BubbleSort اشتباه نکن",
+        "تعداد مقایسه ثابت است"
+      ]
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "SelectionSort (مرتب‌سازی انتخابی) — FIAE Explain Core v1.0",
+  "topic": "selectionsort",
+  "version": "1.0"
+}

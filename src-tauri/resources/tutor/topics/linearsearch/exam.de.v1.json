@@ -1,0 +1,47 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "de",
+  "question_count": 5,
+  "questions": [
+    {
+      "answer": "100 Vergleiche. Im Worst-Case ist das gesuchte Element entweder am Ende (Index 99) oder gar nicht vorhanden. In beiden Fällen müssen alle n Elemente geprüft werden.",
+      "id": "ex1_worst_case",
+      "ihk_note": "IHK fragt oft nach Worst-Case-Komplexität!",
+      "level": "basic",
+      "question": "Wie viele Vergleiche benötigt Linear Search im Worst-Case bei einem Array mit 100 Elementen?"
+    },
+    {
+      "answer": "Wenn das Array NICHT sortiert ist. Binary Search benötigt ein sortiertes Array und würde falsche Ergebnisse liefern. Außerdem: Bei sehr kleinen Arrays (n < 10) ist Linear Search schneller wegen geringerem Overhead.",
+      "id": "ex2_vs_binary",
+      "ihk_note": "Wichtig: Binary Search funktioniert nur auf sortierten Arrays!",
+      "level": "intermediate",
+      "question": "Wann ist Linear Search BESSER als Binary Search?"
+    },
+    {
+      "answer": "Weil `0` ein gültiger Array-Index ist (erstes Element). `-1` ist KEIN gültiger Index und signalisiert daher eindeutig 'nicht gefunden'.",
+      "id": "ex3_return_value",
+      "ihk_note": "Häufiger Fehler in Prüfungen!",
+      "level": "basic",
+      "question": "Warum gibt Linear Search `-1` zurück und nicht `0` bei 'nicht gefunden'?"
+    },
+    {
+      "answer": "3 Vergleiche. Linear Search prüft:\n- Index 0: `5 ≠ 8`\n- Index 1: `3 ≠ 8`\n- Index 2: `8 == 8` → Treffer, Early-Exit!\nEs werden NICHT alle 4 Elemente geprüft.",
+      "id": "ex4_early_exit",
+      "ihk_note": "Early-Exit ist wichtig für Best-Case `O(1)`.",
+      "level": "intermediate",
+      "question": "Gegeben: Array `[5, 3, 8, 1]`, Suche `x = 8`. Wie viele Vergleiche?"
+    },
+    {
+      "answer": "- `first_hit`: Index `1` (erstes Vorkommen, dann Early-Exit)\n- `all_hits`: Liste `[1, 3]` (beide Vorkommen, kein Early-Exit)\nAnzahl Vergleiche: first_hit = 2, all_hits = 5 (immer alle).",
+      "id": "ex5_duplicates",
+      "ihk_note": "Bei Duplikaten Variante beachten!",
+      "level": "advanced",
+      "question": "Array: `[2, 5, 3, 5, 7]`, Suche `x = 5`. Was gibt first_hit und all_hits zurück?"
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "Linear Search (Lineare Suche) – FIAE Core (Deutsch)",
+  "topic": "linearsearch",
+  "version": "1.0"
+}

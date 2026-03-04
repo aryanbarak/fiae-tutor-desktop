@@ -1,0 +1,376 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "de",
+  "question_count": 10,
+  "questions": [
+    {
+      "expected": "mid=2, mid=3; index=3",
+      "expected_key": "mid=2, mid=3; index=3",
+      "id": "binarysearch-01",
+      "input": {
+        "arr": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "target": 7
+      },
+      "input_schema": {
+        "arr": "int[]",
+        "target": "int"
+      },
+      "solution": "l=0,r=4 -> mid=2 (5<7) l=3; mid=3 (7) gefunden, Index 3.",
+      "solution_de": "l=0,r=4 -> mid=2 (5<7) l=3; mid=3 (7) gefunden, Index 3.",
+      "solution_fa": "l=0,r=4 -> mid=2 (5<7) l=3؛ mid=3 (7) پیدا شد، اندیس 3.",
+      "task": "Fuehre die binaere Suche auf arr=[1,3,5,7,9] mit target=7 aus. Gib die mid-Indizes und den Trefferindex an.",
+      "task_de": "Fuehre die binaere Suche auf arr=[1,3,5,7,9] mit target=7 aus. Gib die mid-Indizes und den Trefferindex an.",
+      "task_fa": "جست‌وجوی دودویی روی arr=[1,3,5,7,9] با target=7 را اجرا کن. توالی midها و اندیس نهایی را بنویس.",
+      "traps": [
+        "Indizes, nicht Werte",
+        "mid korrekt berechnen",
+        "low/high korrekt updaten"
+      ],
+      "traps_de": [
+        "Indizes, nicht Werte",
+        "mid korrekt berechnen",
+        "low/high korrekt updaten"
+      ],
+      "traps_fa": [
+        "اندیس‌ها را بنویس، نه مقدارها",
+        "محاسبه درست mid",
+        "آپدیت درست low/high"
+      ],
+      "type": "trace"
+    },
+    {
+      "expected": "nicht gefunden (-1)",
+      "expected_key": "nicht gefunden (-1)",
+      "id": "binarysearch-02",
+      "input": {
+        "arr": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ],
+        "target": 7
+      },
+      "input_schema": {
+        "arr": "int[]",
+        "target": "int"
+      },
+      "solution": "mid=2 (6<7) l=3; mid=3 (8>7) r=2; l>r -> nicht gefunden.",
+      "solution_de": "mid=2 (6<7) l=3; mid=3 (8>7) r=2; l>r -> nicht gefunden.",
+      "solution_fa": "mid=2 (6<7) l=3؛ mid=3 (8>7) r=2؛ l>r -> پیدا نشد.",
+      "task": "arr=[2,4,6,8,10], target=7. Gib das Ergebnis der binaeren Suche an.",
+      "task_de": "arr=[2,4,6,8,10], target=7. Gib das Ergebnis der binaeren Suche an.",
+      "task_fa": "arr=[2,4,6,8,10] و target=7. نتیجه جست‌وجوی دودویی چیست؟",
+      "traps": [
+        "Abbruchbedingung low>high",
+        "Sortierung ist Voraussetzung",
+        "Nicht lineare Suche"
+      ],
+      "traps_de": [
+        "Abbruchbedingung low>high",
+        "Sortierung ist Voraussetzung",
+        "Nicht lineare Suche"
+      ],
+      "traps_fa": [
+        "شرط پایان low>high",
+        "مرتب بودن شرط لازم است",
+        "با جست‌وجوی خطی اشتباه نشود"
+      ],
+      "type": "trace"
+    },
+    {
+      "expected": "5",
+      "expected_key": "5",
+      "id": "binarysearch-03",
+      "input": {
+        "n": 32
+      },
+      "input_schema": {
+        "n": "int"
+      },
+      "solution": "log2(32)=5 Vergleiche im Worst-Case.",
+      "solution_de": "log2(32)=5 Vergleiche im Worst-Case.",
+      "solution_fa": "log2(32)=5 مقایسه در بدترین حالت.",
+      "task": "Wie viele Vergleiche maximal bei n=32 (klassische binaere Suche)?",
+      "task_de": "Wie viele Vergleiche maximal bei n=32 (klassische binaere Suche)?",
+      "task_fa": "حداکثر چند مقایسه برای n=32 در جست‌وجوی دودویی کلاسیک؟",
+      "traps": [
+        "log2(n) verwenden",
+        "Nicht O(n)",
+        "Ganzzahlige Anzahl"
+      ],
+      "traps_de": [
+        "log2(n) verwenden",
+        "Nicht O(n)",
+        "Ganzzahlige Anzahl"
+      ],
+      "traps_fa": [
+        "از log2(n) استفاده کن",
+        "O(n) نیست",
+        "عدد صحیح مقایسه‌ها"
+      ],
+      "type": "complexity"
+    },
+    {
+      "expected": "Best O(1), Worst O(log n)",
+      "expected_key": "Best O(1), Worst O(log n)",
+      "id": "binarysearch-04",
+      "input": {},
+      "input_schema": {},
+      "solution": "Best-Case: Treffer in der Mitte -> O(1). Worst-Case: Halbierung bis low>high -> O(log n).",
+      "solution_de": "Best-Case: Treffer in der Mitte -> O(1). Worst-Case: Halbierung bis low>high -> O(log n).",
+      "solution_fa": "بهترین حالت: یافتن در وسط -> O(1). بدترین حالت: نصف‌کردن تا low>high -> O(log n).",
+      "task": "Gib Best- und Worst-Case-Zeitkomplexitaet der binaeren Suche an.",
+      "task_de": "Gib Best- und Worst-Case-Zeitkomplexitaet der binaeren Suche an.",
+      "task_fa": "پیچیدگی زمانی بهترین و بدترین حالت جست‌وجوی دودویی را بگو.",
+      "traps": [
+        "Best-Case ist O(1)",
+        "Worst-Case ist O(log n)",
+        "Nur bei sortiertem Array"
+      ],
+      "traps_de": [
+        "Best-Case ist O(1)",
+        "Worst-Case ist O(log n)",
+        "Nur bei sortiertem Array"
+      ],
+      "traps_fa": [
+        "بهترین حالت O(1) است",
+        "بدترین حالت O(log n) است",
+        "فقط برای آرایه مرتب"
+      ],
+      "type": "complexity"
+    },
+    {
+      "expected": "low <= high",
+      "expected_key": "low <= high",
+      "id": "binarysearch-05",
+      "input": {},
+      "input_schema": {},
+      "solution": "Korrekt ist low <= high, sonst wird das letzte Element nicht geprueft.",
+      "solution_de": "Korrekt ist low <= high, sonst wird das letzte Element nicht geprueft.",
+      "solution_fa": "شرط درست low <= high است، وگرنه آخرین عنصر بررسی نمی‌شود.",
+      "task": "Welche Schleifenbedingung ist korrekt fuer die klassische iterative binaere Suche?",
+      "task_de": "Welche Schleifenbedingung ist korrekt fuer die klassische iterative binaere Suche?",
+      "task_fa": "شرط درست حلقه در نسخه تکراری کلاسیک چیست؟",
+      "traps": [
+        "low < high ist falsch",
+        "Gleichheit muss erlaubt sein",
+        "Grenzen nach Vergleich updaten"
+      ],
+      "traps_de": [
+        "low < high ist falsch",
+        "Gleichheit muss erlaubt sein",
+        "Grenzen nach Vergleich updaten"
+      ],
+      "traps_fa": [
+        "low < high غلط است",
+        "برابری باید مجاز باشد",
+        "بعد از مقایسه حدود را آپدیت کن"
+      ],
+      "type": "concept"
+    },
+    {
+      "expected": "Overflow vermeiden",
+      "expected_key": "Overflow vermeiden",
+      "id": "binarysearch-06",
+      "input": {},
+      "input_schema": {},
+      "solution": "low+high kann ueberlaufen; low+(high-low)/2 ist overflow-sicher.",
+      "solution_de": "low+high kann ueberlaufen; low+(high-low)/2 ist overflow-sicher.",
+      "solution_fa": "جمع low+high ممکن است سرریز دهد؛ low+(high-low)/2 امن است.",
+      "task": "Warum nutzt man mid = low + (high-low)/2 statt (low+high)/2?",
+      "task_de": "Warum nutzt man mid = low + (high-low)/2 statt (low+high)/2?",
+      "task_fa": "چرا از mid = low + (high-low)/2 به‌جای (low+high)/2 استفاده می‌شود؟",
+      "traps": [
+        "Integer-Overflow bei low+high",
+        "Ganzzahl-Division beachten",
+        "Formel nicht veraendern"
+      ],
+      "traps_de": [
+        "Integer-Overflow bei low+high",
+        "Ganzzahl-Division beachten",
+        "Formel nicht veraendern"
+      ],
+      "traps_fa": [
+        "Overflow در low+high",
+        "تقسیم صحیح",
+        "فرمول را تغییر نده"
+      ],
+      "type": "edge"
+    },
+    {
+      "expected": "1",
+      "expected_key": "1",
+      "id": "binarysearch-07",
+      "input": {
+        "arr": [
+          1,
+          2,
+          2,
+          2,
+          3
+        ],
+        "target": 2
+      },
+      "input_schema": {
+        "arr": "int[]",
+        "target": "int"
+      },
+      "solution": "first_occurrence erzwingt die linkeste Position: Index 1.",
+      "solution_de": "first_occurrence erzwingt die linkeste Position: Index 1.",
+      "solution_fa": "first_occurrence چپ‌ترین موقعیت را می‌دهد: اندیس 1.",
+      "task": "first_occurrence-Variante: arr=[1,2,2,2,3], target=2. Welcher Index ist korrekt?",
+      "task_de": "first_occurrence-Variante: arr=[1,2,2,2,3], target=2. Welcher Index ist korrekt?",
+      "task_fa": "نسخه first_occurrence: arr=[1,2,2,2,3], target=2. اندیس درست چیست؟",
+      "traps": [
+        "Klassische Suche liefert irgendeinen Treffer",
+        "first_occurrence geht nach links weiter",
+        "Index ist 1, nicht 2 oder 3"
+      ],
+      "traps_de": [
+        "Klassische Suche liefert irgendeinen Treffer",
+        "first_occurrence geht nach links weiter",
+        "Index ist 1, nicht 2 oder 3"
+      ],
+      "traps_fa": [
+        "نسخه کلاسیک هر اندیسی می‌دهد",
+        "first_occurrence به چپ ادامه می‌دهد",
+        "اندیس 1 است، نه 2 یا 3"
+      ],
+      "type": "variant"
+    },
+    {
+      "expected": "3",
+      "expected_key": "3",
+      "id": "binarysearch-08",
+      "input": {
+        "arr": [
+          1,
+          2,
+          2,
+          4,
+          6
+        ],
+        "target": 3
+      },
+      "input_schema": {
+        "arr": "int[]",
+        "target": "int"
+      },
+      "solution": "Erstes Element >=3 ist 4 an Index 3.",
+      "solution_de": "Erstes Element >=3 ist 4 an Index 3.",
+      "solution_fa": "اولین عنصر >=3 عدد 4 در اندیس 3 است.",
+      "task": "lower_bound: arr=[1,2,2,4,6], target=3. Welche Einfuegeposition?",
+      "task_de": "lower_bound: arr=[1,2,2,4,6], target=3. Welche Einfuegeposition?",
+      "task_fa": "lower_bound: arr=[1,2,2,4,6], target=3. موقعیت درج چیست؟",
+      "traps": [
+        "lower_bound = erstes >= target",
+        "Rueckgabe ist Index, nicht Wert",
+        "Schleife meist low < high"
+      ],
+      "traps_de": [
+        "lower_bound = erstes >= target",
+        "Rueckgabe ist Index, nicht Wert",
+        "Schleife meist low < high"
+      ],
+      "traps_fa": [
+        "lower_bound یعنی اولین >= target",
+        "خروجی اندیس است نه مقدار",
+        "معمولاً شرط low < high"
+      ],
+      "type": "variant"
+    },
+    {
+      "expected": "3",
+      "expected_key": "3",
+      "id": "binarysearch-09",
+      "input": {
+        "arr": [
+          1,
+          2,
+          2,
+          4,
+          6
+        ],
+        "target": 2
+      },
+      "input_schema": {
+        "arr": "int[]",
+        "target": "int"
+      },
+      "solution": "Erstes Element >2 ist 4 an Index 3.",
+      "solution_de": "Erstes Element >2 ist 4 an Index 3.",
+      "solution_fa": "اولین عنصر >2 عدد 4 در اندیس 3 است.",
+      "task": "upper_bound: arr=[1,2,2,4,6], target=2. Welche Position?",
+      "task_de": "upper_bound: arr=[1,2,2,4,6], target=2. Welche Position?",
+      "task_fa": "upper_bound: arr=[1,2,2,4,6], target=2. موقعیت چیست؟",
+      "traps": [
+        "upper_bound = erstes > target",
+        "Index 3, nicht 1 oder 2",
+        "Hilfreich fuer Anzahl Duplikate"
+      ],
+      "traps_de": [
+        "upper_bound = erstes > target",
+        "Index 3, nicht 1 oder 2",
+        "Hilfreich fuer Anzahl Duplikate"
+      ],
+      "traps_fa": [
+        "upper_bound یعنی اولین > target",
+        "اندیس 3 است نه 1 یا 2",
+        "برای تعداد تکرارها مفید است"
+      ],
+      "type": "variant"
+    },
+    {
+      "expected": "letztes Element wird nicht geprueft",
+      "expected_key": "letztes Element wird nicht geprueft",
+      "id": "binarysearch-10",
+      "input": {
+        "arr": [
+          5,
+          8,
+          12
+        ],
+        "target": 12
+      },
+      "input_schema": {
+        "arr": "int[]",
+        "target": "int"
+      },
+      "solution": "Mit low < high wird Index 2 nicht mehr geprueft; 12 kann verpasst werden.",
+      "solution_de": "Mit low < high wird Index 2 nicht mehr geprueft; 12 kann verpasst werden.",
+      "solution_fa": "با low < high اندیس 2 بررسی نمی‌شود و 12 ممکن است پیدا نشود.",
+      "task": "Off-by-one: arr=[5,8,12], target=12. Was passiert mit der falschen Bedingung low < high?",
+      "task_de": "Off-by-one: arr=[5,8,12], target=12. Was passiert mit der falschen Bedingung low < high?",
+      "task_fa": "خطای off-by-one: arr=[5,8,12], target=12. با شرط اشتباه low < high چه می‌شود؟",
+      "traps": [
+        "low < high ueberspringt letztes Element",
+        "Korrekt ist low <= high",
+        "Fuehrt zu falschem -1"
+      ],
+      "traps_de": [
+        "low < high ueberspringt letztes Element",
+        "Korrekt ist low <= high",
+        "Fuehrt zu falschem -1"
+      ],
+      "traps_fa": [
+        "low < high آخرین عنصر را جا می‌اندازد",
+        "شرط درست low <= high است",
+        "ممکن است اشتباهاً -1 بدهد"
+      ],
+      "type": "edge"
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "Binary Search (Binäre Suche) – FIAE Core (Deutsch)",
+  "topic": "binarysearch",
+  "version": "1.0"
+}

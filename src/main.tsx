@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import "./responsive.css"; // Responsive layout styles
 
 // ===== GLOBAL ERROR STORE =====
 // Module-level store for fatal errors that must be visible
@@ -23,18 +24,35 @@ export function subscribeToGlobalError(fn: () => void) {
   };
 }
 
+function isIgnorableGlobalErrorMessage(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes("resizeobserver loop completed with undelivered notifications") ||
+    normalized.includes("resizeobserver loop limit exceeded")
+  );
+}
+
 // ===== GLOBAL ERROR HANDLERS =====
 window.addEventListener("error", (e) => {
+  const message = e.message || "";
+  if (isIgnorableGlobalErrorMessage(message)) {
+    e.preventDefault();
+    return;
+  }
   console.error("[GLOBAL] window.onerror:", e.error, e.message);
   setGlobalError({
-    message: e.message || "Unknown error",
+    message: message || "Unknown error",
     stack: e.error?.stack,
   });
 });
 
 window.addEventListener("unhandledrejection", (e) => {
-  console.error("[GLOBAL] unhandledrejection:", e.reason);
   const message = e.reason instanceof Error ? e.reason.message : String(e.reason);
+  if (isIgnorableGlobalErrorMessage(message)) {
+    e.preventDefault();
+    return;
+  }
+  console.error("[GLOBAL] unhandledrejection:", e.reason);
   const stack = e.reason instanceof Error ? e.reason.stack : undefined;
   setGlobalError({ message, stack });
 });

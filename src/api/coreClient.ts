@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api/core";
+import { safeInvoke } from "../lib/tauriInvoke";
 
 /**
  * Calls the Python core CLI via Tauri command
@@ -20,7 +20,7 @@ export async function runTutorRaw(req: unknown): Promise<string> {
   try {
     console.log("[CLIENT] Invoking run_tutor...");
     // Invoke the Tauri command
-    stdout = await invoke<string>("run_tutor", {
+    stdout = await safeInvoke<string>("run_tutor", {
       requestJson: JSON.stringify(req),
     });
     console.log("[CLIENT] run_tutor returned, length:", stdout?.length ?? 0);
@@ -44,7 +44,7 @@ export async function runTutorRaw(req: unknown): Promise<string> {
 export async function ping(): Promise<string> {
   console.log("[CLIENT] ping called");
   try {
-    const result = await invoke<string>("ping");
+    const result = await safeInvoke<string>("ping");
     console.log("[CLIENT] ping returned:", result);
     return result;
   } catch (error) {

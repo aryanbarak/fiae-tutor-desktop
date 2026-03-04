@@ -1,0 +1,46 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "de",
+  "question_count": 3,
+  "questions": [
+    {
+      "body": "Traciere Array `a = [1, 0, 1, 1, 1, 0, 1, 1]` mit Variante `longest_ones_binary` (Bedingung: `a[i] == 1`).\n\n**Fragen:**\n- Wie lauten `currentLen`, `maxLen`, `endIndex` nach jedem Schritt?\n- Bei welchen Schritten wird `maxLen` aktualisiert?\n- Wie lautet der finale `startIndex`?\n\n**Erwartete Antwort:**\n- `maxLen = 3`, `startIndex = 2`, `endIndex = 4`\n- Updates von `maxLen`: bei `i=0` (auf 1), `i=2` (auf 2), `i=3` (auf 3)\n",
+      "difficulty": "basic",
+      "expected_output": "maxLen=3, startIndex=2, endIndex=4",
+      "hints": [
+        "Bei `a[i]=0` wird `currentLen` zurückgesetzt",
+        "Nur wenn `currentLen > maxLen`, wird `maxLen` aktualisiert",
+        "Formel: `startIndex = endIndex - maxLen + 1`"
+      ],
+      "id": "ex_basic_trace",
+      "title": "Vollständiger Trace (klassische Variante)"
+    },
+    {
+      "body": "Untersuche Array `a = [0, -3, 5, 0, 2, -1, 4, 0]` mit Variante `longest_nonzero_run` (Bedingung: `a[i] != 0`).\n\n**Fragen:**\n- Wo ist die längste Nicht-Null-Serie?\n- Warum werden negative Zahlen mitgezählt?\n- Was würde sich ändern, wenn Bedingung `a[i] > 0` wäre?\n\n**Erwartete Antwort:**\n- `maxLen = 3`, `startIndex = 4`, `endIndex = 6` (Serie `[2, -1, 4]`)\n- Negative Zahlen erfüllen `!= 0`\n- Mit `> 0` würden Serien `[-3, 5]` und `[2, -1, 4]` unterbrochen\n",
+      "difficulty": "intermediate",
+      "expected_output": "maxLen=3 (mit !=0), maxLen=1 (mit >0)",
+      "hints": [
+        "Bedingung `!= 0` umfasst positive und negative Zahlen",
+        "Mit `> 0` werden nur positive Zahlen gezählt"
+      ],
+      "id": "ex_nonzero_negative",
+      "title": "Übung mit negativen Zahlen"
+    },
+    {
+      "body": "Gegeben Array `a = [5, 12, 8, 3, 15, 20, 7, 18]` und `threshold = 10`. Finde die längste Serie, bei der alle Elemente `> 10` sind.\n\n**Fragen:**\n- Welche Elemente erfüllen `> 10`?\n- Welche ist die längste zusammenhängende Serie?\n- Warum sind `[12]` und `[15, 20, 18]` zwei getrennte Serien?\n\n**Erwartete Antwort:**\n- Elemente `> 10`: Indizes 1, 4, 5, 7 → Werte `[12, 15, 20, 18]`\n- Längste zusammenhängende Serie: Indizes 4-5 (`[15, 20]`) mit `maxLen=2`\n- **Hinweis:** `[12]` ist bei Index 1, aber Index 2 (`8`) erfüllt Bedingung nicht → Serie unterbrochen\n",
+      "difficulty": "advanced",
+      "expected_output": "maxLen=2, startIndex=4, endIndex=5",
+      "hints": [
+        "Elemente müssen **aufeinanderfolgend** sein (nicht nur Bedingung erfüllen)",
+        "Falls ein Element Bedingung nicht erfüllt, wird `currentLen` zurückgesetzt"
+      ],
+      "id": "ex_condition_threshold",
+      "title": "Prädikat-Übung (beliebige Bedingung)"
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "MaxPeriod (Längste aufeinanderfolgende Serie) — FIAE Explain Core v1.0",
+  "topic": "maxperiod",
+  "version": "1.0"
+}
