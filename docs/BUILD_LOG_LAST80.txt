@@ -1,0 +1,80 @@
+=== Validate paths ===
+Core path: C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-core
+Python command: C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-core\.venv\Scripts\python.exe
+
+=== Export tutor static from core ===
+Export completed: C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\build\export\tutor
+
+=== Verify exported content ===
+
+=== Sync export into desktop resources ===
+
+=== Verify synced resources ===
+
+=== Export sync complete ===
+Synced to: C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\resources\tutor
+
+=== Build Tauri release bundles ===
+
+> fiae-app@1.0.0 tauri
+> tauri build
+
+
+> fiae-app@1.0.0 build
+> tsc && vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 2207 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                 [39m[1m[2m  0.48 kB[22m[1m[22m[2m │ gzip:   0.31 kB[22m
+[2mdist/[22m[35massets/index-DQK6z1Hy.css  [39m[1m[2m 11.89 kB[22m[1m[22m[2m │ gzip:   2.99 kB[22m
+[2mdist/[22m[36massets/core-DhEqZVGG.js    [39m[1m[2m  2.44 kB[22m[1m[22m[2m │ gzip:   0.98 kB[22m
+[2mdist/[22m[36massets/index-D8qwkmWT.js   [39m[1m[33m600.47 kB[39m[22m[2m │ gzip: 187.32 kB[22m
+[32m✓ built in 4.20s[39m
+
+=== Locate installer artifacts ===
+NSIS: C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\nsis\CodeZertifikat_1.0.0_x64-setup.exe
+MSI : C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\msi\CodeZertifikat_1.0.0_x64_en-US.msi
+
+=== Build complete ===
+
+=== SUCCESS ===
+NSIS: C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\nsis\CodeZertifikat_1.0.0_x64-setup.exe
+MSI : C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\msi\CodeZertifikat_1.0.0_x64_en-US.msi
+
+=== Locate installer artifacts ===
+NSIS: C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\nsis\CodeZertifikat_1.0.0_x64-setup.exe
+MSI : C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\msi\CodeZertifikat_1.0.0_x64_en-US.msi
+
+=== Build complete ===
+
+=== SUCCESS ===
+NSIS: C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\nsis\CodeZertifikat_1.0.0_x64-setup.exe
+MSI : C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\msi\CodeZertifikat_1.0.0_x64_en-US.msi
+        Info Looking up installed tauri packages to check mismatched versions...
+     Running beforeBuildCommand `npm run build`
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+    Blocking waiting for file lock on build directory
+   Compiling codezertifikat v1.0.0 (C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri)
+    Finished `release` profile [optimized] target(s) in 42.28s
+       Built application at: C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\codezertifikat.exe
+        Info Patching binary "C:\\Projects\\fiae-tutor-suite\\_suite_repo\\fiae-tutor-desktop\\src-tauri\\target\\release\\codezertifikat.exe" for type msi
+        Info Target: x64
+     Running candle for "C:\\Projects\\fiae-tutor-suite\\_suite_repo\\fiae-tutor-desktop\\src-tauri\\target\\release\\wix\\x64\\main.wxs"
+     Running light to produce C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\msi\CodeZertifikat_1.0.0_x64_en-US.msi
+        Info Patching binary "C:\\Projects\\fiae-tutor-suite\\_suite_repo\\fiae-tutor-desktop\\src-tauri\\target\\release\\codezertifikat.exe" for type nsis
+        Info Target: x64
+     Running makensis to produce C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\nsis\CodeZertifikat_1.0.0_x64-setup.exe
+tor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\msi\CodeZertifikat_1.0.0_x64_en-US.msi
+        C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\nsis\CodeZertifikat_1.0.0_x64-setup.exe
+
+    Finished 2 bundles at:
+        C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\msi\CodeZertifikat_1.0.0_x64_en-US.msi
+        C:\Projects\fiae-tutor-suite\_suite_repo\fiae-tutor-desktop\src-tauri\target\release\bundle\nsis\CodeZertifikat_1.0.0_x64-setup.exe
+
