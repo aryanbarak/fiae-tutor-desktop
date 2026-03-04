@@ -1,6 +1,6 @@
-# Tauri + React + Typescript
+# CodeZertifikat
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+CodeZertifikat is a Tauri + React + TypeScript desktop app for tutor execution, exam-bank practice, and export workflows.
 
 ## Recommended IDE Setup
 
