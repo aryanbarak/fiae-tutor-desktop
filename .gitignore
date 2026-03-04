@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 build
+release_upload
 dist-ssr
 *.local
 
