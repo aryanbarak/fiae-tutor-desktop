@@ -18,10 +18,10 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Node.js (LTS)
+      - name: Setup Node.js (20 LTS)
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: "20"
           cache: npm
 
       - name: Setup Python
@@ -78,6 +78,9 @@ jobs:
 
           if (-not (Test-Path (Join-Path $target 'manifest.json'))) { throw 'manifest.json missing after export-sync' }
           if (-not (Test-Path (Join-Path $target 'index.json'))) { throw 'index.json missing after export-sync' }
+          if (-not (Get-ChildItem (Join-Path $target 'topics') -Directory | Select-Object -First 1)) {
+            throw 'topics/* missing after export-sync'
+          }
 
       - name: Build Tauri installers
         run: npm run tauri build
