@@ -1,0 +1,246 @@
+{
+  "version": "1.0",
+  "topic": "bubblesort",
+  "lang": "de",
+  "schema_name": "bubblesort.explain.de.v1",
+  "schema_kind": "explain_content",
+  "title": "BubbleSort — FIAE Explain Core v1.0",
+  "audience": "IHK FIAE AP2 (Algorithmen) — prüfungsorientiert",
+  "meta": {
+    "canonical_topic": "bubblesort",
+    "difficulty": "basic",
+    "tags": [
+      "sorting",
+      "adjacent-swap",
+      "O(n^2)",
+      "early-exit",
+      "comparator",
+      "IHK"
+    ],
+    "rtl_enabled": false,
+    "last_updated": "2026-02-07"
+  },
+  "sections_order": [
+    "definition",
+    "idea",
+    "procedure",
+    "example",
+    "complexity",
+    "ihk_traps",
+    "variants"
+  ],
+  "sections": [
+    {
+      "id": "definition",
+      "title": "Definition",
+      "format": "md",
+      "rtl": false,
+      "body": "BubbleSort ist ein Sortierverfahren, das benachbarte Elemente wiederholt vergleicht und bei falscher Reihenfolge tauscht.\n"
+    },
+    {
+      "id": "idea",
+      "title": "Grundidee",
+      "format": "md",
+      "rtl": false,
+      "body": "- Rechts entsteht der sortierte Bereich; nach Pass `i` sind die letzten `i+1` Elemente fix.\n- Die innere Schleife wird k?rzer: `j = 0 .. n-2-i`.\n- Es werden nur Nachbarn getauscht (Adjacent Swap).\n"
+    },
+    {
+      "id": "procedure",
+      "title": "Ablauf (klassisch)",
+      "format": "md",
+      "rtl": false,
+      "body": "- ?u?ere Schleife: `i = 0 .. n-2` (P?sse).\n- Innere Schleife: `j = 0 .. n-2-i`.\n- Vergleiche `arr[j]` und `arr[j+1]`; bei `arr[j] > arr[j+1]` swap.\n- Nach jedem Pass steht das gr??te Element des Restbereichs rechts fix.\n- Early-Exit (optimiert): `swapped=false` vor dem Pass; wenn kein Swap ? Abbruch.\n"
+    },
+    {
+      "id": "example",
+      "title": "Beispiel",
+      "format": "md",
+      "rtl": false,
+      "body": "Beispiel: `arr = [5,1,4,2,8]`\n- Pass 0 ? `[1,4,2,5,8]`\n- Pass 1 ? `[1,2,4,5,8]`\n- Pass 2 ? `[1,2,4,5,8]` (fertig)\n"
+    },
+    {
+      "id": "complexity",
+      "title": "Komplexität & Eigenschaften",
+      "format": "md",
+      "rtl": false,
+      "body": "- Klassisch: Best/Worst `O(n^2)` (immer `n(n-1)/2` Vergleiche).\n- Early-Exit: Best `O(n)`, Worst `O(n^2)`.\n- Speicher: `O(1)` (in-place).\n- Stabil, wenn nur bei `>` getauscht wird.\n"
+    },
+    {
+      "id": "ihk_traps",
+      "title": "Prüfungsfallen (IHK)",
+      "format": "md",
+      "rtl": false,
+      "body": "- Schleifenbereiche falsch: `i=0..n-2`, `j=0..n-2-i`.\n- Vergleichsrichtung falsch (aufsteigend nur bei `>` tauschen).\n- `swapped` nicht pro Pass resetten; Abbruch nicht nach innerer Schleife.\n- Stabilit?t falsch: bei `>=` ist es nicht stabil.\n- Bei Objekten nur Feld tauschen (falsch).\n- Comparator: `cmp(arr[j], arr[j+1]) > 0` bedeutet Swap.\n"
+    },
+    {
+      "id": "variants",
+      "title": "Varianten (Überblick)",
+      "format": "md",
+      "rtl": false,
+      "body": "**classic_full**\nZiel: klassisches Adjacent-Swap (asc).\nPseudocode: `BubbleSort(arr)`.\nKomplexit?t: Best/Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- `j` bis `n-2-i`.\n- Swap nur bei `>`.\n\n**early_exit**\nZiel: Abbruch, wenn ein Pass ohne Swap bleibt.\nPseudocode: `BubbleSort(arr)` mit `swapped`.\nKomplexit?t: Best `O(n)`, Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- `swapped` vor jedem Pass resetten.\n- Abbruch erst nach der inneren Schleife.\n\n**reverse**\nZiel: absteigend sortieren.\nPseudocode: `BubbleSort(arr)` mit Vergleich `<`.\nKomplexit?t: Best/Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Vergleichsrichtung umdrehen.\n- Schleifenbereiche bleiben gleich.\n\n**comparator**\nZiel: Sortieren per `cmp(a,b)`.\nPseudocode: `BubbleSort(arr, cmp)`.\nKomplexit?t: Best/Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Swap bei `cmp(arr[j], arr[j+1]) > 0`.\n- Parameterreihenfolge nicht vertauschen.\n\n**objects**\nZiel: nach Feld `key` sortieren.\nPseudocode: `BubbleSort(arr, key)`.\nKomplexit?t: Best/Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Ganze Objekte tauschen.\n- Falscher `key`/Typ.\n\n**strings**\nZiel: lexikografisch sortieren.\nPseudocode: `BubbleSort(arr)` (Stringvergleich).\nKomplexit?t: Best/Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Case/Locale beachten.\n- Stringvergleich nicht numerisch interpretieren.\n\n**cocktail**\nZiel: bidirektionale P?sse (vorw?rts/r?ckw?rts).\nPseudocode: `CocktailSort(arr)`.\nKomplexit?t: Best/Worst `O(n^2)`, Space `O(1)`.\nTraps:\n- Grenzen `left/right` falsch aktualisiert.\n- R?ckw?rtslauf-Indizes vertauscht.\n"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex01_trace_passes",
+      "task": "F?hre BubbleSort auf arr = [5, 1, 4, 2] aus. Gib den Array-Zustand nach jedem Pass i=0..2 an.",
+      "input": {
+        "arr": [
+          5,
+          1,
+          4,
+          2
+        ]
+      },
+      "expected": "Pass0: [1,4,2,5]; Pass1: [1,2,4,5]; Pass2: [1,2,4,5]",
+      "solution": "Pass0: (5,1) tauschen -> [1,5,4,2], (5,4) -> [1,4,5,2], (5,2) -> [1,4,2,5]. Pass1: (4,2) -> [1,2,4,5]. Pass2: keine Aenderung.",
+      "traps": [
+        "Innerer Bereich ist j=0..n-2-i",
+        "Pro Pass wandert das groesste Element nach rechts",
+        "Nicht nach jedem Vergleich abbrechen"
+      ]
+    },
+    {
+      "id": "ex02_trace_after_pass0",
+      "task": "Gegeben arr = [3, 2, 1, 4]. Wie sieht der Array-Zustand nach Pass i=0 aus?",
+      "input": {
+        "arr": [
+          3,
+          2,
+          1,
+          4
+        ]
+      },
+      "expected": "[2,1,3,4]",
+      "solution": "Pass0: (3,2) tauschen -> [2,3,1,4], (3,1) tauschen -> [2,1,3,4], (3,4) kein Tausch.",
+      "traps": [
+        "Nur benachbarte Elemente vergleichen",
+        "Pass0 umfasst j=0..n-2",
+        "Nicht mit SelectionSort verwechseln"
+      ]
+    },
+    {
+      "id": "ex03_trace_swaps_pass0",
+      "task": "Im ersten Pass von BubbleSort auf arr = [2, 5, 4, 1]: Wie viele Swaps passieren und wie lautet der Zustand nach Pass0?",
+      "input": {
+        "arr": [
+          2,
+          5,
+          4,
+          1
+        ]
+      },
+      "expected": "2 Swaps, Zustand [2,4,1,5]",
+      "solution": "Vergleiche: (2,5) kein Swap, (5,4) Swap -> [2,4,5,1], (5,1) Swap -> [2,4,1,5]. Swaps=2.",
+      "traps": [
+        "Swaps nur bei arr[j] > arr[j+1]",
+        "Pass0 hat n-1 Vergleiche",
+        "Groesstes Element landet rechts"
+      ]
+    },
+    {
+      "id": "ex04_complexity_classic",
+      "task": "Wieviele Vergleiche macht klassischer BubbleSort (ohne Early-Exit) bei n=5?",
+      "input": {
+        "n": 5
+      },
+      "expected": "10",
+      "solution": "Vergleiche = n(n-1)/2 = 5*4/2 = 10.",
+      "traps": [
+        "Best-Case bleibt O(n^2) ohne Early-Exit",
+        "Formel n(n-1)/2 verwenden",
+        "Nicht Swaps mit Vergleichen verwechseln"
+      ]
+    },
+    {
+      "id": "ex05_complexity_early_exit",
+      "task": "Optimierter BubbleSort mit swapped-Flag, arr ist bereits sortiert, n=5. Wieviele Vergleiche und wie viele P?sse?",
+      "input": {
+        "n": 5,
+        "arr": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "expected": "4 Vergleiche, 1 Pass",
+      "solution": "Im ersten Pass keine Swaps, daher Abbruch. Vergleiche = n-1 = 4.",
+      "traps": [
+        "swapped muss pro Pass neu gesetzt werden",
+        "Early-Exit nur im optimierten Algorithmus",
+        "Vergleiche = n-1 im Best-Case"
+      ]
+    },
+    {
+      "id": "ex06_trap_swap_condition",
+      "task": "Welche Tauschbedingung ist korrekt f?r aufsteigende Sortierung und erhaelt Stabilitaet?",
+      "input": {},
+      "expected": "Tauschen bei arr[j] > arr[j+1]",
+      "solution": "Nur bei > tauschen; bei Gleichheit kein Swap, damit die Reihenfolge gleicher Elemente erhalten bleibt.",
+      "traps": [
+        "Nicht bei >= tauschen",
+        "Stabilitaet h?ngt von der Bedingung ab",
+        "Nicht die Vergleichsrichtung verwechseln"
+      ]
+    },
+    {
+      "id": "ex07_trap_loop_bounds",
+      "task": "Gib die korrekten Schleifenbereiche f?r klassischen BubbleSort an.",
+      "input": {
+        "n": 5
+      },
+      "expected": "i=0..n-2, j=0..n-2-i",
+      "solution": "Aeusserer Pass i von 0 bis n-2, innerer j von 0 bis n-2-i, da rechts bereits sortiert ist.",
+      "traps": [
+        "j-Bereich haeufig zu lang",
+        "i laeuft nicht bis n-1",
+        "Rechter Bereich ist nach jedem Pass sortiert"
+      ]
+    },
+    {
+      "id": "ex08_trap_swapped_reset",
+      "task": "Warum muss das swapped-Flag in jedem Pass zurueckgesetzt werden?",
+      "input": {},
+      "expected": "Sonst bricht der Algorithmus falsch ab",
+      "solution": "Wenn swapped nicht pro Pass auf false gesetzt wird, bleibt es eventuell true und der Algorithmus beendet nie frueh oder bricht zu frueh ab.",
+      "traps": [
+        "Flag nur nach jedem Pass pruefen",
+        "Flag vor innerer Schleife resetten",
+        "Nicht nach jedem Swap abbrechen"
+      ]
+    },
+    {
+      "id": "ex09_comparator",
+      "task": "BubbleSort mit Comparator f(a,b) (f<0 bedeutet a kommt vor b). Wann wird getauscht?",
+      "input": {},
+      "expected": "Wenn f(arr[j], arr[j+1]) > 0",
+      "solution": "Ein Swap ist noetig, wenn arr[j] nach der Ordnung hinter arr[j+1] stehen soll, also f(arr[j], arr[j+1]) > 0.",
+      "traps": [
+        "Parameterreihenfolge nicht vertauschen",
+        "Vergleichszeichen richtig setzen",
+        "Nicht direkt mit > auf Werte vergleichen"
+      ]
+    },
+    {
+      "id": "ex10_trace_sorted_early_exit",
+      "task": "Optimierter BubbleSort: arr = [1, 2, 3, 4]. Wie viele Vergleiche und wann wird beendet?",
+      "input": {
+        "arr": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "expected": "3 Vergleiche, Abbruch nach Pass0",
+      "solution": "Im ersten Pass keine Swaps, daher Abbruch; Vergleiche = n-1 = 3.",
+      "traps": [
+        "Abbruch nur bei optimierter Variante",
+        "Vergleiche bleiben n-1 im Best-Case",
+        "Nicht mehrere Paesse annehmen"
+      ]
+    }
+  ]
+}

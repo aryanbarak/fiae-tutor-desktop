@@ -1,0 +1,228 @@
+{
+  "version": "1.0",
+  "topic": "checksum",
+  "lang": "de",
+  "schema_name": "checksum.explain.de.v1",
+  "schema_kind": "explain_content",
+  "title": "Prüfziffer (Checksum) — FIAE Explain Core v1.0",
+  "audience": "IHK FIAE AP2 (Algorithmen) — Prüfungsvorbereitung",
+  "meta": {
+    "canonical_topic": "checksum",
+    "difficulty": "intermediate",
+    "tags": [
+      "checksum",
+      "check-digit",
+      "weighted-sum",
+      "modulo",
+      "validation",
+      "IHK"
+    ],
+    "rtl_supported": false,
+    "last_updated": "2026-02-07"
+  },
+  "sections_order": [
+    "definition",
+    "idea",
+    "procedure",
+    "example",
+    "complexity",
+    "ihk_traps",
+    "variants"
+  ],
+  "sections": [
+    {
+      "id": "definition",
+      "title": "Definition und Ziel",
+      "body": "**Prüfziffer (Checksum / Check Digit)** ist ein Verfahren zur **Fehlererkennung in Daten**, das durch Berechnung einer zusätzlichen Ziffer aus den ursprünglichen Ziffern die Validierung eines Codes ermöglicht.\n\n**Ziel:** Verhinderung von Tippfehlern, Zifferndrehern oder zufälligen Änderungen in wichtigen Codes wie:\n- ISBN-Nummern (Bücher)\n- EAN/UPC-Codes (Produkte)\n- Kreditkartennummern (Luhn)\n- Bankkontonummern (IBAN)\n\n**Wichtiger Punkt (Prüfung):** Die Prüfziffer wird **aus den anderen Ziffern berechnet** und kann nicht beliebig sein. Zwei Hauptoperationen:\n1. **Build (Erstellen):** Code ohne Prüfziffer → vollständiger Code mit Prüfziffer\n2. **Validate (Validieren):** vollständiger Code → Ist er gültig?\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "idea",
+      "title": "Grundidee (Mentales Modell)",
+      "body": "**Mathematisches Grundmodell:**\n- Jede Ziffer im Code hat ein **Gewicht (weight)**.\n- Wir berechnen die **gewichtete Summe** aller Ziffern: `sum = Σ(digit[i] × weight[i])`\n- Eine **Modulo-Operation** (meist Mod 10 oder Mod 11) wird durchgeführt.\n- Die Prüfziffer wird so gewählt, dass die **Gesamtsumme durch die Modulo-Zahl teilbar ist**.\n\n**Drei häufige Varianten:**\n\n**1) Quersumme (einfache Summe):**\n- Gewicht aller Ziffern = 1\n- Nur addieren: `1+2+3+4 = 10`\n- Keine komplexe Formel\n\n**2) Mod-10 mit Gewichtung:**\n- Gewichte alternierend oder fest: z.B. `[2, 1, 2, 1, ...]` oder `[1, 3, 1, 3, ...]`\n- Finale Formel: `check = (10 - sum % 10) % 10`\n\n**3) Mod-11 (ISBN-10):**\n- Absteigende Gewichte: `[10, 9, 8, 7, 6, 5, 4, 3, 2]`\n- Formel: `check = (11 - sum % 11) % 11`\n- Prüfziffer kann 0-9 oder 'X' (= 10) sein\n\n**Mentales Bild:** Stell dir vor, jede Ziffer ist ein \"Stein\" mit bestimmtem Gewicht; wir addieren alle und prüfen den Rest bei Division durch 10 oder 11.\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "procedure",
+      "title": "Arbeitsablauf (Schritt-für-Schritt, ohne Pseudocode)",
+      "body": "**Algorithmus Build (Prüfziffer erstellen):**\n\n**Schritt 1) Initialisierung:**\n- `sum = 0`\n- `weights` = Gewichte-Array (z.B. `[2, 1]` oder `[10, 9, 8, ...]`)\n\n**Schritt 2) Gewichtete Summe berechnen:**\n- Für jede Ziffer im Code (von links nach rechts oder rechts nach links, je nach Standard):\n  - `digit = int(code[i])`\n  - `weight = weights[i % len(weights)]` (Cycling für lange Codes)\n  - `sum += digit × weight`\n\n**Schritt 3) Rest berechnen:**\n- `rest = sum % 10` (oder `% 11` für Mod-11)\n\n**Schritt 4) Prüfziffer berechnen:**\n- **Mod-10:** `check = (10 - rest) % 10`\n- **Mod-11:** `check = (11 - rest) % 11` (wenn 10 → 'X')\n\n**Schritt 5) Ergebnis zurückgeben:**\n- Vollständiger Code = `prefix + str(check)`\n\n---\n\n**Algorithmus Validate (Validieren):**\n\n**Schritt 1) Prefix und Check trennen:**\n- `prefix = code[:-1]` (alle Ziffern außer der letzten)\n- `given_check = int(code[-1])` (letzte Ziffer)\n\n**Schritt 2) Erwartete Prüfziffer berechnen:**\n- Gleichen Build-Algorithmus verwenden, aber nur mit `prefix`\n- `expected_check = calculate_check(prefix)`\n\n**Schritt 3) Vergleichen:**\n- Gültig ⇔ `given_check == expected_check`\n\n**Prüfungshinweis:** Bei Validate **muss die Prüfziffer aus der Berechnung ausgeschlossen werden**; d.h. nur prefix verwenden.\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "example",
+      "title": "Beispiel",
+      "body": "Code \"12345\" mit Gewichten [2,1] ? Pr?fziffer 6.",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "complexity",
+      "title": "Komplexität (IHK) — Das musst du wissen",
+      "body": "**Zeit (Time):**\n- **Build:** `O(n)` — ein Durchlauf durch alle Ziffern\n- **Validate:** `O(n)` — ein Durchlauf für Neuberechnung + Vergleich\n- Keine verschachtelten Schleifen\n\n**Speicher (Space):**\n- `O(1)` — nur wenige Variablen: `sum`, `rest`, `check`, `i`\n- Gewichte sind meist fest und klein (z.B. `[2, 1]` oder `[10..2]`)\n- Algorithmus ist nicht In-Place (wir geben einen neuen String zurück), aber zusätzlicher Speicher ist minimal\n\n**Vergleich mit anderen Algorithmen:**\n- Schneller als kryptografische Hashes (MD5, SHA)\n- Einfacher als CRC (Cyclic Redundancy Check)\n- **Anwendung:** Einfache Fehlererkennung, keine starke Sicherheit\n\n**Prüfungshinweis:**\n- Immer `O(n)`, da wir alle Ziffern sehen müssen\n- Kann nicht schneller als `O(n)` sein (gesamter Code muss verarbeitet werden)\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "ihk_traps",
+      "title": "Prüfungsfallen (IHK) — Lern diese auswendig",
+      "body": "**1) Falsche finale Formel:**\n- ❌ `check = sum % 10` (Falsch!)\n- ✓ `check = (10 - sum % 10) % 10` (Richtig)\n- Grund: Zweites Modulo stellt sicher, dass wenn `sum % 10 = 0`, Ergebnis 0 ist (nicht 10)\n\n**2) Falsche char → int Konvertierung:**\n- ❌ `digit = ord(c)` (gibt ASCII-Code zurück, z.B. 48 für '0')\n- ✓ `digit = int(c)` oder `digit = ord(c) - ord('0')`\n\n**3) Falscher Gewicht-Index:**\n- ❌ `weight = weights[i+1]` (kann out of bounds sein)\n- ✓ `weight = weights[i % len(weights)]` (Cycling)\n\n**4) Bei Validate: Prüfziffer in Berechnung einbeziehen:**\n- ❌ Verwendung von `code` für Berechnung (enthält Prüfziffer)\n- ✓ Verwendung von `prefix = code[:-1]` (nur ursprüngliche Ziffern)\n\n**5) Falsches Modulo (Mod-10 vs Mod-11):**\n- Mod-10: für die meisten Standards (EAN, UPC, Luhn)\n- Mod-11: für ISBN-10\n- ❌ Verwendung von Mod-10 für ISBN-10\n- ✓ Genaue Prüfung des Standards\n\n**6) Luhn: Start an falscher Position:**\n- ✓ Start von rechts nach links (letzte Ziffer = Position 1)\n- ✓ Nur gerade Positionen (2, 4, 6...) werden verdoppelt\n- ❌ Start von links nach rechts\n\n**7) Luhn: Quersumme vergessen für doubled > 9:**\n- Wenn `doubled = 16`:\n  - ❌ Verwendung von 16 direkt\n  - ✓ `1 + 6 = 7` oder `doubled - 9 = 7`\n\n**8) ISBN-10: 'X' vergessen für check = 10:**\n- ✓ Wenn `(11 - sum % 11) % 11 = 10` → Rückgabe `'X'`\n- ❌ Rückgabe von `'10'` oder `10`\n\n**9) Keine Eingabevalidierung:**\n- ❌ Annahme, dass alle Zeichen Ziffern sind\n- ✓ Prüfung `c.isdigit()` vor `int(c)`\n\n**10) Feste vs. variable Gewichte:**\n- EAN-13: Alternierende Gewichte `[1, 3]`\n- ISBN-10: Absteigende Gewichte `[10, 9, 8, ...]`\n- ❌ Falsche Gewichte für spezifischen Standard verwenden\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "variants",
+      "title": "Varianten-Übersicht (Was ändert sich? Was bleibt gleich?)",
+      "body": "**checksum_sum_digits**\nZiel: Einfache Quersumme berechnen.\nPseudocode: `ChecksumSumDigits(code)`.\nKomplexit?t: `O(n)`, Space `O(1)`.\nTraps:\n- Ziffern als Zahlen lesen (nicht Zeichen addieren).\n- Kein Mod/Weight in dieser Variante.\n\n**checksum_mod_10**\nZiel: Mod-10 Pr?fziffer ohne Gewichtung berechnen.\nPseudocode: `CheckDigitMod10(code)`.\nKomplexit?t: `O(n)`, Space `O(1)`.\nTraps:\n- `(10 - (sum % 10)) % 10` korrekt anwenden.\n- Ergebnis ist Pr?fziffer, nicht Summe.\n\n**checksum_weighted_mod_11**\nZiel: Gewichtete Mod-11 Pr?fziffer (ISBN-10 Stil).\nPseudocode: `CheckDigitMod11Weighted(code, weights)`.\nKomplexit?t: `O(n)`, Space `O(1)`.\nTraps:\n- Gewichte in korrekter Reihenfolge.\n- Mod-11 nicht mit Mod-10 verwechseln.\n\n**checksum_luhn_like**\nZiel: Luhn-?hnliche Pr?fziffer mit alternierender Verdopplung.\nPseudocode: `CheckDigitLuhnLike(code)`.\nKomplexit?t: `O(n)`, Space `O(1)`.\nTraps:\n- Von rechts z?hlen; jede zweite Ziffer verdoppeln.\n- Bei >9: `digit -= 9`.\n\n**checksum_build_and_validate**\nZiel: Pr?fziffer bauen und vollst?ndigen Code validieren.\nPseudocode: `BuildCodeWithCheck(code)` / `ValidateCode(fullCode)`.\nKomplexit?t: je `O(n)`, Space `O(1)`.\nTraps:\n- Pr?fziffer ist letztes Zeichen.\n- Validieren: expected aus Code ohne Pr?fziffer.\n\n**checksum_weighted_alternating**\nZiel: Alternierende Gewichte (EAN/UPC, 3/1).\nPseudocode: `CheckDigitAlternating(code)`.\nKomplexit?t: `O(n)`, Space `O(1)`.\nTraps:\n- Startgewicht von rechts beachten.\n- Mod-10 am Ende nicht vergessen.\n",
+      "format": "md",
+      "rtl": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex1_mod10_build",
+      "level": "exam_like",
+      "title": "Mod-10 Prüfziffer erstellen",
+      "task": "Gegeben: code = \"12345\", weights = [2, 1]. Berechne die Prüfziffer mit Formel (10 - sum % 10) % 10.",
+      "input_example": {
+        "code": "12345",
+        "weights": [
+          2,
+          1
+        ]
+      },
+      "expected_example": "sum = 1×2 + 2×1 + 3×2 + 4×1 + 5×2 = 2+2+6+4+10 = 24\nrest = 24 % 10 = 4\ncheck = (10-4) % 10 = 6\nErgebnis: \"123456\"",
+      "hints": [
+        "Gewichte sind zyklisch: weights[i % 2]",
+        "Zweites Modulo stellt sicher, Ergebnis ist 0-9",
+        "Vollständige Formel: (10 - sum % 10) % 10"
+      ]
+    },
+    {
+      "id": "ex2_isbn10_build",
+      "level": "exam_like",
+      "title": "ISBN-10 Prüfziffer erstellen",
+      "task": "Code: \"012345678\". Gewichte: [10,9,8,7,6,5,4,3,2]. Berechne Prüfziffer (wenn 10 → 'X').",
+      "input_example": {
+        "code": "012345678",
+        "weights": [
+          10,
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2
+        ]
+      },
+      "expected_example": "sum = 0×10 + 1×9 + 2×8 + 3×7 + 4×6 + 5×5 + 6×4 + 7×3 + 8×2\n    = 0+9+16+21+24+25+24+21+16 = 156\nrest = 156 % 11 = 2\ncheck = (11-2) % 11 = 9\nErgebnis: \"0123456789\"",
+      "hints": [
+        "Mod-11 für ISBN-10",
+        "Gewichte absteigend von 10 bis 2",
+        "Wenn check = 10 → Rückgabe 'X'"
+      ]
+    },
+    {
+      "id": "ex3_validate",
+      "level": "exam_like",
+      "title": "Code validieren",
+      "task": "Vollständiger Code: \"123456\". weights = [2, 1]. Ist er gültig?",
+      "input_example": {
+        "code": "123456",
+        "weights": [
+          2,
+          1
+        ]
+      },
+      "expected_example": "prefix = \"12345\"\ngiven_check = 6\nBerechnung aus prefix: expected_check = 6\n6 == 6 → Gültig ✓",
+      "hints": [
+        "prefix = code[:-1]",
+        "given_check = int(code[-1])",
+        "Neuberechnung nur aus prefix",
+        "Vergleich: given == expected"
+      ]
+    }
+  ],
+  "exam_tips": [
+    {
+      "id": "tip1",
+      "priority": "critical",
+      "text": "Finale Mod-10 Formel: **(10 - sum % 10) % 10** — zweites Modulo ist erforderlich!"
+    },
+    {
+      "id": "tip2",
+      "priority": "critical",
+      "text": "char → int Konvertierung: **int(c)** oder **ord(c) - ord('0')** — niemals nur ord(c)"
+    },
+    {
+      "id": "tip3",
+      "priority": "high",
+      "text": "Cycling Gewichte: **weights[i % len(weights)]** — für lange Codes erforderlich"
+    },
+    {
+      "id": "tip4",
+      "priority": "critical",
+      "text": "Validate: Nur **prefix** verwenden (code[:-1]), nicht ganzen code!"
+    },
+    {
+      "id": "tip5",
+      "priority": "high",
+      "text": "ISBN-10: Wenn check = 10 → Rückgabe **'X'** (nicht '10' oder 10)"
+    },
+    {
+      "id": "tip6",
+      "priority": "high",
+      "text": "Luhn: Start von **rechts nach links**, **gerade** Positionen (2,4,6...) werden verdoppelt"
+    },
+    {
+      "id": "tip7",
+      "priority": "medium",
+      "text": "Luhn: Wenn doubled > 9 → **Quersumme** (16 → 1+6=7) oder **(n-9)**"
+    },
+    {
+      "id": "tip8",
+      "priority": "high",
+      "text": "Mod-10 vs Mod-11: **EAN/Luhn → Mod-10**, **ISBN-10 → Mod-11**"
+    },
+    {
+      "id": "tip9",
+      "priority": "medium",
+      "text": "Komplexität immer **O(n)** — alle Ziffern müssen gesehen werden"
+    },
+    {
+      "id": "tip10",
+      "priority": "high",
+      "text": "EAN-13: Alternierende Gewichte **[1, 3]** von rechts nach links"
+    }
+  ],
+  "glossary": [
+    {
+      "term": "Prüfziffer",
+      "definition": "Check digit — zusätzliche Ziffer zur Fehlererkennung"
+    },
+    {
+      "term": "Gewichtung",
+      "definition": "Weighting — Multiplikation jeder Ziffer mit spezifischem Gewicht"
+    },
+    {
+      "term": "Modulo",
+      "definition": "Remainder — z.B. 24 % 10 = 4"
+    },
+    {
+      "term": "Quersumme",
+      "definition": "Digit sum — z.B. 16 → 1+6 = 7"
+    },
+    {
+      "term": "Prefix",
+      "definition": "Code ohne Prüfziffer — alle Ziffern außer der letzten"
+    },
+    {
+      "term": "Cycling",
+      "definition": "Wiederverwendung von Gewichten: weights[i % len]"
+    }
+  ]
+}

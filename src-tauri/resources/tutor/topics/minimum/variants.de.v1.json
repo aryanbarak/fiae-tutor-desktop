@@ -1,0 +1,11 @@
+[
+  {
+    "id": "int_asc",
+    "label": "int_asc",
+    "description": {
+      "de": "Findet das kleinste Element in einem Integer-Array",
+      "fa": "کوچکترین عنصر را در یک آرایه عدد صحیح پیدا می‌کند"
+    },
+    "is_default": true
+  }
+]

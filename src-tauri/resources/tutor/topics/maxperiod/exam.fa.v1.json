@@ -1,0 +1,57 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "fa",
+  "question_count": 4,
+  "questions": [
+    {
+      "body": "آرایه `a = [1, 0, 1, 1, 1, 0, 1, 1]` را با نسخه `longest_ones_binary` ردیابی کن (شرط: `a[i] == 1`).\n\n**سوال:**\n- بعد از هر گام، مقادیر `currentLen`, `maxLen`, `endIndex` چیست؟\n- در کدام گام‌ها `maxLen` بروزرسانی می‌شود؟\n- `startIndex` نهایی چقدر است؟\n\n**پاسخ مورد انتظار:**\n- `maxLen = 3`, `startIndex = 2`, `endIndex = 4`\n- بروزرسانی‌های `maxLen`: در `i=0` (به 1)، `i=2` (به 2)، `i=3` (به 3)\n",
+      "difficulty": "basic",
+      "expected_output": "maxLen=3, startIndex=2, endIndex=4",
+      "hints": [
+        "وقتی `a[i]=0` می‌بینی، `currentLen` را reset کن",
+        "فقط وقتی `currentLen > maxLen` است، `maxLen` بروزرسانی می‌شود",
+        "فرمول: `startIndex = endIndex - maxLen + 1`"
+      ],
+      "id": "ex_basic_trace",
+      "title": "ردیابی کامل (Trace) نسخه کلاسیک"
+    },
+    {
+      "body": "آرایه `a = [0, -3, 5, 0, 2, -1, 4, 0]` را با نسخه `longest_nonzero_run` بررسی کن (شرط: `a[i] != 0`).\n\n**سوال:**\n- طولانی‌ترین دنباله غیرصفر کجاست؟\n- چرا اعداد منفی هم حساب می‌شوند؟\n- اگر شرط `a[i] > 0` بود، جواب چه فرقی می‌کرد؟\n\n**پاسخ مورد انتظار:**\n- `maxLen = 3`, `startIndex = 4`, `endIndex = 6` (دنباله `[2, -1, 4]`)\n- اعداد منفی شرط `!= 0` را دارند\n- با `> 0`، دنباله‌های `[-3, 5]` و `[2, -1, 4]` قطع می‌شدند\n",
+      "difficulty": "intermediate",
+      "expected_output": "maxLen=3 (با !=0), maxLen=1 (با >0)",
+      "hints": [
+        "شرط `!= 0` شامل هم مثبت و هم منفی می‌شود",
+        "با `> 0` فقط اعداد مثبت حساب می‌شوند"
+      ],
+      "id": "ex_nonzero_negative",
+      "title": "تمرین با اعداد منفی"
+    },
+    {
+      "body": "آرایه `a = [5, 12, 8, 3, 15, 20, 7, 18]` و `threshold = 10` داری. بلندترین دنباله‌ای که همه عناصرش `> 10` هستند را پیدا کن.\n\n**سوال:**\n- کدام عناصر شرط `> 10` را دارند?\n- طولانی‌ترین دنباله متوالی کدام است؟\n- چرا `[12]` و `[15, 20, 18]` دو دنباله جداگانه‌اند؟\n\n**پاسخ مورد انتظار:**\n- عناصر `> 10`: اندیس‌های 1, 4, 5, 7 → مقادیر `[12, 15, 20, 18]`\n- طولانی‌ترین دنباله متوالی: اندیس‌های 4-5 (`[15, 20]`) با `maxLen=2`\n- **نکته:** `[12]` در اندیس 1 است، ولی اندیس 2 (`8`) شرط را ندارد → دنباله قطع می‌شود\n",
+      "difficulty": "advanced",
+      "expected_output": "maxLen=2, startIndex=4, endIndex=5",
+      "hints": [
+        "عناصر باید **متوالی** باشند (نه فقط شرط داشته باشند)",
+        "اگر یک عنصر شرط را نداشت، `currentLen` reset می‌شود"
+      ],
+      "id": "ex_condition_threshold",
+      "title": "تمرین Predicate (شرط دلخواه)"
+    },
+    {
+      "body": "آرایه `a = [0, 0, 0, 0]` را با نسخه `longest_ones_binary` بررسی کن.\n\n**سوال:**\n- `maxLen`, `startIndex`, `endIndex` نهایی چقدر است؟\n- چرا `startIndex = -1` است؟\n\n**پاسخ مورد انتظار:**\n- `maxLen = 0`, `startIndex = -1`, `endIndex = -1`\n- چون هیچ دنباله معتبری (با `a[i] == 1`) وجود ندارد\n",
+      "difficulty": "basic",
+      "expected_output": "maxLen=0, startIndex=-1, endIndex=-1",
+      "hints": [
+        "اگر `maxLen == 0`، یعنی هیچ دنباله‌ای پیدا نشد",
+        "`startIndex = -1` نشان‌دهنده \"هیچ دنباله‌ای\" است"
+      ],
+      "id": "ex_edge_case_empty",
+      "title": "حالت خاص: آرایه بدون دنباله معتبر"
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "MaxPeriod (طولانی‌ترین دنباله متوالی) — FIAE Explain Core v1.0",
+  "topic": "maxperiod",
+  "version": "1.0"
+}

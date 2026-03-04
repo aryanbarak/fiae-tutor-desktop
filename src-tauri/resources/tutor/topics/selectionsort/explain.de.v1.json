@@ -1,0 +1,261 @@
+{
+  "version": "1.0",
+  "topic": "selectionsort",
+  "lang": "de",
+  "schema_name": "selectionsort.explain.de.v1",
+  "schema_kind": "explain_content",
+  "title": "SelectionSort (Auswahlsortierung) — FIAE Explain Core v1.0",
+  "audience": "IHK FIAE AP2 (Algorithmen) — prüfungsorientiert",
+  "meta": {
+    "canonical_topic": "selectionsort",
+    "difficulty": "basic",
+    "tags": [
+      "sorting",
+      "select-min",
+      "O(n^2)",
+      "few-swaps",
+      "IHK"
+    ],
+    "rtl_supported": false,
+    "last_updated": "2026-02-07"
+  },
+  "sections_order": [
+    "definition",
+    "idea",
+    "procedure",
+    "example",
+    "complexity",
+    "ihk_traps",
+    "variants"
+  ],
+  "sections": [
+    {
+      "id": "definition",
+      "title": "Definition und Ziel",
+      "body": "**SelectionSort (Auswahlsortierung)** ist ein Sortieralgorithmus, der in jedem Durchlauf aus dem unsortierten Teil das **„beste“ Element** auswählt (klassisch: das kleinste) und es an die nächste Position im sortierten Teil setzt.\n\n**Ziel:** Ein Array sortieren (aufsteigend oder absteigend) mit **möglichst wenigen Vertauschungen**, während die Anzahl der Vergleiche in allen Fällen **hoch und nahezu fest** bleibt.\n\n**Kernidee (prüfungsrelevant):** Nach Durchlauf `i` ist `a[i]` endgültig korrekt platziert; die ersten `i+1` Elemente sind garantiert sortiert.\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "idea",
+      "title": "Grundidee (Mentales Modell)",
+      "body": "Teile das Array gedanklich in zwei Bereiche:\n- **Sortierter Bereich:** `0 .. i-1` (wächst pro Durchlauf)\n- **Unsortierter Bereich:** `i .. n-1` (schrumpft pro Durchlauf)\n\nIn jedem Durchlauf `i`:\n1) Suche im unsortierten Bereich `i .. n-1` das Minimum (Index `minIndex`).\n2) Tausche dieses Minimum (falls nötig) an Position `i`.\n3) Danach ist `a[i]` **fix** und wird später nicht mehr verändert.\n\n**Merksatz:** Links wird „aufgebaut“ (sortiert), rechts wird „durchsucht“ (unsortiert).\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "procedure",
+      "title": "Ablauf (Schritt für Schritt, ohne Pseudocode)",
+      "body": "SelectionSort arbeitet mit zwei Schleifen:\n\n**1) Äußere Schleife (Durchläufe):**\n- `i` läuft von `0` bis `n-2`.\n- Ziel jedes Durchlaufs: Das beste Element aus `i .. n-1` finden und nach `i` bringen.\n\n**2) Innere Schleife (Minimum finden):**\n- Starte mit der Annahme: `minIndex = i`.\n- Prüfe alle Positionen `j` von `i+1` bis `n-1`.\n- Wenn `a[j]` kleiner ist als das aktuelle Minimum, aktualisiere `minIndex`.\n\n**3) Bedingtes Tauschen (Swap):**\n- Nur wenn `minIndex ≠ i`, wird getauscht.\n- Das vermeidet unnötige Vertauschungen.\n\n**Prüfungstipp:** Auch wenn das Array bereits sortiert ist, wird das Minimum in jedem Durchlauf gesucht → **Best-Case bleibt O(n²)** (kein Early-Exit wie beim optimierten BubbleSort).\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "example",
+      "title": "Beispiel",
+      "body": "Array [64,25,12,22,11] ? nach erstem Durchlauf steht 11 an Index 0.",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "complexity",
+      "title": "Komplexität (IHK) — das musst du sicher beherrschen",
+      "body": "**Zeit (Time):**\n- Anzahl der Vergleiche ist (nahezu) immer gleich:\n  - `(n-1) + (n-2) + ... + 1 = n(n-1)/2` ⇒ `O(n²)`\n- **Best-Case bleibt O(n²)**, weil in jedem Durchlauf der Restbereich durchsucht werden muss.\n\n**Speicher (Space):**\n- `O(1)` (nur Variablen wie `i`, `j`, `minIndex` + temporär für Swap)\n- Algorithmus ist **In-Place**.\n\n**Swaps:**\n- maximal `n-1` (pro Durchlauf höchstens ein Tausch)\n- im Best-Case (bereits sortiert) sind Swaps ggf. `0`, aber die Vergleiche bleiben.\n\n**Stabilität:**\n- klassischer SelectionSort ist **meist nicht stabil**, da ein Tausch die Reihenfolge gleicher Elemente verändern kann.\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "ihk_traps",
+      "title": "Prüfungsfallen (IHK)",
+      "body": "1) **minIndex falsch initialisiert:** muss bei `i` starten, nicht bei `0`.\n2) **j-Bereich falsch:** `j` muss von `i+1` bis `n-1` laufen.\n3) **Falscher Vergleich:** Es wird gegen `a[minIndex]` verglichen (nicht gegen `a[i]`).\n4) **Unnötiger Tausch:** Wenn `minIndex == i`, ist kein Tausch nötig.\n5) **Best-Case falsch:** bleibt `O(n²)` (kein Early-Exit).\n6) **Stabilität falsch behauptet:** klassisch nicht stabil.\n7) **Objekte:** Immer **ganze Objekte** tauschen, nicht nur Feldwerte.\n8) **Maximale Swaps:** `n-1` ist ein wichtiges Vergleichsargument (z. B. vs. Bubble/Insertion).\n",
+      "format": "md",
+      "rtl": false
+    },
+    {
+      "id": "variants",
+      "title": "Varianten-Übersicht (Was ändert sich? Was bleibt gleich?)",
+      "body": "**classic_int_asc**\nZiel: Minimum im Restbereich finden und nach links setzen (asc, int).\nPseudocode: `SelectionSort(a)`.\nKomplexit?t: Best `O(n^2)`, Worst `O(n^2)`.\nTraps:\n- `minIndex` muss bei `i` starten.\n- Best-Case bleibt `O(n^2)`.\n\n**comparator_f**\nZiel: Vergleich ?ber `f(a,b)`.\nPseudocode: `SelectionSort(a, f)`.\nKomplexit?t: Best `O(n^2)`, Worst `O(n^2)` (Kosten pro Vergleich abh?ngig von `f`).\nTraps:\n- `f(a,b) < 0` bedeutet `a` vor `b`.\n- Parameterreihenfolge in `f` nicht vertauschen.\n\n**strings**\nZiel: Strings lexikografisch sortieren.\nPseudocode: `SelectionSort_Strings(a)`.\nKomplexit?t: Best `O(n^2)`, Worst `O(n^2)` (Vergleichskosten abh?ngig von String-L?nge).\nTraps:\n- Case/Locale beachten.\n- Vergleichsregel nicht numerisch interpretieren.\n\n**objects**\nZiel: Objekte nach Feld `key` sortieren.\nPseudocode: `SelectionSort_Objects(a, key)`.\nKomplexit?t: Best `O(n^2)`, Worst `O(n^2)`.\nTraps:\n- Swap muss ganze Objekte tauschen.\n- Falscher `key`/Typ.\n\n**generic**\nZiel: Typunabh?ngig mit Comparator `comp`.\nPseudocode: `SelectionSort_Generic(a, comp)`.\nKomplexit?t: Best `O(n^2)`, Worst `O(n^2)`.\nTraps:\n- Comparator-Richtung verwechselt.\n- `comp(a,b) < 0` falsch interpretiert.\n\n**stable_shift_variant**\nZiel: Stabilit?t durch Shift statt Swap.\nPseudocode: `SelectionSort_Stable(a)`.\nKomplexit?t: Best `O(n^2)`, Worst `O(n^2)` (mehr Verschiebungen).\nTraps:\n- Stabilit?t f?lschlich f?r klassische Version annehmen.\n- Shift-Block vergessen.\n\n**minmax_variant**\nZiel: Pro Durchlauf Minimum und Maximum platzieren.\nPseudocode: `SelectionSort_MinMax(a)`.\nKomplexit?t: Best `O(n^2)`, Worst `O(n^2)`.\nTraps:\n- Grenzen (`links`/`rechts`) nicht korrekt aktualisieren.\n- `maxIdx` nach erstem Swap korrigieren.\n",
+      "format": "md",
+      "rtl": false
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex01_trace_passes",
+      "task": "F?hre SelectionSort auf arr = [7, 2, 6, 3] aus. Gib den Array-Zustand nach jedem Durchlauf i an.",
+      "input": {
+        "arr": [
+          7,
+          2,
+          6,
+          3
+        ]
+      },
+      "expected": "i=0: [2,7,6,3]; i=1: [2,3,6,7]; i=2: [2,3,6,7]",
+      "solution": "i=0: Minimum 2 (Index1) tauschen -> [2,7,6,3]. i=1: Minimum 3 (Index3) tauschen -> [2,3,6,7]. i=2: Minimum bereits an Stelle.",
+      "traps": [
+        "minIndex startet bei i",
+        "Nur ein Swap pro i",
+        "Restbereich ist i..n-1"
+      ]
+    },
+    {
+      "id": "ex02_trace_after_i1",
+      "task": "SelectionSort auf arr = [5, 1, 4, 2]. Wie lautet der Zustand nach i=1?",
+      "input": {
+        "arr": [
+          5,
+          1,
+          4,
+          2
+        ]
+      },
+      "expected": "[1,2,4,5]",
+      "solution": "i=0: Minimum 1 nach vorne -> [1,5,4,2]. i=1: Minimum 2 nach Index1 -> [1,2,4,5].",
+      "traps": [
+        "i=1 bedeutet zweiter Durchlauf",
+        "minIndex aus dem Restbereich",
+        "Nicht alle Elemente tauschen"
+      ]
+    },
+    {
+      "id": "ex03_trace_desc",
+      "task": "SelectionSort absteigend auf arr = [3, 1, 4, 2]. Gib den Zustand nach i=0 an.",
+      "input": {
+        "arr": [
+          3,
+          1,
+          4,
+          2
+        ],
+        "order": "desc"
+      },
+      "expected": "[4,1,3,2]",
+      "solution": "Absteigend: Maximum 4 (Index2) wird nach vorne getauscht -> [4,1,3,2].",
+      "traps": [
+        "Absteigend bedeutet Maximum suchen",
+        "Vergleichsrichtung umdrehen",
+        "Nur ein Swap"
+      ]
+    },
+    {
+      "id": "ex04_complexity_comparisons",
+      "task": "Wieviele Vergleiche macht SelectionSort bei n=5 immer?",
+      "input": {
+        "n": 5
+      },
+      "expected": "10",
+      "solution": "Vergleiche = (n-1)+(n-2)+...+1 = n(n-1)/2 = 10.",
+      "traps": [
+        "Best-Case bleibt O(n^2)",
+        "Formel korrekt anwenden",
+        "Nicht Swaps statt Vergleiche"
+      ]
+    },
+    {
+      "id": "ex05_complexity_swaps",
+      "task": "Wie viele Swaps maximal bei n=5?",
+      "input": {
+        "n": 5
+      },
+      "expected": "4",
+      "solution": "Pro Durchlauf hoechstens ein Swap, insgesamt n-1 = 4.",
+      "traps": [
+        "Swaps != Vergleiche",
+        "Maximal n-1",
+        "Best-Case kann 0 Swaps haben"
+      ]
+    },
+    {
+      "id": "ex06_trap_stability",
+      "task": "Ist klassischer SelectionSort stabil? Begr?nde kurz.",
+      "input": {},
+      "expected": "Nein, nicht stabil",
+      "solution": "Ein Swap kann die Reihenfolge gleicher Elemente veraendern, daher ist der klassische SelectionSort nicht stabil.",
+      "traps": [
+        "Stabilitaet nicht mit > verwechseln",
+        "Swap kann Gleiches vertauschen",
+        "Nicht mit InsertionSort verwechseln"
+      ]
+    },
+    {
+      "id": "ex07_trap_minindex_init",
+      "task": "Warum muss minIndex in jedem Durchlauf mit i initialisiert werden?",
+      "input": {},
+      "expected": "Weil nur der Restbereich i..n-1 durchsucht wird",
+      "solution": "minIndex muss auf den aktuellen Start des Restbereichs gesetzt werden, sonst werden bereits sortierte Teile falsch einbezogen.",
+      "traps": [
+        "minIndex nicht auf 0 setzen",
+        "Restbereich korrekt",
+        "Off-by-one vermeiden"
+      ]
+    },
+    {
+      "id": "ex08_trap_bounds",
+      "task": "Welche Schleifenbereiche sind korrekt?",
+      "input": {
+        "n": 5
+      },
+      "expected": "i=0..n-2, j=i+1..n-1",
+      "solution": "Aeusserer i von 0 bis n-2, innerer j von i+1 bis n-1 fuer die Minimumsuche.",
+      "traps": [
+        "j beginnt bei i+1",
+        "i endet bei n-2",
+        "Nicht den sortierten Teil scannen"
+      ]
+    },
+    {
+      "id": "ex09_trap_comparator",
+      "task": "SelectionSort mit Comparator f(a,b) (f<0 bedeutet a vor b). Welche Bedingung aktualisiert minIndex?",
+      "input": {},
+      "expected": "Wenn f(a[j], a[minIndex]) < 0",
+      "solution": "Das aktuelle Element wird neuer Kandidat, wenn es nach Comparator vor dem bisherigen Minimum liegt.",
+      "traps": [
+        "Parameterreihenfolge beachten",
+        "Nicht f(minIndex, j)",
+        "Vergleichszeichen korrekt"
+      ]
+    },
+    {
+      "id": "ex10_trap_bestcase",
+      "task": "Warum bleibt der Best-Case bei SelectionSort O(n^2)?",
+      "input": {},
+      "expected": "Weil das Minimum in jedem Durchlauf gesucht werden muss",
+      "solution": "Auch bei bereits sortiertem Array muss der Restbereich voll durchsucht werden, daher bleiben die Vergleiche n(n-1)/2.",
+      "traps": [
+        "Kein Early-Exit",
+        "Nicht mit BubbleSort verwechseln",
+        "Vergleiche bleiben gleich"
+      ]
+    }
+  ],
+  "exam_tips": [
+    "Pro i: Minimum im Bereich i..n-1 suchen; danach maximal ein Swap.",
+    "SelectionSort hat kein Early-Exit; Best-Case bleibt O(n²).",
+    "Maximale Swaps = n-1 (wichtiger Vorteil von SelectionSort).",
+    "Klassisch nicht stabil; stabile Variante nur als Konzept (Insert/Shift).",
+    "Bei Comparator: minIndex-Update mit f(a[j], a[minIndex]) < 0 (Parameterreihenfolge beachten)."
+  ],
+  "glossary": [
+    {
+      "term": "minIndex",
+      "definition": "Index des kleinsten (oder nach Comparator „besten“) Elements im unsortierten Restbereich."
+    },
+    {
+      "term": "Restbereich",
+      "definition": "Der unsortierte Teil des Arrays: i..n-1."
+    },
+    {
+      "term": "Swap",
+      "definition": "Vertauschung zweier Elemente/Positionen im Array."
+    },
+    {
+      "term": "In-Place",
+      "definition": "Sortierung im selben Array mit konstantem Zusatzspeicher O(1)."
+    },
+    {
+      "term": "Stabil",
+      "definition": "Gleiche Schlüssel behalten ihre relative Reihenfolge; klassischer SelectionSort ist meist nicht stabil."
+    }
+  ]
+}

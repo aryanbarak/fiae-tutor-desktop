@@ -1,0 +1,182 @@
+[
+  {
+    "id": "first_hit",
+    "pseudocode": {
+      "de": "FUNKTION LinearSearch(arr, x)\n  n = LAENGE(arr)\n  FUER i = 0 BIS n-1\n    WENN arr[i] = x DANN\n      GIB i ZURUECK\n    ENDE\n  ENDE\n  GIB -1 ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: نسخهٔ کلاسیک که اولین تطابق را برمی‌گرداند.\n(2) تفاوت دقیق با LinearSearch کلاسیک: همان نسخهٔ استاندارد است؛ بدون جمع‌آوری همهٔ نتایج.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: با اولین arr[i] = x فوراً return می‌شود.\n(4) رفتار و پیچیدگی زمانی/فضایی: Best O(1)، Avg/Worst O(n)، فضا O(1).\n(5) دام‌های رایج IHK: فراموشی بازگشت -1 در حالت عدم تطابق.\n(6) نکتهٔ طلایی امتحان: اندیس 0 هم می‌تواند جواب درست باشد."
+    },
+    "label": {
+      "de": "Klassisch (erstes Treffer)",
+      "fa": "?????? (????? ?????)"
+    },
+    "description": {
+      "de": "Gibt den ersten Trefferindex zur?ck.",
+      "fa": "????? ????? ????? ?? ???????????."
+    },
+    "is_default": true
+  },
+  {
+    "id": "all_hits",
+    "pseudocode": {
+      "de": "FUNKTION LinearSearchAll(arr, x)\n  treffer = LEERE_LISTE\n  n = LAENGE(arr)\n  FUER i = 0 BIS n-1\n    WENN arr[i] = x DANN\n      FUEGE i ZU treffer HINZU\n    ENDE\n  ENDE\n  GIB treffer ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: همهٔ اندیس‌هایی که x دیده می‌شود را جمع می‌کند.\n(2) تفاوت دقیق با نسخهٔ کلاسیک: به‌جای return فوری، کل آرایه پیمایش می‌شود.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: افزودن i به لیست نتایج و عدم break.\n(4) رفتار و پیچیدگی زمانی/فضایی: همیشه O(n)، فضا O(k) برای تعداد تطابق‌ها.\n(5) دام‌های رایج IHK: توقف بعد از اولین تطابق (اشتباه).\n(6) نکتهٔ طلایی امتحان: خروجی لیست اندیس‌هاست، نه یک عدد."
+    },
+    "label": {
+      "de": "Alle Treffer",
+      "fa": "??? ????????"
+    },
+    "description": {
+      "de": "Sammelt alle Trefferindizes.",
+      "fa": "??? ????????? ????? ?? ??? ??????."
+    },
+    "is_default": false
+  },
+  {
+    "id": "contains_bool",
+    "pseudocode": {
+      "de": "FUNKTION LinearContains(arr, x) -> bool\n  n = LAENGE(arr)\n  FUER i = 0 BIS n-1\n    WENN arr[i] = x DANN\n      GIB true ZURUECK\n    ENDE\n  ENDE\n  GIB false ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: فقط وجود/عدم وجود x را به صورت true/false برمی‌گرداند.\n(2) تفاوت دقیق با نسخهٔ کلاسیک: به‌جای اندیس، مقدار بولی برمی‌گردد.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: return true/false به‌جای i یا -1.\n(4) رفتار و پیچیدگی زمانی/فضایی: Best O(1)، Worst O(n)، فضا O(1).\n(5) دام‌های رایج IHK: اشتباه گرفتن true/false با اندیس.\n(6) نکتهٔ طلایی امتحان: برای «contains?» همین نسخه ساده‌تر و مناسب‌تر است."
+    },
+    "label": {
+      "de": "Contains (bool)",
+      "fa": "????/??? ???? (????)"
+    },
+    "description": {
+      "de": "Gibt nur true/false zur?ck.",
+      "fa": "??? true/false ???????????."
+    },
+    "is_default": false
+  },
+  {
+    "id": "range_limited",
+    "pseudocode": {
+      "de": "FUNKTION LinearSearchRange(arr, x, left, right)\n  FUER i = left BIS right\n    WENN arr[i] = x DANN\n      GIB i ZURUECK\n    ENDE\n  ENDE\n  GIB -1 ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: جست‌وجو فقط در بازهٔ [left, right] انجام می‌شود.\n(2) تفاوت دقیق با نسخهٔ کلاسیک: محدودهٔ حلقه محدود شده است.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: for i = left..right.\n(4) رفتار و پیچیدگی زمانی/فضایی: زمان O(right-left+1)، فضا O(1).\n(5) دام‌های رایج IHK: اشتباه در مرزها یا خارج شدن از محدودهٔ آرایه.\n(6) نکتهٔ طلایی امتحان: این نسخه برای پنجرهٔ زمانی/بازهٔ خاص مفید است."
+    },
+    "label": {
+      "de": "Bereich [left,right]",
+      "fa": "???? ?????"
+    },
+    "description": {
+      "de": "Suche nur im Bereich [left,right].",
+      "fa": "??????? ??? ?? ???? [left,right]."
+    },
+    "is_default": false
+  },
+  {
+    "id": "start_index",
+    "pseudocode": {
+      "de": "FUNKTION LinearSearchFrom(arr, x, startIndex)\n  n = LAENGE(arr)\n  FUER i = startIndex BIS n-1\n    WENN arr[i] = x DANN\n      GIB i ZURUECK\n    ENDE\n  ENDE\n  GIB -1 ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: جست‌وجو از یک startIndex شروع می‌شود.\n(2) تفاوت دقیق با نسخهٔ کلاسیک: شروع حلقه از startIndex است نه 0.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: for i = startIndex..n-1.\n(4) رفتار و پیچیدگی زمانی/فضایی: زمان O(n-startIndex)، فضا O(1).\n(5) دام‌های رایج IHK: startIndex خارج از بازه یا منفی.\n(6) نکتهٔ طلایی امتحان: برای ادامهٔ جست‌وجو بعد از یک نقطه مناسب است."
+    },
+    "label": {
+      "de": "Startindex",
+      "fa": "???? ?? ?????"
+    },
+    "description": {
+      "de": "Startet die Suche ab startIndex.",
+      "fa": "??????? ?? startIndex ???? ??????."
+    },
+    "is_default": false
+  },
+  {
+    "id": "strings_casefold",
+    "pseudocode": {
+      "de": "FUNKTION LinearSearchStringCI(arr, x)\n  n = LAENGE(arr)\n  target = TOLOWER(x)\n  FUER i = 0 BIS n-1\n    WENN TOLOWER(arr[i]) = target DANN\n      GIB i ZURUECK\n    ENDE\n  ENDE\n  GIB -1 ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: جست‌وجوی رشته‌ای بدون حساسیت به حروف بزرگ/کوچک.\n(2) تفاوت دقیق با نسخهٔ کلاسیک: مقایسه با نسخهٔ lower/casefold انجام می‌شود.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: TOLOWER(arr[i]) و TOLOWER(x).\n(4) رفتار و پیچیدگی زمانی/فضایی: زمان O(n * L)، فضا O(1)؛ L طول رشته است.\n(5) دام‌های رایج IHK: فراموش کردن نرمال‌سازی یا locale.\n(6) نکتهٔ طلایی امتحان: اگر سؤال به case اشاره کرد، این نسخه را ذکر کن."
+    },
+    "label": {
+      "de": "Strings ohne Case",
+      "fa": "??????? ???? ?????? ?? ????"
+    },
+    "description": {
+      "de": "Case-insensitive String-Suche.",
+      "fa": "???????? ??????? ???? ?????? ?? ????."
+    },
+    "is_default": false
+  },
+  {
+    "id": "objects_comparator",
+    "pseudocode": {
+      "de": "FUNKTION LinearSearchObj(arr, x, f)\n  n = LAENGE(arr)\n  FUER i = 0 BIS n-1\n    WENN f(arr[i], x) = 0 DANN\n      GIB i ZURUECK\n    ENDE\n  ENDE\n  GIB -1 ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: جست‌وجو روی آبجکت‌ها با تابع مقایسه f.\n(2) تفاوت دقیق با نسخهٔ کلاسیک: به‌جای arr[i] = x از f(arr[i], x)=0 استفاده می‌شود.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: شرط مقایسه با f.\n(4) رفتار و پیچیدگی زمانی/فضایی: زمان O(n * T_f)، فضا O(1).\n(5) دام‌های رایج IHK: تفسیر غلط خروجی f یا استفاده از f متفاوت با منطق داده‌ها.\n(6) نکتهٔ طلایی امتحان: f باید معیار برابری را دقیق مشخص کند."
+    },
+    "label": {
+      "de": "Objekte mit Comparator",
+      "fa": "????? ?? Comparator"
+    },
+    "description": {
+      "de": "Vergleich ?ber Comparator f?r Objekte.",
+      "fa": "?????? ?? Comparator ???? ????????."
+    },
+    "is_default": false
+  },
+  {
+    "id": "predicate",
+    "pseudocode": {
+      "de": "FUNKTION LinearSearchPredicate(arr, p)\n  n = LAENGE(arr)\n  FUER i = 0 BIS n-1\n    WENN p(arr[i]) = true DANN\n      GIB i ZURUECK\n    ENDE\n  ENDE\n  GIB -1 ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: اولین عنصری را پیدا می‌کند که شرط p را ارضا کند.\n(2) تفاوت دقیق با نسخهٔ کلاسیک: به‌جای مقدار x، یک predicate داریم.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: شرط p(arr[i]) = true.\n(4) رفتار و پیچیدگی زمانی/فضایی: Best O(1)، Worst O(n)، فضا O(1).\n(5) دام‌های رایج IHK: تعریف مبهم شرط یا استفاده از predicate ناسازگار.\n(6) نکتهٔ طلایی امتحان: این نسخه برای «اولین عنصر با ویژگی خاص» است."
+    },
+    "label": {
+      "de": "Pr?dikat",
+      "fa": "?? ???? predicate"
+    },
+    "description": {
+      "de": "Erstes Element, das Pr?dikat erf?llt.",
+      "fa": "????? ????? ?? predicate ?? ???? ???."
+    },
+    "is_default": false
+  },
+  {
+    "id": "generic_comparator",
+    "pseudocode": {
+      "de": "FUNKTION LinearSearchCmp(arr, x, cmp)\n  n = LAENGE(arr)\n  FUER i = 0 BIS n-1\n    WENN cmp(arr[i], x) = 0 DANN\n      GIB i ZURUECK\n    ENDE\n  ENDE\n  GIB -1 ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: نسخهٔ جنریک برای هر نوع داده با Comparator عمومی.\n(2) تفاوت دقیق با نسخهٔ کلاسیک: معیار برابری با cmp تعیین می‌شود.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: cmp(arr[i], x) = 0.\n(4) رفتار و پیچیدگی زمانی/فضایی: زمان O(n * T_cmp)، فضا O(1).\n(5) دام‌های رایج IHK: استفاده از cmp نادرست یا ناسازگار با نوع داده.\n(6) نکتهٔ طلایی امتحان: cmp باید دقیقاً مفهوم برابری را برگرداند."
+    },
+    "label": {
+      "de": "Generisch mit Comparator",
+      "fa": "????? ?? Comparator"
+    },
+    "description": {
+      "de": "Generisch mit Comparator f?r beliebige Typen.",
+      "fa": "???? ????? ?? Comparator ???? ????? ??????."
+    },
+    "is_default": false
+  },
+  {
+    "id": "early_exit_sorted",
+    "pseudocode": {
+      "de": "FUNKTION LinearSearchSorted(arr, x)\n  n = LAENGE(arr)\n  FUER i = 0 BIS n-1\n    WENN arr[i] = x DANN\n      GIB i ZURUECK\n    SONST WENN arr[i] > x DANN\n      GIB -1 ZURUECK\n    ENDE\n  ENDE\n  GIB -1 ZURUECK\nENDE"
+    },
+    "explain": {
+      "fa": "(1) تعریف Variant: خروج زودهنگام برای آرایهٔ مرتب صعودی.\n(2) تفاوت دقیق با نسخهٔ کلاسیک: اگر arr[i] > x شد، ادامه بی‌فایده است.\n(3) این تفاوت در شبه‌کد کجا دیده می‌شود: شرط arr[i] > x و return -1 زودتر.\n(4) رفتار و پیچیدگی زمانی/فضایی: Best O(1)، Worst O(n)، فضا O(1).\n(5) دام‌های رایج IHK: استفاده از این نسخه روی آرایهٔ نامرتب (غلط).\n(6) نکتهٔ طلایی امتحان: فقط وقتی مجاز است که آرایه واقعاً مرتب باشد."
+    },
+    "label": {
+      "de": "Fr?habbruch (sortiert)",
+      "fa": "???? ???????? (????)"
+    },
+    "description": {
+      "de": "Fr?her Abbruch bei sortiertem Array.",
+      "fa": "???? ???????? ???? ????? ????."
+    },
+    "is_default": false
+  }
+]

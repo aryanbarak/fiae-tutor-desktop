@@ -1,0 +1,155 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "fa",
+  "question_count": 10,
+  "questions": [
+    {
+      "expected": "min=2, max=9, avg=5.2",
+      "id": "ex01_trace_classic",
+      "input": {
+        "arr": [
+          7,
+          2,
+          9,
+          3,
+          5
+        ]
+      },
+      "solution": "sum=26، avg=26/5=5.2، min=2، max=9.",
+      "task": "برای arr = [7, 2, 9, 3, 5] min/max/avg را حساب کن.",
+      "traps": [
+        "ابتدا با arr[0] مقداردهی کن",
+        "avg=sum/n",
+        "تقسیم صحیح را اشتباه نکن"
+      ]
+    },
+    {
+      "expected": "min=-8, max=-2, avg=-4.5",
+      "id": "ex02_trace_negative",
+      "input": {
+        "arr": [
+          -5,
+          -2,
+          -8,
+          -3
+        ]
+      },
+      "solution": "sum=-18، avg=-18/4=-4.5، min=-8، max=-2.",
+      "task": "برای arr = [-5, -2, -8, -3] min/max/avg را حساب کن.",
+      "traps": [
+        "min/max را 0 نگذار",
+        "اعداد منفی",
+        "avg باید float باشد"
+      ]
+    },
+    {
+      "expected": "min=1, max=6, avg=3.666...",
+      "id": "ex03_trace_small",
+      "input": {
+        "arr": [
+          4,
+          1,
+          6
+        ]
+      },
+      "solution": "sum=11، avg=11/3، min=1، max=6.",
+      "task": "arr = [4, 1, 6]؛ min/max/avg؟",
+      "traps": [
+        "avg ممکن است اعشاری باشد",
+        "sum درست",
+        "Index و value را قاطی نکن"
+      ]
+    },
+    {
+      "expected": "8",
+      "id": "ex04_complexity_comparisons",
+      "input": {
+        "n": 5
+      },
+      "solution": "دو مقایسه برای هر عنصر بعد از اولیه: 2*(n-1)=8.",
+      "task": "برای n=5 چند مقایسه برای min+max (دو if) داریم؟",
+      "traps": [
+        "مقایسه با جمع فرق دارد",
+        "دو if جدا",
+        "فرمول 2*(n-1)"
+      ]
+    },
+    {
+      "expected": "Best/Worst O(n)",
+      "id": "ex05_complexity_big",
+      "input": {},
+      "solution": "هر عنصر دقیقاً یک بار دیده می‌شود، پس همیشه O(n).",
+      "task": "پیچیدگی زمانی min/max/avg (Best/Worst) چیست؟",
+      "traps": [
+        "Early-Exit ندارد",
+        "O(log n) نیست",
+        "خطی می‌ماند"
+      ]
+    },
+    {
+      "expected": "در آرایه منفی غلط می‌شود",
+      "id": "ex06_trap_init",
+      "input": {},
+      "solution": "برای اعداد منفی، 0 بزرگ‌تر از همه است؛ درست: min=max=arr[0].",
+      "task": "چرا min=max=0 اشتباه است؟",
+      "traps": [
+        "ابتدا با arr[0] مقداردهی",
+        "اعداد منفی",
+        "ثابت نگذار"
+      ]
+    },
+    {
+      "expected": "تقسیم صحیح (Integer Division)",
+      "id": "ex07_trap_integer_div",
+      "input": {},
+      "solution": "باید sum/n را به float/double تبدیل کرد، وگرنه اعشار حذف می‌شود.",
+      "task": "دام رایج در محاسبه avg در C/Java چیست؟",
+      "traps": [
+        "Type cast لازم است",
+        "avg نباید int باشد",
+        "نتیجه گرد نشود"
+      ]
+    },
+    {
+      "expected": "چون یک مقدار می‌تواند یکی از آن‌ها باشد",
+      "id": "ex08_trap_if_blocks",
+      "input": {},
+      "solution": "با else-if ممکن است یک آپدیت از دست برود.",
+      "task": "چرا برای min و max باید دو if جدا داشت؟",
+      "traps": [
+        "else-if نگذار",
+        "هر دو مقایسه لازم",
+        "منطق را قاطی نکن"
+      ]
+    },
+    {
+      "expected": "خطا/Exception یا مقدار ویژه",
+      "id": "ex09_trap_empty",
+      "input": {},
+      "solution": "n=0 است؛ arr[0] وجود ندارد و تقسیم بر 0 رخ می‌دهد.",
+      "task": "آرایه خالی را چگونه مدیریت کنیم؟",
+      "traps": [
+        "تقسیم بر صفر",
+        "arr[0] مجاز نیست",
+        "Edge-case را چک کن"
+      ]
+    },
+    {
+      "expected": "minIndex موقعیت است، min مقدار",
+      "id": "ex10_trap_index_value",
+      "input": {},
+      "solution": "minIndex مکان کوچک‌ترین عنصر است و min خود مقدار است.",
+      "task": "فرق minIndex و min چیست؟",
+      "traps": [
+        "Index و Value را قاطی نکن",
+        "نام‌گذاری روشن",
+        "SelectionSort به index نیاز دارد"
+      ]
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "Min/Max/Average (کمینه/بیشینه/میانگین) — FIAE Explain Core v1.0",
+  "topic": "minmax_avg",
+  "version": "1.0"
+}

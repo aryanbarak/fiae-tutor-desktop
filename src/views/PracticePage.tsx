@@ -68,7 +68,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
       {/* Controls Panel (left side, hidden when fullscreen) */}
       {!model.isFullscreen && (
         <div style={styles.controlsPanel}>
-          <h1 style={styles.title}>🎓 FIAE Tutor</h1>
+          <h1 style={styles.title}>🎓 CodeZertifikat</h1>
 
           {/* Controls */}
           <div style={styles.controlsSection}>
@@ -296,7 +296,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
         {/* Fullscreen mode header */}
         {model.isFullscreen && (
           <div style={styles.fullscreenHeader}>
-            <h2 style={styles.fullscreenTitle}>🎓 FIAE Tutor</h2>
+            <h2 style={styles.fullscreenTitle}>🎓 CodeZertifikat</h2>
             <div style={styles.fullscreenControls}>
               <button
                 onClick={() => dispatch({ type: "PracticeRunRequested" })}

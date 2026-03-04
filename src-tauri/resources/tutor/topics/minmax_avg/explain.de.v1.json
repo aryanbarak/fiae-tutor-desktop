@@ -1,0 +1,257 @@
+{
+  "version": "1.0",
+  "topic": "minmax_avg",
+  "lang": "de",
+  "schema_name": "minmax_avg.explain.de.v1",
+  "schema_kind": "explain_content",
+  "title": "Min/Max/Average (Min/Max/Durchschnitt) — FIAE Explain Core v1.0",
+  "audience": "IHK FIAE AP2 (Algorithmen) — prüfungsorientiert",
+  "meta": {
+    "canonical_topic": "minmax_avg",
+    "difficulty": "basic",
+    "tags": [
+      "minmax",
+      "average",
+      "statistical",
+      "O(n)",
+      "linear",
+      "IHK"
+    ],
+    "rtl_enabled": false,
+    "last_updated": "2026-01-28"
+  },
+  "sections_order": [
+    "definition",
+    "idea",
+    "procedure",
+    "example",
+    "complexity",
+    "ihk_traps",
+    "variants"
+  ],
+  "sections": [
+    {
+      "id": "definition",
+      "title": "Definition",
+      "format": "md",
+      "rtl": false,
+      "body": "**Min/Max/Average (Min/Max/Durchschnitt)** ist ein grundlegender Algorithmus, der den **kleinsten**, **größten** und **durchschnittlichen** Wert in einem Array findet.\n\n**Kernprinzip:**\n- Array einmal durchlaufen (O(n))\n- Bei jedem Element:\n  - Wenn kleiner als min → min aktualisieren\n  - Wenn größer als max → max aktualisieren\n  - Zur sum addieren\n- Am Ende: avg = sum / n\n\n**IHK-Fokus:** Linearer Algorithmus O(n), korrekte Initialisierung (min = max = a[0], nicht 0!), Integer-Division bei avg, Unterschied zwischen Wert und Index."
+    },
+    {
+      "id": "idea",
+      "title": "Grundidee",
+      "format": "md",
+      "rtl": false,
+      "body": "TBD"
+    },
+    {
+      "id": "procedure",
+      "title": "Algorithmus-Schritte",
+      "format": "md",
+      "rtl": false,
+      "body": "**Schritt 1: Leeres Array prüfen**\n```\nWENN n = 0:\n  Fehler zurückgeben\n```\n\n**Schritt 2: Initialisierung**\n```\nmin = a[0]    // nicht 0 — falsch bei negativen Zahlen!\nmax = a[0]    // nicht 0\nsum = a[0]    // oder sum = 0 wenn ab i=0\n```\n\n**Schritt 3: Array durchlaufen (i = 1 bis n-1)**\n```\nFür jedes Element a[i]:\n  WENN a[i] < min:\n    min = a[i]\n  WENN a[i] > max:\n    max = a[i]\n  sum = sum + a[i]\n```\n\n**Schritt 4: Durchschnitt berechnen**\n```\navg = sum / n\n```\n\n**Schritt 5: Ergebnis zurückgeben**\n```\nRückgabe (min, max, avg)\n```"
+    },
+    {
+      "id": "example",
+      "title": "Beispiel",
+      "format": "md",
+      "rtl": false,
+      "body": "TBD"
+    },
+    {
+      "id": "complexity",
+      "title": "Komplexität (IHK)",
+      "format": "md",
+      "rtl": false,
+      "body": "**Zeit:**\n- **Alle Varianten:** O(n) — linear\n- Grund: Einmaliges Durchlaufen des Arrays\n- Anzahl Vergleiche: 2n (für min und max)\n\n**Speicher:**\n- **Alle Varianten:** O(1) — konstant\n- Nur Variablen min, max, sum, avg\n- Keine zusätzlichen Arrays\n\n**Optimierung:** Schneller als O(n) nicht möglich — jedes Element muss mindestens einmal betrachtet werden."
+    },
+    {
+      "id": "ihk_traps",
+      "title": "Prüfungsfallen",
+      "format": "md",
+      "rtl": false,
+      "body": "1) **Falsche Initialisierung:** min = 0 statt min = a[0] (falsch bei negativen Zahlen)\n2) **Integer-Division:** sum / n ohne Beachtung des Typs (in Java/C: float(sum) / n)\n3) **sum vergessen:** oder in Schleife zurücksetzen\n4) **< und > vertauschen:** WENN a[i] > min (falsch!)\n5) **WENN...SONST für min/max:** Zwei getrennte IF-Blöcke nötig\n6) **Leeres Array:** n = 0 nicht prüfen (Division durch 0)\n7) **Index mit Wert verwechseln:** min = i statt min = a[i]\n8) **Falscher Feldzugriff:** arr[field] statt arr[i][field]\n9) **Index-Update vergessen:** Nur min = a[i] ohne minIndex = i"
+    },
+    {
+      "id": "variants",
+      "title": "Varianten (7)",
+      "format": "md",
+      "rtl": false,
+      "body": "**1) classic_minmax_avg (Klassisch komplett):**\n- **Eingabe:** Zahlen-Array\n- **Ausgabe:** min, max, avg\n- **Beispiel:** [5, 2, 8, 3] → min=2, max=8, avg=4.5\n\n**2) min_only (Nur Minimum):**\n- **Eingabe:** Zahlen-Array\n- **Ausgabe:** min, minIndex\n- **Beispiel:** [5, 2, 8, 3] → min=2, minIndex=1\n\n**3) max_only (Nur Maximum):**\n- **Eingabe:** Zahlen-Array\n- **Ausgabe:** max, maxIndex\n- **Beispiel:** [5, 2, 8, 3] → max=8, maxIndex=2\n\n**4) average_only (Nur Durchschnitt):**\n- **Eingabe:** Zahlen-Array\n- **Ausgabe:** avg\n- **Beispiel:** [5, 2, 8, 3] → avg=4.5\n\n**5) minmax_only (Ohne Durchschnitt):**\n- **Eingabe:** Zahlen-Array\n- **Ausgabe:** min, max\n- **Beispiel:** [5, 2, 8, 3] → min=2, max=8\n\n**6) minmax_avg_by_field (Objekt-Feld):**\n- **Eingabe:** Objekt-Array + field\n- **Ausgabe:** min, max, avg des Feldes\n- **Beispiel:** [{note: 2}, {note: 3}] → min=2, max=3, avg=2.5\n\n**7) minmax_with_indices (Mit Indizes):**\n- **Eingabe:** Zahlen-Array\n- **Ausgabe:** min, minIndex, max, maxIndex\n- **Beispiel:** [5, 2, 8, 3] → min=2, minIndex=1, max=8, maxIndex=2\n\n**Gemeinsamkeit:** Alle Varianten sind linear O(n), Initialisierung mit a[0]."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex01_trace_classic",
+      "task": "Berechne min, max und avg fuer arr = [7, 2, 9, 3, 5].",
+      "input": {
+        "arr": [
+          7,
+          2,
+          9,
+          3,
+          5
+        ]
+      },
+      "expected": "min=2, max=9, avg=5.2",
+      "solution": "sum=26, avg=26/5=5.2, min=2, max=9.",
+      "traps": [
+        "Initialisierung mit arr[0]",
+        "Avg als sum/n",
+        "Nicht mit ganzzahliger Division verwechseln"
+      ]
+    },
+    {
+      "id": "ex02_trace_negative",
+      "task": "Berechne min, max und avg fuer arr = [-5, -2, -8, -3].",
+      "input": {
+        "arr": [
+          -5,
+          -2,
+          -8,
+          -3
+        ]
+      },
+      "expected": "min=-8, max=-2, avg=-4.5",
+      "solution": "sum=-18, avg=-18/4=-4.5, min=-8, max=-2.",
+      "traps": [
+        "min/max nicht mit 0 initialisieren",
+        "Negative Werte beachten",
+        "Avg als float"
+      ]
+    },
+    {
+      "id": "ex03_trace_small",
+      "task": "Gegeben arr = [4, 1, 6]. Gib min, max, avg an.",
+      "input": {
+        "arr": [
+          4,
+          1,
+          6
+        ]
+      },
+      "expected": "min=1, max=6, avg=3.666...",
+      "solution": "sum=11, avg=11/3, min=1, max=6.",
+      "traps": [
+        "Avg kann nicht ganzzahlig sein",
+        "sum korrekt bilden",
+        "Index nicht mit Wert verwechseln"
+      ]
+    },
+    {
+      "id": "ex04_complexity_comparisons",
+      "task": "Wie viele Vergleiche fuer min+max in einem Durchlauf bei n=5 (klassisch mit zwei IFs)?",
+      "input": {
+        "n": 5
+      },
+      "expected": "8",
+      "solution": "Nach Initialisierung werden pro Element zwei Vergleiche gemacht: 2*(n-1)=8.",
+      "traps": [
+        "Vergleiche nicht mit sum",
+        "Zwei IFs, keine else-if",
+        "Formel 2*(n-1)"
+      ]
+    },
+    {
+      "id": "ex05_complexity_big",
+      "task": "Zeitkomplexitaet fuer min/max/avg (Best/Worst).",
+      "input": {},
+      "expected": "Best/Worst O(n)",
+      "solution": "Es wird jedes Element genau einmal betrachtet, daher immer O(n).",
+      "traps": [
+        "Kein Early-Exit",
+        "Nicht O(log n)",
+        "Linear bleibt linear"
+      ]
+    },
+    {
+      "id": "ex06_trap_init",
+      "task": "Warum ist min = max = 0 falsch als Initialisierung?",
+      "input": {},
+      "expected": "Bei negativen Arrays falsch",
+      "solution": "Wenn alle Werte negativ sind, wuerde 0 als min/max bleiben. Richtig: min=max=arr[0].",
+      "traps": [
+        "Initialisierung mit arr[0]",
+        "Negative Werte",
+        "Keine Konstante"
+      ]
+    },
+    {
+      "id": "ex07_trap_integer_div",
+      "task": "Was ist die typische Falle beim Durchschnitt in Java/C?",
+      "input": {},
+      "expected": "Integer-Division",
+      "solution": "sum/n muss als float/double gerechnet werden, sonst wird gerundet.",
+      "traps": [
+        "Typcasting noetig",
+        "sum/n nicht als int",
+        "Avg sonst falsch"
+      ]
+    },
+    {
+      "id": "ex08_trap_if_blocks",
+      "task": "Warum braucht man zwei getrennte IF-Bloecke fuer min und max?",
+      "input": {},
+      "expected": "Weil ein Wert gleichzeitig min oder max sein kann",
+      "solution": "Mit else-if wuerde ein Wert, der z.B. neues min ist, nicht mehr auf max gepr?ft (oder umgekehrt).",
+      "traps": [
+        "Kein else-if",
+        "Beide Vergleiche ausfuehren",
+        "Logik nicht verwechseln"
+      ]
+    },
+    {
+      "id": "ex09_trap_empty",
+      "task": "Wie behandelt man ein leeres Array?",
+      "input": {},
+      "expected": "Fehler/Exception oder spezieller Rueckgabewert",
+      "solution": "Bei n=0 darf nicht durch n geteilt werden und arr[0] existiert nicht.",
+      "traps": [
+        "Division durch 0",
+        "arr[0] unzulaessig",
+        "Edge-Case pruefen"
+      ]
+    },
+    {
+      "id": "ex10_trap_index_value",
+      "task": "Was ist der Unterschied zwischen minIndex und min?",
+      "input": {},
+      "expected": "minIndex ist die Position, min der Wert",
+      "solution": "minIndex speichert die Position des kleinsten Werts, min speichert den Wert selbst.",
+      "traps": [
+        "Index nicht mit Wert verwechseln",
+        "Rueckgabewert klar benennen",
+        "SelectionSort braucht Index"
+      ]
+    }
+  ],
+  "exam_tips": [
+    "Initialisierung: min = max = a[0] (nicht 0)",
+    "Integer-Division: In Java/C float(sum) / n",
+    "sum nicht vergessen",
+    "Bedingungen: < für min, > für max",
+    "Zwei getrennte IF-Blöcke",
+    "Leeres Array prüfen: WENN n = 0",
+    "Feldzugriff: arr[i][field]",
+    "Wert vs. Index: min = a[i] (nicht i)",
+    "Komplexität: O(n)"
+  ],
+  "glossary": [
+    {
+      "term": "min",
+      "definition": "Minimum — kleinster Wert im Array"
+    },
+    {
+      "term": "max",
+      "definition": "Maximum — größter Wert im Array"
+    },
+    {
+      "term": "avg",
+      "definition": "Average — Durchschnitt (sum / n)"
+    },
+    {
+      "term": "sum",
+      "definition": "Summe — Gesamtsumme aller Elemente"
+    }
+  ]
+}

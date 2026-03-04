@@ -1,0 +1,32 @@
+{
+  "content_revision": "7a74c3eee53d8ad81fba269e3247afb965934749",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "lang": "de",
+  "question_count": 4,
+  "questions": [
+    {
+      "body": "Trace den String `text = \"algorithm\"` mit `target = 'o'`.\n\n**Fragen:**\n- Wie viele Vergleiche werden durchgeführt?\n- Bei welchem Index tritt der erste Treffer auf?\n- Was ist die Ausgabe?\n\n**Erwartete Antwort:**\n- 5 Vergleiche (i=0 bis i=4)\n- Index 4: `'o' == 'o'` ✓\n- Ausgabe: `true`\n",
+      "id": "ex_contains_trace",
+      "title": "Trace von contains_char"
+    },
+    {
+      "body": "Du hast String `text = \"banana\"` und `pattern = \"ana\"`. Finde den Index des ersten Treffers.\n\n**Fragen:**\n- Welche Startpositionen (`i`) müssen geprüft werden?\n- Wie viele Vergleiche werden bei jeder Position durchgeführt?\n- Was ist der finale Index?\n\n**Erwartete Antwort:**\n- Gültige Positionen: i = 0, 1, 2, 3 (weil 6-3=3)\n- i=0: \"ban\" vs \"ana\" → 1 Vergleich ('b'!='a')\n- i=1: \"ana\" vs \"ana\" → 3 Vergleiche (alle stimmen überein)\n- Ausgabe: `1`\n",
+      "id": "ex_indexof_substring",
+      "title": "Übung indexOf mit Teilstring"
+    },
+    {
+      "body": "Du hast String `text = \"aaaa\"` und `pattern = \"aa\"`.\n\n**Fragen:**\n- Wenn der Algorithmus **nicht-überlappend** ist, wie groß ist count?\n- Wenn der Algorithmus **überlappend** ist, wie groß ist count?\n- Wo liegt der Unterschied im Code?\n\n**Erwartete Antwort:**\n- **Nicht-überlappend:** count=2 (Treffer bei i=0, i=2)\n  * Nach Treffer: `i = i + m` (Sprung um 2)\n- **Überlappend:** count=3 (Treffer bei i=0, i=1, i=2)\n  * Nach Treffer: `i++` (Sprung um 1)\n- **Unterschied:** Zeile `i = i + m` vs `i = i + 1`\n",
+      "id": "ex_count_overlap",
+      "title": "Falle Überlappend vs. Nicht-Überlappend"
+    },
+    {
+      "body": "Du hast String `text = \"hello.txt\"`.\n\n**Fragen:**\n- Wie groß ist `startsWith(text, \"hel\")`?\n- Wie groß ist `endsWith(text, \".txt\")`?\n- Wie groß ist `endsWith(text, \".pdf\")`?\n- Wie viele Vergleiche werden für jede durchgeführt?\n\n**Erwartete Antwort:**\n- `startsWith(\"hel\")`: true (3 Vergleiche)\n- `endsWith(\".txt\")`: true (4 Vergleiche)\n- `endsWith(\".pdf\")`: false (1 Vergleich — erstes Zeichen stimmt nicht überein)\n",
+      "id": "ex_startswith_endswith",
+      "title": "Übung startsWith und endsWith"
+    }
+  ],
+  "schema_name": "tutor_static_exam.v1",
+  "title": "Search/Contains (Suchen/Enthalten) — FIAE Explain Core v1.0",
+  "topic": "search_contains",
+  "version": "1.0"
+}

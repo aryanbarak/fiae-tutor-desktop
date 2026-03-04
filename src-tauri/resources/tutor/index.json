@@ -1,0 +1,169 @@
+{
+  "base_path": "/tutor",
+  "generated_at": "2026-03-04T01:00:45+01:00",
+  "schema_name": "tutor_static_index.v1",
+  "topics": [
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/binarysearch/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/binarysearch/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/binarysearch/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/binarysearch/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/binarysearch/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/binarysearch/variants.fa.v1.json"
+      },
+      "slug": "binarysearch",
+      "title_de": "Binary Search (Binäre Suche) – FIAE Core (Deutsch)",
+      "title_fa": "Binary Search (جستجوی دودویی) — FIAE Core (فارسی)"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/bubblesort/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/bubblesort/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/bubblesort/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/bubblesort/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/bubblesort/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/bubblesort/variants.fa.v1.json"
+      },
+      "slug": "bubblesort",
+      "title_de": "BubbleSort — FIAE Explain Core v1.0",
+      "title_fa": "BubbleSort (مرتب‌سازی حبابی) — FIAE Explain Core v1.0"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/checksum/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/checksum/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/checksum/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/checksum/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/checksum/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/checksum/variants.fa.v1.json"
+      },
+      "slug": "checksum",
+      "title_de": "Prüfziffer (Checksum) — FIAE Explain Core v1.0",
+      "title_fa": "رقم بررسی (Checksum / Prüfziffer) — FIAE Explain Core v1.0"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/count_condition/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/count_condition/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/count_condition/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/count_condition/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/count_condition/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/count_condition/variants.fa.v1.json"
+      },
+      "slug": "count_condition",
+      "title_de": "Count Condition (Zählen mit Bedingung) — FIAE Explain Core v1.0",
+      "title_fa": "Count Condition (شمارش با شرط) — FIAE Explain Core v1.0"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/exam_bank_ap2/exam.de.v1.json"
+      },
+      "slug": "exam_bank_ap2",
+      "title_de": "Exam Bank AP2",
+      "title_fa": "Exam Bank AP2"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/insertionsort/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/insertionsort/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/insertionsort/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/insertionsort/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/insertionsort/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/insertionsort/variants.fa.v1.json"
+      },
+      "slug": "insertionsort",
+      "title_de": "InsertionSort (Einfügesortierung) — FIAE Explain Core v1.0",
+      "title_fa": "InsertionSort (مرتب‌سازی درجی) — FIAE Explain Core v1.0"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/linearsearch/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/linearsearch/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/linearsearch/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/linearsearch/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/linearsearch/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/linearsearch/variants.fa.v1.json"
+      },
+      "slug": "linearsearch",
+      "title_de": "Linear Search (Lineare Suche) – FIAE Core (Deutsch)",
+      "title_fa": "Linear Search (جستجوی خطی) — FIAE Explain Core v1.0"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/maxperiod/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/maxperiod/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/maxperiod/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/maxperiod/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/maxperiod/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/maxperiod/variants.fa.v1.json"
+      },
+      "slug": "maxperiod",
+      "title_de": "MaxPeriod (Längste aufeinanderfolgende Serie) — FIAE Explain Core v1.0",
+      "title_fa": "MaxPeriod (طولانی‌ترین دنباله متوالی) — FIAE Explain Core v1.0"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/minimum/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/minimum/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/minimum/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/minimum/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/minimum/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/minimum/variants.fa.v1.json"
+      },
+      "slug": "minimum",
+      "title_de": "Minimum (Minimumsuche) — FIAE Explain Core v1.0",
+      "title_fa": "Minimum (کمینه‌یابی) — FIAE Core (فارسی)"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/minmax_avg/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/minmax_avg/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/minmax_avg/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/minmax_avg/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/minmax_avg/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/minmax_avg/variants.fa.v1.json"
+      },
+      "slug": "minmax_avg",
+      "title_de": "Min/Max/Average (Min/Max/Durchschnitt) — FIAE Explain Core v1.0",
+      "title_fa": "Min/Max/Average (کمینه/بیشینه/میانگین) — FIAE Explain Core v1.0"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/search_contains/exam.de.v1.json",
+        "explain_de": "/tutor/topics/search_contains/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/search_contains/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/search_contains/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/search_contains/variants.fa.v1.json"
+      },
+      "slug": "search_contains",
+      "title_de": "Search/Contains (Suchen/Enthalten) — FIAE Explain Core v1.0",
+      "title_fa": "Search/Contains — FIAE Core (فارسی)"
+    },
+    {
+      "paths": {
+        "exam_de": "/tutor/topics/selectionsort/exam.de.v1.json",
+        "exam_fa": "/tutor/topics/selectionsort/exam.fa.v1.json",
+        "explain_de": "/tutor/topics/selectionsort/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/selectionsort/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/selectionsort/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/selectionsort/variants.fa.v1.json"
+      },
+      "slug": "selectionsort",
+      "title_de": "SelectionSort (Auswahlsortierung) — FIAE Explain Core v1.0",
+      "title_fa": "SelectionSort (مرتب‌سازی انتخابی) — FIAE Explain Core v1.0"
+    },
+    {
+      "paths": {
+        "explain_de": "/tutor/topics/software_testing/explain.de.v1.json",
+        "explain_fa": "/tutor/topics/software_testing/explain.fa.v1.json",
+        "variants_de": "/tutor/topics/software_testing/variants.de.v1.json",
+        "variants_fa": "/tutor/topics/software_testing/variants.fa.v1.json"
+      },
+      "slug": "software_testing",
+      "title_de": "Software Testing — FIAE Prüfungsvorbereitung",
+      "title_fa": "تست نرم‌افزار — آمادگی امتحان FIAE"
+    }
+  ],
+  "version": "1.0"
+}

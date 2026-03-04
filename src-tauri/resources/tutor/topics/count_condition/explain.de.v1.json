@@ -1,0 +1,153 @@
+{
+  "version": "1.0",
+  "topic": "count_condition",
+  "lang": "de",
+  "schema_name": "count_condition.explain.de.v1",
+  "schema_kind": "explain_content",
+  "title": "Count Condition (Zählen mit Bedingung) — FIAE Explain Core v1.0",
+  "audience": "IHK FIAE AP2 (Algorithmen) — prüfungsorientiert",
+  "meta": {
+    "canonical_topic": "count_condition",
+    "difficulty": "basic",
+    "tags": [
+      "counting",
+      "condition",
+      "filter",
+      "O(n)",
+      "linear",
+      "IHK"
+    ],
+    "rtl_enabled": false,
+    "last_updated": "2026-01-28"
+  },
+  "sections_order": [
+    "definition",
+    "idea",
+    "procedure",
+    "example",
+    "complexity",
+    "ihk_traps",
+    "variants"
+  ],
+  "sections": [
+    {
+      "id": "definition",
+      "title": "Definition",
+      "format": "md",
+      "rtl": false,
+      "body": "**Count Condition (Zählen mit Bedingung)** ist ein einfacher Algorithmus, der ein Array durchläuft und die Anzahl der Elemente zählt, die eine **bestimmte Bedingung** erfüllen, oder eine gefilterte Liste aufbaut.\n\n**Kernprinzip:**\n- Zählvariable count startet bei 0\n- Array von Anfang bis Ende durchlaufen\n- Für jedes Element: Wenn Bedingung erfüllt → count erhöhen (oder Element zu Liste hinzufügen)\n- Ausgabe: Anzahl (count) oder gefilterte Liste (filtered)\n\n**IHK-Fokus:** Linearer Algorithmus O(n), Unterschied zwischen Zählen (count) und Filtern (build list), genaue Bedingungen (>, >=, ==, <, <=), Zugriff auf Objektfelder."
+    },
+    {
+      "id": "idea",
+      "title": "Grundidee",
+      "format": "md",
+      "rtl": false,
+      "body": "TBD"
+    },
+    {
+      "id": "procedure",
+      "title": "Vorgehen",
+      "format": "md",
+      "rtl": false,
+      "body": "TBD"
+    },
+    {
+      "id": "example",
+      "title": "Beispiel",
+      "format": "md",
+      "rtl": false,
+      "body": "TBD"
+    },
+    {
+      "id": "complexity",
+      "title": "Komplexität (IHK)",
+      "format": "md",
+      "rtl": false,
+      "body": "**Zeit:**\n- **Alle Varianten:** O(n) — linear\n- Grund: Einmaliges Durchlaufen des Arrays\n\n**Speicher:**\n- **count_gt:** O(1) — nur Variable count\n- **count_has_note:** O(1) — nur Variable count\n- **build_filtered_list:** O(k) — k gefilterte Elemente (Worst-Case: O(n))"
+    },
+    {
+      "id": "ihk_traps",
+      "title": "Prüfungsfallen",
+      "format": "md",
+      "rtl": false,
+      "body": "1) **count mit i verwechseln:** count und i sind unabhängig\n2) **count in jeder Runde erhöhen:** Nur bei erfüllter Bedingung\n3) **Initialisierung vergessen:** count = 0 vor Schleife\n4) **Falsche Bedingung:** Unterschied >, >=, ==, <, <=\n5) **Falscher Feldzugriff:** arr[i][field], nicht arr[field]\n6) **count statt filtered zurückgeben:** Bei build_filtered_list Liste zurückgeben\n7) **i statt arr[i] hinzufügen:** filtered.append(arr[i]), nicht i\n8) **filtered = [] vergessen:** Initialisierung vor Schleife"
+    },
+    {
+      "id": "variants",
+      "title": "Varianten (3)",
+      "format": "md",
+      "rtl": false,
+      "body": "**1) count_gt (Zähle größer als Schwellwert):**\n- **Eingabe:** Zahlen-Array + threshold\n- **Bedingung:** arr[i] > threshold\n- **Ausgabe:** Anzahl (count)\n- **Beispiel:** arr = [5, 2, 8, 3], threshold = 4 → count = 2 (Elemente 5 und 8)\n\n**2) count_has_note (Zähle Objekte mit bestimmtem Feldwert):**\n- **Eingabe:** Objekt-Array + field + value\n- **Bedingung:** arr[i][field] == value\n- **Ausgabe:** Anzahl (count)\n- **Beispiel:** students = [{note: 2}, {note: 3}, {note: 2}], field = \"note\", value = 2 → count = 2\n\n**3) build_filtered_list (Baue gefilterte Liste):**\n- **Eingabe:** Zahlen-Array + threshold\n- **Bedingung:** arr[i] > threshold\n- **Ausgabe:** Liste filtered (nicht nur count!)\n- **Beispiel:** arr = [5, 2, 8, 3], threshold = 4 → filtered = [5, 8]\n\n**Gemeinsamkeit:** Alle Varianten sind linear O(n)"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex1_count_gt",
+      "level": "exam_like",
+      "title": "Zähle größer als Schwellwert",
+      "task": "Gegeben: arr = [3, 7, 2, 9, 5], threshold = 4. Wie viele Elemente sind größer als 4?",
+      "input_example": {
+        "arr": [
+          3,
+          7,
+          2,
+          9,
+          5
+        ],
+        "threshold": 4
+      },
+      "expected_example": "count = 3 (Elemente 7, 9, 5)",
+      "hints": [
+        "Nur Elemente > 4 zählen"
+      ]
+    },
+    {
+      "id": "ex2_filtered",
+      "level": "exam_like",
+      "title": "Baue gefilterte Liste",
+      "task": "Gegeben: arr = [3, 7, 2, 9, 5], threshold = 4. Was ist filtered?",
+      "input_example": {
+        "arr": [
+          3,
+          7,
+          2,
+          9,
+          5
+        ],
+        "threshold": 4
+      },
+      "expected_example": "filtered = [7, 9, 5]",
+      "hints": [
+        "Leere Liste erstellen",
+        "Elemente > 4 hinzufügen"
+      ]
+    }
+  ],
+  "exam_tips": [
+    "count und i sind unabhängig",
+    "count nur bei erfüllter Bedingung erhöhen",
+    "Initialisierung: count = 0 oder filtered = []",
+    "Genaue Bedingung: >, >=, ==, <, <=",
+    "build_filtered_list gibt Liste zurück, nicht count",
+    "Feldzugriff: arr[i][field]",
+    "Komplexität: O(n) für alle Varianten"
+  ],
+  "glossary": [
+    {
+      "term": "count",
+      "definition": "Zählvariable für Anzahl erfüllter Bedingungen"
+    },
+    {
+      "term": "threshold",
+      "definition": "Schwellwert für Vergleich"
+    },
+    {
+      "term": "filtered",
+      "definition": "Neue Liste mit Elementen, die Bedingung erfüllen"
+    },
+    {
+      "term": "condition",
+      "definition": "Bedingung für Vergleich (z.B. > oder ==)"
+    }
+  ]
+}
