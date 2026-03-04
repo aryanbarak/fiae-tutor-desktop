@@ -1,0 +1,107 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  windows-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Setup Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Export-sync tutor resources
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          $workspace = $env:GITHUB_WORKSPACE
+          $candidates = @(
+            (Join-Path $workspace 'fiae-tutor-core'),
+            (Join-Path (Split-Path $workspace -Parent) 'fiae-tutor-core')
+          )
+
+          $corePath = $null
+          foreach ($candidate in $candidates) {
+            if (Test-Path $candidate) {
+              $corePath = $candidate
+              break
+            }
+          }
+
+          if (-not $corePath) {
+            throw "fiae-tutor-core submodule not found. Expected at '$($candidates -join "' or '")'."
+          }
+
+          Write-Host "Using core path: $corePath"
+          Push-Location $corePath
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+          $exportOut = Join-Path $workspace 'build\export\tutor'
+          if (Test-Path $exportOut) { Remove-Item -Recurse -Force $exportOut }
+          New-Item -ItemType Directory -Path $exportOut -Force | Out-Null
+
+          python -m fiae_tutor.export.tutor_static --out $exportOut
+          Pop-Location
+
+          $target = Join-Path $workspace 'src-tauri\resources\tutor'
+          if (Test-Path $target) { Remove-Item -Recurse -Force $target }
+          New-Item -ItemType Directory -Path $target -Force | Out-Null
+          Copy-Item (Join-Path $exportOut '*') $target -Recurse -Force
+
+          if (-not (Test-Path (Join-Path $target 'manifest.json'))) { throw 'manifest.json missing after export-sync' }
+          if (-not (Test-Path (Join-Path $target 'index.json'))) { throw 'index.json missing after export-sync' }
+
+      - name: Build Tauri installers
+        run: npm run tauri build
+
+      - name: Upload NSIS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nsis-installer
+          path: src-tauri/target/release/bundle/nsis/*.exe
+          if-no-files-found: error
+
+      - name: Upload MSI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: msi-installer
+          path: src-tauri/target/release/bundle/msi/*.msi
+          if-no-files-found: error
+
+      - name: Create GitHub release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/msi/*.msi
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
