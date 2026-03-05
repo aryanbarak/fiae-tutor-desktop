@@ -3,7 +3,7 @@ name: release
 on:
   push:
     tags:
-      - "v*"
+      - "v*.*.*"
 
 permissions:
   contents: write
@@ -82,29 +82,85 @@ jobs:
             throw 'topics/* missing after export-sync'
           }
 
-      - name: Build Tauri installers
+      - name: Build Tauri installers + updater metadata
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: npm run tauri build
 
-      - name: Upload NSIS artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nsis-installer
-          path: src-tauri/target/release/bundle/nsis/*.exe
-          if-no-files-found: error
+      - name: Validate and collect release assets
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
 
-      - name: Upload MSI artifact
+          $tag = $env:GITHUB_REF_NAME
+          $version = $tag.TrimStart('v')
+          $bundleRoot = Join-Path $env:GITHUB_WORKSPACE 'src-tauri\target\release\bundle'
+
+          $nsis = Get-ChildItem (Join-Path $bundleRoot 'nsis') -Filter 'CodeZertifikat_*setup.exe' -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          $msi = Get-ChildItem (Join-Path $bundleRoot 'msi') -Filter 'CodeZertifikat_*.msi' -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if (-not $nsis) { throw 'NSIS installer not found' }
+          if (-not $msi) { throw 'MSI installer not found' }
+
+          $latest = Get-ChildItem $bundleRoot -Recurse -Filter 'latest.json' -File | Select-Object -First 1
+          if (-not $latest) { throw 'latest.json not found. Ensure createUpdaterArtifacts and signing env are set.' }
+
+          $latestJson = Get-Content $latest.FullName -Raw
+          if ($latestJson -notmatch ('"version"\s*:\s*"' + [regex]::Escape($version) + '"')) {
+            throw "latest.json version mismatch. Expected: $version"
+          }
+
+          $sigFiles = Get-ChildItem $bundleRoot -Recurse -Filter '*.sig' -File
+          if (-not $sigFiles) { throw 'No .sig signature files found' }
+
+          $releaseDir = Join-Path $env:GITHUB_WORKSPACE 'release_assets'
+          if (Test-Path $releaseDir) { Remove-Item -Recurse -Force $releaseDir }
+          New-Item -ItemType Directory -Path $releaseDir | Out-Null
+
+          Copy-Item $nsis.FullName (Join-Path $releaseDir $nsis.Name) -Force
+          Copy-Item $msi.FullName (Join-Path $releaseDir $msi.Name) -Force
+          Copy-Item $latest.FullName (Join-Path $releaseDir 'latest.json') -Force
+
+          $sigOut = Join-Path $releaseDir 'signatures'
+          New-Item -ItemType Directory -Path $sigOut | Out-Null
+          foreach ($sig in $sigFiles) {
+            Copy-Item $sig.FullName (Join-Path $sigOut $sig.Name) -Force
+          }
+
+          $shaLines = @()
+          $hashTargets = @(
+            (Join-Path $releaseDir $nsis.Name),
+            (Join-Path $releaseDir $msi.Name),
+            (Join-Path $releaseDir 'latest.json')
+          ) + (Get-ChildItem $sigOut -File | Select-Object -ExpandProperty FullName)
+
+          foreach ($f in $hashTargets) {
+            $h = (Get-FileHash $f -Algorithm SHA256).Hash
+            $name = [IO.Path]::GetFileName($f)
+            $shaLines += "$h  $name"
+          }
+          Set-Content (Join-Path $releaseDir 'SHA256SUMS.txt') -Value $shaLines
+
+          Write-Host 'Release asset list:'
+          Get-ChildItem $releaseDir -Recurse -File | ForEach-Object { Write-Host $_.FullName }
+
+      - name: Upload release assets as workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: msi-installer
-          path: src-tauri/target/release/bundle/msi/*.msi
+          name: release-assets
+          path: release_assets/**
           if-no-files-found: error
 
       - name: Create GitHub release and upload assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            src-tauri/target/release/bundle/nsis/*.exe
-            src-tauri/target/release/bundle/msi/*.msi
+            release_assets/CodeZertifikat_*setup.exe
+            release_assets/CodeZertifikat_*.msi
+            release_assets/latest.json
+            release_assets/signatures/*.sig
+            release_assets/SHA256SUMS.txt
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
