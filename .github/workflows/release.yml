@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
 
       - name: Setup Node.js (20 LTS)
         uses: actions/setup-node@v4
@@ -35,52 +35,40 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      - name: Checkout tutor core (no submodule)
+        uses: actions/checkout@v4
+        with:
+          repository: aryanbarak/fiae-tutor-core
+          path: fiae-tutor-core
+          fetch-depth: 1
+
       - name: Export-sync tutor resources
         shell: pwsh
         run: |
           Set-StrictMode -Version Latest
           $ErrorActionPreference = 'Stop'
 
-          $workspace = $env:GITHUB_WORKSPACE
-          $candidates = @(
-            (Join-Path $workspace 'fiae-tutor-core'),
-            (Join-Path (Split-Path $workspace -Parent) 'fiae-tutor-core')
-          )
+          python -m pip install -U pip
+          python -m pip install -e .\fiae-tutor-core
+          python -m fiae_tutor.export.tutor_static --out .\_build\tutor
 
-          $corePath = $null
-          foreach ($candidate in $candidates) {
-            if (Test-Path $candidate) {
-              $corePath = $candidate
-              break
-            }
+          if (Test-Path .\src-tauri\resources\tutor\*) {
+            Remove-Item -Recurse -Force .\src-tauri\resources\tutor\* -ErrorAction SilentlyContinue
+          }
+          New-Item -ItemType Directory -Force -Path .\src-tauri\resources\tutor | Out-Null
+          Copy-Item -Recurse .\_build\tutor\* .\src-tauri\resources\tutor\
+
+          if (!(Test-Path .\src-tauri\resources\tutor\topics)) {
+            throw 'Missing topics folder after export'
           }
 
-          if (-not $corePath) {
-            throw "fiae-tutor-core submodule not found. Expected at '$($candidates -join "' or '")'."
-          }
-
-          Write-Host "Using core path: $corePath"
-          Push-Location $corePath
-          python -m pip install --upgrade pip
-          python -m pip install -e .
-
-          $exportOut = Join-Path $workspace 'build\export\tutor'
-          if (Test-Path $exportOut) { Remove-Item -Recurse -Force $exportOut }
-          New-Item -ItemType Directory -Path $exportOut -Force | Out-Null
-
-          python -m fiae_tutor.export.tutor_static --out $exportOut
-          Pop-Location
-
-          $target = Join-Path $workspace 'src-tauri\resources\tutor'
-          if (Test-Path $target) { Remove-Item -Recurse -Force $target }
-          New-Item -ItemType Directory -Path $target -Force | Out-Null
-          Copy-Item (Join-Path $exportOut '*') $target -Recurse -Force
-
-          if (-not (Test-Path (Join-Path $target 'manifest.json'))) { throw 'manifest.json missing after export-sync' }
-          if (-not (Test-Path (Join-Path $target 'index.json'))) { throw 'index.json missing after export-sync' }
-          if (-not (Get-ChildItem (Join-Path $target 'topics') -Directory | Select-Object -First 1)) {
+          Push-Location .\src-tauri\resources\tutor
+          if (-not (Test-Path .\manifest.json)) { throw 'manifest.json missing after export-sync' }
+          if (-not (Test-Path .\index.json)) { throw 'index.json missing after export-sync' }
+          if (-not (Get-ChildItem .\topics -Directory | Select-Object -First 1)) {
             throw 'topics/* missing after export-sync'
           }
+          Pop-Location
 
       - name: Build Tauri installers + updater metadata
         env:
