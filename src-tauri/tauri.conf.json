@@ -1,46 +1,46 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
-  "productName": "CodeZertifikat",
-  "version": "1.0.1",
-  "identifier": "cloud.barakzai.codezertifikat",
-  "build": {
-    "beforeDevCommand": "npm run dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist"
-  },
-  "app": {
-    "windows": [
-      {
-        "title": "CodeZertifikat",
-        "width": 800,
-        "height": 600
-      }
-    ],
-    "security": {
-      "csp": null
-    }
-  },
-  "bundle": {
-    "active": true,
-    "targets": "all",
-    "createUpdaterArtifacts": true,
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ]
-  },
-  "plugins": {
-    "updater": {
-      "active": true,
-      "dialog": true,
-      "endpoints": [
-        "https://github.com/aryanbarak/fiae-tutor-desktop/releases/latest/download/latest.json"
-      ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM1REQ3ODhGMjRBQUI4REUKUldUZXVLb2tqM2pkTlVzeTNVWCtEQWQ3TXNnU3pMYkV0VlBoaFdzSHpzemNuQUc1d0s3SUpXdjAK"
-    }
-  }
+    "$schema":  "https://schema.tauri.app/config/2",
+    "productName":  "CodeZertifikat",
+    "version":  "1.0.2",
+    "identifier":  "cloud.barakzai.codezertifikat",
+    "build":  {
+                  "beforeDevCommand":  "npm run dev",
+                  "devUrl":  "http://localhost:1420",
+                  "beforeBuildCommand":  "npm run build",
+                  "frontendDist":  "../dist"
+              },
+    "app":  {
+                "windows":  [
+                                {
+                                    "title":  "CodeZertifikat",
+                                    "width":  800,
+                                    "height":  600
+                                }
+                            ],
+                "security":  {
+                                 "csp":  null
+                             }
+            },
+    "bundle":  {
+                   "active":  true,
+                   "targets":  "all",
+                   "createUpdaterArtifacts":  true,
+                   "icon":  [
+                                "icons/32x32.png",
+                                "icons/128x128.png",
+                                "icons/128x128@2x.png",
+                                "icons/icon.icns",
+                                "icons/icon.ico"
+                            ]
+               },
+    "plugins":  {
+                    "updater":  {
+                                    "active":  true,
+                                    "dialog":  true,
+                                    "endpoints":  [
+                                                      "https://github.com/aryanbarak/fiae-tutor-desktop/releases/latest/download/latest.json"
+                                                  ],
+                                    "pubkey":  "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM1REQ3ODhGMjRBQUI4REUKUldUZXVLb2tqM2pkTlVzeTNVWCtEQWQ3TXNnU3pMYkV0VlBoaFdzSHpzemNuQUc1d0s3SUpXdjAK"
+                                }
+                }
 }
