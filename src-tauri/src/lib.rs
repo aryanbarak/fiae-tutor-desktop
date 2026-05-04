@@ -53,40 +53,6 @@ fn run_tutor(request_json: String) -> Result<String, String> {
     
     eprintln!("Core directory validated: {}", core_dir);
 
-    // Validate Python is runnable
-    eprintln!("Validating Python executable...");
-    let version_check = Command::new(&python_cmd)
-        .arg("--version")
-        .output();
-    
-    match version_check {
-        Ok(output) => {
-            if output.status.success() {
-                let version = String::from_utf8_lossy(&output.stdout);
-                let version_err = String::from_utf8_lossy(&output.stderr);
-                eprintln!("Python version check OK: {}{}", version.trim(), version_err.trim());
-            } else {
-                eprintln!("ERROR: Python --version failed!");
-                return Err(format!(
-                    "FATAL: Python executable failed version check.\n\
-                     Command: {} --version\n\
-                     Exit code: {:?}",
-                    python_cmd, output.status.code()
-                ));
-            }
-        }
-        Err(e) => {
-            eprintln!("ERROR: Cannot execute Python!");
-            return Err(format!(
-                "FATAL: Python is not runnable.\n\
-                 Error: {}\n\
-                 Python command: {}\n\
-                 Ensure Python is installed and in PATH, or set FIAE_TUTOR_PYTHON correctly.",
-                e, python_cmd
-            ));
-        }
-    }
-
     eprintln!("Spawning Python process: {} -m fiae_tutor.cli", python_cmd);
 
     // Spawn the Python process

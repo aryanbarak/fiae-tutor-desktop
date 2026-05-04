@@ -5,13 +5,7 @@
 import React from "react";
 import { CoreResponse } from "../domain/types";
 import { VariantInfo } from "../state/model";
-import DirBlock from "./DirBlock";
-import { ExamSessionState, ExamSessionItem, scoreAnswer } from "../utils/examSessionScoring";
-
-/**
- * Debug UI flag - enables inspector panels for developers
- */
-const DEBUG_UI = import.meta.env.VITE_DEBUG_UI === "true";
+import { ExamSessionRenderer } from "./ExamSessionRenderer";
 
 /**
  * Check if a language requires RTL (Right-to-Left) rendering
@@ -70,26 +64,6 @@ function renderBidiText(text: string, lang: string): React.ReactNode {
   );
 }
 
-const LTR_CHUNK = /([A-Za-z0-9_]+(?:[./:+\-*()=<>,'"\[\]]*[A-Za-z0-9_]+)*)/g;
-
-function renderBidiInline(text: string): React.ReactNode {
-  if (!text) return text;
-  const parts = text.split(LTR_CHUNK);
-  return (
-    <>
-      {parts.map((part, idx) =>
-        /^[A-Za-z0-9_]+/.test(part) ? (
-          <bdi key={idx} dir="ltr" className="bidi-ltr">
-            {part}
-          </bdi>
-        ) : (
-          <React.Fragment key={idx}>{part}</React.Fragment>
-        )
-      )}
-    </>
-  );
-}
-
 function localizedText(value: any, lang: "de" | "fa" | "bi"): string {
   if (typeof value === "string") return value;
   if (value && typeof value === "object" && !Array.isArray(value)) {
@@ -109,56 +83,6 @@ function variantTitle(v: any, lang: "de" | "fa" | "bi"): string {
   return "Variant";
 }
 
-type ExerciseType = "mcq" | "numeric" | "short_text" | "trace_steps" | "formula";
-
-const EXERCISE_TYPES: Record<string, ExerciseType> = {
-  ex04_complexity_classic: "numeric",
-  ex05_complexity_early_exit: "numeric",
-  ex04_complexity_best: "numeric",
-  ex05_complexity_worst: "numeric",
-  ex04_complexity_comparisons: "numeric",
-  ex05_complexity_swaps: "numeric",
-  ex04_complexity_log: "numeric",
-  ex05_complexity_formula: "formula",
-  ex04_complexity_comparisons_minmax: "numeric",
-  ex01_trace_passes: "trace_steps",
-  ex02_trace_after_i2: "trace_steps",
-  ex03_trace_insert_pos: "trace_steps",
-  ex01_trace_found: "trace_steps",
-  ex02_trace_not_found: "trace_steps",
-  ex03_trace_single: "trace_steps",
-};
-
-const MCQ_CHOICES: Record<string, { de: string[]; fa: string[] }> = {
-  ex06_trap_mid_overflow: {
-    de: [
-      "Um Integer-Overflow zu vermeiden",
-      "Weil (l+r)//2 schneller ist",
-      "Weil es immer aufrundet",
-      "Damit l und r unverÃ¤ndert bleiben",
-    ],
-    fa: [
-      "Ø¨Ø±Ø§ÛŒ Ø¬Ù„ÙˆÚ¯ÛŒØ±ÛŒ Ø§Ø² overflow",
-      "Ú†ÙˆÙ† (l+r)//2 Ø³Ø±ÛŒØ¹â€ŒØªØ± Ø§Ø³Øª",
-      "Ú†ÙˆÙ† Ù‡Ù…ÛŒØ´Ù‡ Ø±Ùˆ Ø¨Ù‡ Ø¨Ø§Ù„Ø§ Ú¯Ø±Ø¯ Ù…ÛŒâ€ŒÚ©Ù†Ø¯",
-      "Ø¨Ø±Ø§ÛŒ Ø§ÛŒÙ†Ú©Ù‡ l Ùˆ r ØªØºÛŒÛŒØ± Ù†Ú©Ù†Ù†Ø¯",
-    ],
-  },
-};
-
-function detectExerciseType(exId: string, task: string): ExerciseType {
-  if (exId && EXERCISE_TYPES[exId]) return EXERCISE_TYPES[exId];
-  const t = task.toLowerCase();
-  if (t.includes("welche") && t.includes("bedingung")) return "short_text";
-  if (t.includes("wie viele") || t.includes("anzahl") || t.includes("Ú†Ù†Ø¯") || t.includes("ØªØ¹Ø¯Ø§Ø¯")) return "numeric";
-  if (t.includes("komplex") || t.includes("big-o") || t.includes("o(")) return "formula";
-  if (t.includes("trace") || t.includes("zustand") || t.includes("nach i") || t.includes("Ø¨Ø¹Ø¯ Ø§Ø²")) return "trace_steps";
-  return "short_text";
-}
-
-
- 
-
 interface BaseRendererProps {
   response: CoreResponse;
   lang: "de" | "fa" | "bi";
@@ -170,33 +94,49 @@ interface ResultRendererProps extends BaseRendererProps {
   onVariantSelect: (variantId: string) => void;
 }
 
+function VariantSelectorComponent({
+  variants,
+  selectedVariantId,
+  onVariantSelect,
+}: {
+  variants: any[];
+  selectedVariantId: string | null;
+  onVariantSelect: (id: string) => void;
+}) {
+  const selectedVariant = selectedVariantId
+    ? variants.find((v) => v.id === selectedVariantId) || variants[0]
+    : variants[0];
+
+  return (
+    <div style={styles.variantSelector}>
+      <span style={styles.variantLabel}>Variants ({variants.length}):</span>
+      <select
+        value={selectedVariant?.id || variants[0]?.id}
+        onChange={(e) => onVariantSelect(e.target.value)}
+        style={styles.variantDropdown}
+        aria-label="Select variant"
+        title="Select variant"
+      >
+        {variants.map((v) => (
+          <option key={v.id} value={v.id}>
+            {String(v.title || v.id)}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 /**
  * Render Result tab - shows pseudocode, explain text, or structured data
- * Now supports multi-variant display with stable state
  */
-export function ResultRenderer({ 
-  response, 
-  lang, 
-  availableVariants, 
-  selectedVariantId, 
-  onVariantSelect 
+export function ResultRenderer({
+  response,
+  lang,
+  availableVariants,
+  selectedVariantId,
+  onVariantSelect,
 }: ResultRendererProps) {
-  const [examIndex, setExamIndex] = React.useState(0);
-  const [openSolutions, setOpenSolutions] = React.useState<Record<string, boolean>>({});
-  const [examState, setExamState] = React.useState<Record<string, {
-    answer: string;
-    checked: boolean;
-    isCorrect: boolean;
-    attempts: number;
-    revealed: boolean;
-    hintUsed: boolean;
-    warning?: string;
-  }>>({});
-  const [session, setSession] = React.useState<ExamSessionState | null>(null);
-  const [mode, setMode] = React.useState<"learn" | "exam">("learn");
-  const [timerEnabled, setTimerEnabled] = React.useState(false);
-  const [remainingSec, setRemainingSec] = React.useState<number | null>(null);
-  const [showSummary, setShowSummary] = React.useState(false);
   const [selectedPredictionTopic, setSelectedPredictionTopic] = React.useState<string | null>(null);
   const result = response?.result as any;
   const safeAvailableVariants: any[] = React.useMemo(
@@ -221,611 +161,11 @@ export function ResultRenderer({
   }
 
   if (result.exam_session) {
-    const exam = result.exam_session || {};
-    const isFa = lang === "fa";
-    const normalizeExamSession = (raw: any) => {
-      if (Array.isArray(raw?.exercises) && raw.exercises.length > 0) {
-        const total =
-          typeof raw.total === "number" && raw.total > 0
-            ? raw.total
-            : raw.exercises.length;
-        return {
-          topic: raw.topic || raw.meta?.topic || result.topic || "",
-          total,
-          exercises: raw.exercises,
-        };
-      }
-      return {
-        topic: raw.topic || raw.meta?.topic || result.topic || "",
-        total: 1,
-        exercises: [
-          {
-            id: raw.exercise_id || raw.meta?.exercise_id,
-            task: raw.task,
-            input: raw.input,
-            expected: raw.expected,
-            solution: raw.solution,
-            traps: raw.traps,
-            meta: raw.meta,
-          },
-        ],
-      };
-    };
-
-    const normalized = normalizeExamSession(exam);
-    const exercises = normalized.exercises || [];
-    const total = normalized.total || exercises.length || 1;
-    const safeIndex = Math.min(Math.max(examIndex, 0), Math.max(exercises.length - 1, 0));
-    const current = exercises[safeIndex] || {};
-    const exerciseKey = current.exercise_id || current.id || String(safeIndex);
-
-    const taskValue = current.task;
-    const task =
-      typeof taskValue === "string"
-        ? taskValue
-        : taskValue?.[lang] || taskValue?.de || taskValue?.fa || "";
-    const traps = Array.isArray(current.traps) ? current.traps : [];
-    const displayTraps =
-      DEBUG_UI && isFa
-        ? [...traps, "Ù†Ù…ÙˆÙ†Ù‡: Ø´Ø±Ø· low <= high Ø±Ø§ Ø¨Ø±Ø±Ø³ÛŒ Ú©Ù†."]
-        : traps;
-    const solutionValue = current.solution;
-    const solution =
-      typeof solutionValue === "string"
-        ? solutionValue
-        : solutionValue?.[lang] || solutionValue?.de || solutionValue?.fa || "";
-    const expectedValue = current.expected;
-    const expected =
-      typeof expectedValue === "string"
-        ? expectedValue
-        : expectedValue?.[lang] || expectedValue?.de || expectedValue?.fa || "";
-    const hasSolution = solution.trim().length > 0;
-    const hasExpected = expected.trim().length > 0;
-    const toggleStyle = hasSolution
-      ? styles.toggleButton
-      : { ...styles.toggleButton, opacity: 0.5, cursor: "not-allowed" as const };
-    const isMulti = exercises.length > 1;
-    const isOpen = openSolutions[exerciseKey] ?? false;
-
-    const sessionTopic = normalized.topic || exam.meta?.topic || result.topic || "";
-    const sessionSeed = exam.meta?.seed ?? exam.seed ?? 1;
-    const sessionKey = `${sessionTopic}::${sessionSeed}`;
-
-    React.useEffect(() => {
-      setExamIndex(0);
-      setOpenSolutions({});
-      setExamState({});
-      setShowSummary(false);
-      const sessionId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-      setSession({
-        session_id: sessionId,
-        started_at: new Date().toISOString(),
-        items: [],
-        totals: {
-          points_total: 0,
-          points_awarded: 0,
-          correct_count: 0,
-          total_time_sec: 0,
-        },
-      });
-    }, [sessionKey]);
-
-    const t = {
-      answerLabel: isFa ? "Ù¾Ø§Ø³Ø®" : "Answer",
-      answerPlaceholder: isFa ? "Ù¾Ø§Ø³Ø® Ø®ÙˆØ¯ Ø±Ø§ Ø¨Ù†ÙˆÛŒØ³ÛŒØ¯..." : "Type your answer...",
-      checkAnswer: isFa ? "Ø¨Ø±Ø±Ø³ÛŒ Ù¾Ø§Ø³Ø®" : "Check Answer",
-      noExpected: isFa
-        ? "Ù¾Ø§Ø³Ø® Ø±Ø³Ù…ÛŒ Ù†Ø¯Ø§Ø±Ø¯Ø› Ø§Ø² Ø±Ø§Ù‡â€ŒØ­Ù„ Ø§Ø³ØªÙØ§Ø¯Ù‡ Ú©Ù†."
-        : "No official expected answer; use solution as guidance.",
-      correct: isFa ? "âœ… Ø¯Ø±Ø³Øª Ø§Ø³Øª." : "âœ… Correct.",
-      wrong: isFa ? "âŒ Ù†Ø§Ø¯Ø±Ø³Øª Ø§Ø³Øª. Ù‚Ø§Ù„Ø¨ Ù¾Ø§Ø³Ø® Ø±Ø§ Ø¨Ø§ Expected Ù…Ù‚Ø§ÛŒØ³Ù‡ Ú©Ù†." : "âŒ Incorrect. Compare with expected format.",
-      firstTry: isFa ? "Ø§ÙˆÙ„ Ø¬ÙˆØ§Ø¨ Ø¨Ø¯Ù‡." : "First try answering.",
-      score: isFa ? "Ø§Ù…ØªÛŒØ§Ø²" : "Score",
-      expectedLabel: isFa ? "Ù¾Ø§Ø³Ø® Ù…ÙˆØ±Ø¯ Ø§Ù†ØªØ¸Ø§Ø±" : "Expected",
-      typeLabel: isFa ? "Ù†ÙˆØ¹ Ø³ÙˆØ§Ù„" : "Type",
-      modeLabel: isFa ? "Ø­Ø§Ù„Øª" : "Mode",
-      learn: isFa ? "Ø¢Ù…ÙˆØ²Ø´ÛŒ" : "Learn",
-      exam: isFa ? "Ø§Ù…ØªØ­Ø§Ù†" : "Exam",
-      timer: isFa ? "Ø²Ù…Ø§Ù†â€ŒØ³Ù†Ø¬" : "Timer",
-      submit: isFa ? "Ø«Ø¨Øª Ù¾Ø§Ø³Ø®" : "Submit",
-      hint: isFa ? "Ù†Ù…Ø§ÛŒØ´ Ø±Ø§Ù‡Ù†Ù…Ø§" : "Show hint",
-      summary: isFa ? "Ø®Ù„Ø§ØµÙ‡ Ø¬Ù„Ø³Ù‡" : "Session Summary",
-      export: isFa ? "Ø®Ø±ÙˆØ¬ÛŒ JSON Ø¬Ù„Ø³Ù‡" : "Export session JSON",
-      timeLeft: isFa ? "Ø²Ù…Ø§Ù† Ø¨Ø§Ù‚ÛŒâ€ŒÙ…Ø§Ù†Ø¯Ù‡" : "Time left",
-    };
-
-    const stateKey = `${sessionKey}::${safeIndex}`;
-    const currentState = examState[stateKey] || {
-      answer: "",
-      checked: false,
-      isCorrect: false,
-      attempts: 0,
-      revealed: false,
-      hintUsed: false,
-      warning: "",
-    };
-
-    const answeredCount = Object.values(examState).filter((s) => s.checked).length;
-    const correctCount = Object.values(examState).filter((s) => s.isCorrect).length;
-
-    const exerciseType = detectExerciseType(current.id || exerciseKey, task || "");
-    const mcqChoices = MCQ_CHOICES[current.id || ""]?.[isFa ? "fa" : "de"];
-    const exerciseId = current.id || exerciseKey;
-    const durationMap: Record<string, number> = {
-      ex01_trace_passes: 120,
-      ex02_trace_after_i2: 90,
-      ex03_trace_insert_pos: 90,
-      ex04_complexity_best: 60,
-      ex05_complexity_worst: 60,
-    };
-    const defaultDuration = 90;
-    const exerciseDuration = durationMap[exerciseId] ?? defaultDuration;
-
-    React.useEffect(() => {
-      if (!timerEnabled) {
-        setRemainingSec(null);
-        return;
-      }
-      setRemainingSec(exerciseDuration);
-    }, [timerEnabled, exerciseId]);
-
-    React.useEffect(() => {
-      if (!timerEnabled || remainingSec === null) return;
-      if (remainingSec <= 0) {
-        handleSubmit(true);
-        return;
-      }
-      const id = setInterval(() => {
-        setRemainingSec((s) => (s === null ? null : s - 1));
-      }, 1000);
-      return () => clearInterval(id);
-    }, [timerEnabled, remainingSec]);
-
-    function handleSubmit(auto = false) {
-      const trimmedAnswer = currentState.answer.trim();
-      const trimmedExpected = expected.trim();
-      if (!trimmedExpected) {
-        setExamState((prev) => ({
-          ...prev,
-          [stateKey]: {
-            ...currentState,
-            checked: true,
-            attempts: currentState.attempts + 1,
-            warning: t.noExpected,
-          },
-        }));
-        return;
-      }
-      const { is_correct, points_awarded } = scoreAnswer(
-        trimmedExpected,
-        trimmedAnswer,
-        currentState.revealed
-      );
-      setExamState((prev) => ({
-        ...prev,
-        [stateKey]: {
-          ...currentState,
-          checked: true,
-          isCorrect: is_correct,
-          attempts: currentState.attempts + 1,
-          warning: "",
-        },
-      }));
-      if (session) {
-        const timeSpent = timerEnabled ? (exerciseDuration - (remainingSec ?? exerciseDuration)) : 0;
-        const item: ExamSessionItem = {
-          exercise_id: exerciseId,
-          task: task || "",
-          input: current.input ?? {},
-          answer: trimmedAnswer,
-          is_correct,
-          attempts: currentState.attempts + 1,
-          time_spent_sec: timeSpent,
-          revealed_solution: currentState.revealed,
-          points_awarded,
-          hint_used: currentState.revealed,
-        };
-        const items = session.items.filter((i) => i.exercise_id !== exerciseId).concat(item);
-        const totals = {
-          points_total: total,
-          points_awarded: items.reduce((s, i) => s + i.points_awarded, 0),
-          correct_count: items.filter((i) => i.is_correct).length,
-          total_time_sec: items.reduce((s, i) => s + i.time_spent_sec, 0),
-        };
-        setSession({ ...session, items, totals });
-      }
-      if (auto && mode === "exam") {
-        setExamIndex((prev) => Math.min(exercises.length - 1, prev + 1));
-      }
-    }
-
-    return (
-      <div dir={isFa ? "rtl" : "ltr"} className={isFa ? "rtl" : undefined}>
-        <div style={styles.header}>
-          Exam Session {normalized.topic ? `- ${normalized.topic}` : ""}
-        </div>
-        {isMulti && (
-          <div style={styles.examSection}>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              <button
-                onClick={() => setExamIndex((prev) => Math.max(0, prev - 1))}
-                disabled={safeIndex === 0}
-                style={styles.navButton}
-              >
-                Prev
-              </button>
-              <button
-                onClick={() => setExamIndex((prev) => Math.min(exercises.length - 1, prev + 1))}
-                disabled={safeIndex >= exercises.length - 1}
-                style={styles.navButton}
-              >
-                Next
-              </button>
-              <div style={styles.examLabel}>
-                Exercise {safeIndex + 1} / {total}
-              </div>
-              <div style={{ ...styles.examLabel, marginLeft: "8px" }}>
-                {t.typeLabel}: {exerciseType}
-              </div>
-              <div style={{ ...styles.examLabel, marginLeft: "8px" }}>
-                {t.score}: {correctCount} / {answeredCount}
-              </div>
-              <div style={{ ...styles.examLabel, marginLeft: "8px" }}>
-                {t.modeLabel}: {mode === "exam" ? t.exam : t.learn}
-              </div>
-              <div style={{ display: "flex", gap: "6px", marginLeft: "8px" }}>
-                <button
-                  onClick={() => setMode("learn")}
-                  style={mode === "learn" ? styles.toggleButton : styles.navButton}
-                >
-                  {t.learn}
-                </button>
-                <button
-                  onClick={() => setMode("exam")}
-                  style={mode === "exam" ? styles.toggleButton : styles.navButton}
-                >
-                  {t.exam}
-                </button>
-              </div>
-              <label style={{ marginLeft: "8px", display: "flex", gap: "6px", alignItems: "center" }}>
-                <input
-                  type="checkbox"
-                  checked={timerEnabled}
-                  onChange={(e) => setTimerEnabled(e.target.checked)}
-                />
-                {t.timer}
-              </label>
-              {timerEnabled && remainingSec !== null && (
-                <div style={{ ...styles.examLabel, marginLeft: "8px" }}>
-                  {t.timeLeft}: {remainingSec}s
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-        <div style={styles.examSection}>
-          <div style={styles.examLabel}>Task</div>
-          <DirBlock
-            rtl={isFa}
-            style={{
-              ...styles.examText,
-              unicodeBidi: "plaintext",
-            }}
-          >
-            {isFa ? renderBidiInline(task) : task}
-          </DirBlock>
-        </div>
-
-        <div style={styles.examSection}>
-          <div style={styles.examLabel}>Input</div>
-          <DirBlock rtl={false}>
-            <pre style={styles.jsonBlock}>
-              {JSON.stringify(current.input ?? {}, null, 2)}
-            </pre>
-          </DirBlock>
-        </div>
-
-        <div style={styles.examSection}>
-          <div style={styles.examLabel}>{t.answerLabel}</div>
-          {exerciseType === "mcq" && mcqChoices ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              {mcqChoices.map((choice) => (
-                <label key={choice} style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                  <input
-                    type="radio"
-                    name={`mcq-${stateKey}`}
-                    checked={currentState.answer === choice}
-                    disabled={mode === "exam" && currentState.checked}
-                    onChange={() =>
-                      setExamState((prev) => ({
-                        ...prev,
-                        [stateKey]: { ...currentState, answer: choice, warning: "" },
-                      }))
-                    }
-                  />
-                  <span>{choice}</span>
-                </label>
-              ))}
-            </div>
-          ) : exerciseType === "numeric" ? (
-            <input
-              type="number"
-              style={styles.answerInput}
-              placeholder={t.answerPlaceholder}
-              value={currentState.answer}
-              disabled={mode === "exam" && currentState.checked}
-              onChange={(e) =>
-                setExamState((prev) => ({
-                  ...prev,
-                  [stateKey]: { ...currentState, answer: e.target.value, warning: "" },
-                }))
-              }
-            />
-          ) : exerciseType === "formula" ? (
-            <input
-              type="text"
-              style={styles.answerInput}
-              placeholder={t.answerPlaceholder}
-              value={currentState.answer}
-              disabled={mode === "exam" && currentState.checked}
-              onChange={(e) =>
-                setExamState((prev) => ({
-                  ...prev,
-                  [stateKey]: { ...currentState, answer: e.target.value, warning: "" },
-                }))
-              }
-            />
-          ) : exerciseType === "short_text" ? (
-            <input
-              type="text"
-              style={styles.answerInput}
-              placeholder={t.answerPlaceholder}
-              value={currentState.answer}
-              disabled={mode === "exam" && currentState.checked}
-              onChange={(e) =>
-                setExamState((prev) => ({
-                  ...prev,
-                  [stateKey]: { ...currentState, answer: e.target.value, warning: "" },
-                }))
-              }
-            />
-          ) : (
-            <textarea
-              style={styles.answerInput}
-              placeholder={t.answerPlaceholder}
-              value={currentState.answer}
-              disabled={mode === "exam" && currentState.checked}
-              onChange={(e) =>
-                setExamState((prev) => ({
-                  ...prev,
-                  [stateKey]: { ...currentState, answer: e.target.value, warning: "" },
-                }))
-              }
-            />
-          )}
-          <div style={{ marginTop: "8px", display: "flex", gap: "8px", alignItems: "center" }}>
-            <button
-              onClick={() => handleSubmit(false)}
-              style={styles.toggleButton}
-            >
-              {mode === "exam" ? t.submit : t.checkAnswer}
-            </button>
-            {currentState.warning && (
-              <div style={{ color: "#ffcc66" }}>{currentState.warning}</div>
-            )}
-          </div>
-          {currentState.checked && expected.trim() && (
-            <div style={{ marginTop: "8px", color: currentState.isCorrect ? "#88ff88" : "#ff8888" }}>
-              {currentState.isCorrect ? t.correct : t.wrong}
-            </div>
-          )}
-          {(currentState.checked && !currentState.isCorrect && expected.trim()) ||
-          (currentState.revealed && expected.trim()) ? (
-            <div style={{ marginTop: "8px" }}>
-              <div style={styles.examLabel}>{t.expectedLabel}</div>
-              <DirBlock
-                rtl={isFa}
-                style={styles.examSolution}
-              >
-                {expected}
-              </DirBlock>
-            </div>
-          ) : null}
-        </div>
-
-        {displayTraps.length > 0 && (
-          <div
-            style={styles.examSection}
-            className={isFa ? "traps rtl" : "traps"}
-            dir={isFa ? "rtl" : "ltr"}
-          >
-            <div style={styles.examLabel}>Traps</div>
-            {mode === "exam" ? (
-              <>
-                <button
-                  onClick={() =>
-                    setExamState((prev) => ({
-                      ...prev,
-                      [stateKey]: {
-                        ...currentState,
-                        hintUsed: true,
-                      },
-                    }))
-                  }
-                  style={styles.toggleButton}
-                >
-                  {t.hint}
-                </button>
-                {currentState.hintUsed && (
-                  <ul style={styles.examList}>
-                    {displayTraps.map((trap: string, idx: number) => (
-                      <li key={idx} style={styles.examListItem}>
-                        <DirBlock rtl={isFa}>
-                          {trap}
-                        </DirBlock>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </>
-            ) : (
-              <ul style={styles.examList}>
-                {displayTraps.map((trap: string, idx: number) => (
-                  <li key={idx} style={styles.examListItem}>
-                    <DirBlock rtl={isFa}>
-                      {trap}
-                    </DirBlock>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-
-        <div style={styles.examSection}>
-          <button
-            onClick={() =>
-              setOpenSolutions((prev) => {
-                if (mode === "exam" && !currentState.checked) {
-                  setExamState((s) => ({
-                    ...s,
-                    [stateKey]: { ...currentState, warning: t.firstTry },
-                  }));
-                  return prev;
-                }
-                if (currentState.attempts < 1) {
-                  setExamState((s) => ({
-                    ...s,
-                    [stateKey]: { ...currentState, warning: t.firstTry },
-                  }));
-                  return prev;
-                }
-                setExamState((s) => ({
-                  ...s,
-                  [stateKey]: { ...currentState, revealed: !isOpen, warning: "" },
-                }));
-                return { ...prev, [exerciseKey]: !isOpen };
-              })
-            }
-            style={toggleStyle}
-            disabled={!hasSolution || (mode === "exam" && !currentState.checked)}
-          >
-            {isOpen ? "Hide solution" : "Show solution"}
-          </button>
-          {!hasSolution && hasExpected && (
-            <DirBlock
-              rtl={isFa}
-              style={styles.examSolution}
-            >
-              {expected}
-            </DirBlock>
-          )}
-          {!hasSolution && !hasExpected && (
-            <div style={styles.examSolution}>
-              No solution available for this exercise.
-            </div>
-          )}
-          {isOpen && hasSolution && (
-            <DirBlock
-              rtl={isFa}
-              style={styles.examSolution}
-            >
-              {solution}
-            </DirBlock>
-          )}
-        </div>
-
-        <div style={styles.examSection}>
-          <button onClick={() => setShowSummary(!showSummary)} style={styles.toggleButton}>
-            {t.summary}
-          </button>
-          {showSummary && session && (
-            <div style={{ marginTop: "12px" }}>
-              <div style={{ marginBottom: "8px" }}>
-                <div style={styles.examLabel}>
-                  {t.score}: {session.totals.correct_count} / {total}
-                </div>
-                <div style={styles.examLabel}>
-                  Points: {session.totals.points_awarded} / {session.totals.points_total}
-                </div>
-                <div style={styles.examLabel}>
-                  Time: {session.totals.total_time_sec}s
-                </div>
-              </div>
-              <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "8px" }}>
-                <thead>
-                  <tr>
-                    <th style={styles.examTableHeader}>#</th>
-                    <th style={styles.examTableHeader}>ID</th>
-                    <th style={styles.examTableHeader}>Correct</th>
-                    <th style={styles.examTableHeader}>Attempts</th>
-                    <th style={styles.examTableHeader}>Time(s)</th>
-                    <th style={styles.examTableHeader}>Points</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {session.items.map((item, idx) => (
-                    <tr key={item.exercise_id}>
-                      <td style={styles.examTableCell}>{idx + 1}</td>
-                      <td style={styles.examTableCell}>{item.exercise_id}</td>
-                      <td style={styles.examTableCell}>{item.is_correct ? "âœ…" : "âŒ"}</td>
-                      <td style={styles.examTableCell}>{item.attempts}</td>
-                      <td style={styles.examTableCell}>{item.time_spent_sec}</td>
-                      <td style={styles.examTableCell}>{item.points_awarded}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <pre style={styles.jsonBlock}>{JSON.stringify(session, null, 2)}</pre>
-              <button
-                onClick={() => {
-                  const blob = new Blob([JSON.stringify(session, null, 2)], { type: "application/json" });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = `exam_session_${session.session_id}.json`;
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-                style={styles.copyButton}
-              >
-                {t.export}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    );
+    return <ExamSessionRenderer result={result} lang={lang} />;
   }
 
   // Use variants from model state (stable) instead of response
   const hasVariants = safeAvailableVariants.length > 0;
-
-  // Variant Selector Component (reusable)
-  const VariantSelector = () => {
-    if (!hasVariants) return null;
-
-    const selectedVariant = selectedVariantId
-      ? safeAvailableVariants.find((v) => v.id === selectedVariantId) || safeAvailableVariants[0]
-      : safeAvailableVariants[0];
-
-    return (
-      <div style={styles.variantSelector}>
-        <span style={styles.variantLabel}>Variants ({safeAvailableVariants.length}):</span>
-        <select
-          value={selectedVariant?.id || safeAvailableVariants[0]?.id}
-          onChange={(e) => onVariantSelect(e.target.value)}
-          style={styles.variantDropdown}
-        >
-          {safeAvailableVariants.map((v) => (
-            <option key={v.id} value={v.id}>
-              {String(v.title || v.id)}
-            </option>
-          ))}
-        </select>
-      </div>
-    );
-  };
 
   if (hasVariants) {
     const selectedVariant = selectedVariantId
@@ -841,7 +181,11 @@ export function ResultRenderer({
 
       return (
         <div>
-          <VariantSelector />
+          <VariantSelectorComponent
+            variants={safeAvailableVariants}
+            selectedVariantId={selectedVariantId}
+            onVariantSelect={onVariantSelect}
+          />
           <div style={styles.header}>
             {result.topic || "Algorithm"} - {variantTitle(selectedVariant, lang)}
           </div>
@@ -880,7 +224,11 @@ export function ResultRenderer({
       const notesText = localizedText(selectedVariant.notes, lang);
       return (
         <div>
-          <VariantSelector />
+          <VariantSelectorComponent
+            variants={safeAvailableVariants}
+            selectedVariantId={selectedVariantId}
+            onVariantSelect={onVariantSelect}
+          />
           <div style={styles.header}>{variantTitle(selectedVariant, lang)}</div>
           <div
             style={{
@@ -942,14 +290,16 @@ export function ResultRenderer({
 
     return (
       <div>
-        <VariantSelector />
+        <VariantSelectorComponent
+          variants={safeAvailableVariants}
+          selectedVariantId={selectedVariantId}
+          onVariantSelect={onVariantSelect}
+        />
         <div style={styles.empty}>Variant "{variantTitle(selectedVariant, lang)}" has no content</div>
       </div>
     );
   }
 
-  // Check for error response from backend.
-  // Distinguish explain-loader errors from algorithm/domain errors.
   if (result.error) {
     const looksLikeExplainLoadError =
       result.error === true ||
@@ -959,23 +309,27 @@ export function ResultRenderer({
     if (looksLikeExplainLoadError) {
       return (
         <div>
-          <div style={{...styles.header, backgroundColor: "#d32f2f"}}>
+          <div style={{ ...styles.header, backgroundColor: "#d32f2f" }}>
             Error Loading Explain Content
           </div>
-          <div style={{
-            padding: "1rem",
-            backgroundColor: "#ffebee",
-            color: "#c62828",
-            borderRadius: "4px",
-            marginTop: "1rem",
-            fontFamily: "monospace",
-            whiteSpace: "pre-wrap"
-          }}>
-            <strong>Error Type:</strong> {result.error_type || "unknown"}<br/>
+          <div
+            style={{
+              padding: "1rem",
+              backgroundColor: "#ffebee",
+              color: "#c62828",
+              borderRadius: "4px",
+              marginTop: "1rem",
+              fontFamily: "monospace",
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            <strong>Error Type:</strong> {result.error_type || "unknown"}
+            <br />
             <strong>Message:</strong> {result.error_message || "Unknown error"}
           </div>
-          <div style={{marginTop: "1rem", fontSize: "0.9rem", color: "#666"}}>
-            <strong>Topic:</strong> {result.topic || "unknown"} | <strong>Language:</strong> {result.lang || "unknown"}
+          <div style={{ marginTop: "1rem", fontSize: "0.9rem", color: "#666" }}>
+            <strong>Topic:</strong> {result.topic || "unknown"} |{" "}
+            <strong>Language:</strong> {result.lang || "unknown"}
           </div>
         </div>
       );
@@ -989,48 +343,43 @@ export function ResultRenderer({
 
     return (
       <div>
-        <div style={{...styles.header, backgroundColor: "#d32f2f"}}>
-          Algorithm Error
-        </div>
-        <div style={{
-          padding: "1rem",
-          backgroundColor: "#ffebee",
-          color: "#c62828",
-          borderRadius: "4px",
-          marginTop: "1rem",
-          fontFamily: "monospace",
-          whiteSpace: "pre-wrap"
-        }}>
+        <div style={{ ...styles.header, backgroundColor: "#d32f2f" }}>Algorithm Error</div>
+        <div
+          style={{
+            padding: "1rem",
+            backgroundColor: "#ffebee",
+            color: "#c62828",
+            borderRadius: "4px",
+            marginTop: "1rem",
+            fontFamily: "monospace",
+            whiteSpace: "pre-wrap",
+          }}
+        >
           <strong>Error:</strong> {errorDetail}
         </div>
       </div>
     );
   }
 
-  // STRICT: Explain Core v1.0 - structured sections rendering (FROZEN SCHEMA)
-  // Only render sections that exist in sections array
-  // No fallbacks, no normalization, no heuristics
   if (result.sections && Array.isArray(result.sections)) {
     const isRtl = isRtlLang(lang);
-    
-    // Validate we have sections to render
+
     if (result.sections.length === 0) {
       return (
         <div>
-          <div style={styles.header}>ðŸ’¡ {result.title || "Explanation"}</div>
-          <div style={{...styles.empty, color: "#ff9800"}}>
-            âš ï¸ No sections found in explain content. The sections array is empty.
+          <div style={styles.header}>💡 {result.title || "Explanation"}</div>
+          <div style={{ ...styles.empty, color: "#ff9800" }}>
+            ⚠️ No sections found in explain content. The sections array is empty.
           </div>
         </div>
       );
     }
-    
+
     return (
       <div>
-        <div style={styles.header}>ðŸ’¡ {result.title || "Explanation"}</div>
+        <div style={styles.header}>💡 {result.title || "Explanation"}</div>
         <div style={styles.sectionsContainer}>
           {result.sections.map((section: any, idx: number) => {
-            // STRICT: Use only validated schema fields
             const sectionId = section.id || `section-${idx}`;
             const sectionTitle = localizedText(section.title, lang) || "Untitled Section";
             const sectionBodyRaw =
@@ -1038,43 +387,49 @@ export function ResultRenderer({
               (Array.isArray(section.blocks) ? blocksToText(section.blocks) : "");
             const sectionBody = localizedText(sectionBodyRaw, lang);
             const sectionFormat = section.format || "md";
+            void sectionFormat;
             const sectionRtl = section.rtl ?? isRtl;
-            
-            // Warn if body is empty (schema should prevent this, but defensive)
+
             if (!sectionBody.trim()) {
               console.warn(`[ExplainRenderer] Section ${sectionId} has empty body!`);
               return (
-                <div key={sectionId} style={{...styles.section, borderLeft: "3px solid #ff9800"}}>
-                  <h3 style={{
-                    ...styles.sectionTitle,
-                    direction: sectionRtl ? "rtl" : "ltr",
-                    textAlign: sectionRtl ? "right" : "left",
-                  }}>
+                <div key={sectionId} style={{ ...styles.section, borderLeft: "3px solid #ff9800" }}>
+                  <h3
+                    style={{
+                      ...styles.sectionTitle,
+                      direction: sectionRtl ? "rtl" : "ltr",
+                      textAlign: sectionRtl ? "right" : "left",
+                    }}
+                  >
                     {sectionTitle}
                   </h3>
-                  <div style={{color: "#ff9800", fontStyle: "italic"}}>
-                    âš ï¸ Section body is empty
+                  <div style={{ color: "#ff9800", fontStyle: "italic" }}>
+                    ⚠️ Section body is empty
                   </div>
                 </div>
               );
             }
-            
+
             return (
               <div key={sectionId} style={styles.section}>
-                <h3 style={{
-                  ...styles.sectionTitle,
-                  direction: sectionRtl ? "rtl" : "ltr",
-                  textAlign: sectionRtl ? "right" : "left",
-                }}>
+                <h3
+                  style={{
+                    ...styles.sectionTitle,
+                    direction: sectionRtl ? "rtl" : "ltr",
+                    textAlign: sectionRtl ? "right" : "left",
+                  }}
+                >
                   {sectionTitle}
                 </h3>
-                <div style={{
-                  ...styles.sectionBody,
-                  direction: sectionRtl ? "rtl" : "ltr",
-                  textAlign: sectionRtl ? "right" : "left",
-                  unicodeBidi: "plaintext",
-                  whiteSpace: sectionFormat === "text" ? "pre-wrap" : "pre-wrap",
-                }} className={sectionRtl ? "rtlText" : undefined}>
+                <div
+                  style={{
+                    ...styles.sectionBody,
+                    direction: sectionRtl ? "rtl" : "ltr",
+                    textAlign: sectionRtl ? "right" : "left",
+                    unicodeBidi: "plaintext",
+                  }}
+                  className={sectionRtl ? "rtlText" : undefined}
+                >
                   {renderBidiText(sectionBody, lang)}
                 </div>
               </div>
@@ -1091,14 +446,10 @@ export function ResultRenderer({
     Object.prototype.hasOwnProperty.call(result, "matched_keywords")
   ) {
     const isFa = lang === "fa";
-    const templateKey =
-      isFa ? "template_pseudocode_fa" : "template_pseudocode_de";
-    const fallbackTemplateKey =
-      isFa ? "template_pseudocode_de" : "template_pseudocode_fa";
+    const templateKey = isFa ? "template_pseudocode_fa" : "template_pseudocode_de";
+    const fallbackTemplateKey = isFa ? "template_pseudocode_de" : "template_pseudocode_fa";
     const templatePseudocode =
-      (result?.[templateKey] as string) ||
-      (result?.[fallbackTemplateKey] as string) ||
-      "";
+      (result?.[templateKey] as string) || (result?.[fallbackTemplateKey] as string) || "";
     const predictions = Array.isArray(result.predictions) ? result.predictions : [];
     const normalizedPredictions = predictions
       .filter((p: any) => p && typeof p === "object")
@@ -1128,7 +479,7 @@ export function ResultRenderer({
 
     return (
       <div>
-        <div style={styles.header}>ðŸ§­ Master Patterns</div>
+        <div style={styles.header}>🧭 Master Patterns</div>
         <div style={styles.sectionsContainer}>
           <div style={styles.section}>
             <h3 style={styles.sectionTitle}>Recommended Topic</h3>
@@ -1149,10 +500,7 @@ export function ResultRenderer({
                       width: "100%",
                       textAlign: "left",
                       cursor: "pointer",
-                      border:
-                        activeTopic === p.topic
-                          ? "2px solid #00ff88"
-                          : "1px solid #555",
+                      border: activeTopic === p.topic ? "2px solid #00ff88" : "1px solid #555",
                     }}
                   >
                     <div style={styles.exerciseTitle}>
@@ -1223,10 +571,18 @@ export function ResultRenderer({
 
           {trapsFa.length > 0 && !isFa && isRecommendedActive && (
             <div style={styles.section}>
-              <h3 style={styles.sectionTitle}>ØªÙˆØ¶ÛŒØ­ ÙØ§Ø±Ø³ÛŒ</h3>
+              <h3 style={styles.sectionTitle}>توضیح فارسی</h3>
               <ul style={styles.examList}>
                 {trapsFa.map((item: string, idx: number) => (
-                  <li key={idx} style={{ ...styles.examListItem, direction: "rtl", textAlign: "right", unicodeBidi: "plaintext" }}>
+                  <li
+                    key={idx}
+                    style={{
+                      ...styles.examListItem,
+                      direction: "rtl",
+                      textAlign: "right",
+                      unicodeBidi: "plaintext",
+                    }}
+                  >
                     {renderBidiText(item, "fa")}
                   </li>
                 ))}
@@ -1234,7 +590,9 @@ export function ResultRenderer({
             </div>
           )}
 
-          <div style={{ ...styles.section, borderBottom: "none", marginBottom: 0, paddingBottom: 0 }}>
+          <div
+            style={{ ...styles.section, borderBottom: "none", marginBottom: 0, paddingBottom: 0 }}
+          >
             <h3 style={styles.sectionTitle}>Next Steps</h3>
             {nextSteps.length > 0 && isRecommendedActive ? (
               <ul style={styles.examList}>
@@ -1262,7 +620,7 @@ export function ResultRenderer({
     return (
       <div>
         <div style={styles.header}>
-          ðŸ“ {result.algorithm || "Algorithm"} - {result.variant || ""}
+          📝 {result.algorithm || "Algorithm"} - {result.variant || ""}
         </div>
         <pre style={styles.codeBlock}>{result.pseudocode}</pre>
         <button
@@ -1275,8 +633,6 @@ export function ResultRenderer({
     );
   }
 
-  // Generic trace result renderer for algorithm topics that return flat trace summaries
-  // (e.g., insertionsort trace: { sorted, variant, algorithm, passes }).
   if (
     Array.isArray(result.sorted) &&
     (typeof result.algorithm === "string" || typeof result.variant === "string")
@@ -1311,27 +667,21 @@ export function ResultRenderer({
     );
   }
 
-  // REMOVED: Legacy fallback for explain.content, explain.summary, etc.
-  // All explain mode content MUST use sections[] array with strict schema
-  
-  // Final fallback: show structured data for debugging
   return (
     <div>
-      <div style={{...styles.header, backgroundColor: "#ff9800"}}>
-        âš ï¸ Unexpected Result Format
+      <div style={{ ...styles.header, backgroundColor: "#ff9800" }}>
+        ⚠️ Unexpected Result Format
       </div>
-      <div style={{marginTop: "1rem", color: "#ff6f00"}}>
-        The result does not match any known format (sections, pseudocode, etc).
-        This likely indicates a schema issue or unsupported mode.
+      <div style={{ marginTop: "1rem", color: "#ff6f00" }}>
+        The result does not match any known format (sections, pseudocode, etc). This likely
+        indicates a schema issue or unsupported mode.
       </div>
       <div style={styles.keyValueContainer}>
         {Object.entries(result).map(([key, value]) => (
           <div key={key} style={styles.keyValueRow}>
             <span style={styles.key}>{key}:</span>
             <span style={styles.value}>
-              {typeof value === "object"
-                ? JSON.stringify(value, null, 2)
-                : String(value)}
+              {typeof value === "object" ? JSON.stringify(value, null, 2) : String(value)}
             </span>
           </div>
         ))}
@@ -1344,65 +694,121 @@ export function ResultRenderer({
  * Render Schreibtischtest tab - desk-check table from trace events
  */
 export function SchreibtischtestRenderer({ response }: BaseRendererProps) {
+  const result = (response?.result as any) || {};
+  const examRows = Array.isArray(result?.trace_exam_rows) ? result.trace_exam_rows : [];
   const events = Array.isArray(response?.events) ? response.events : [];
-  if (events.length === 0) {
+  if (examRows.length === 0 && events.length === 0) {
     return <div style={styles.empty}>No events available for Schreibtischtest</div>;
   }
 
-  const rows = events.map((ev: any, idx: number) => {
-    const state = (ev && typeof ev === "object" ? ev.state : {}) || {};
-    const indices = (state && typeof state === "object" ? state.indices : {}) || {};
-    const details = (ev?.action && typeof ev.action === "object" ? ev.action.details : {}) || {};
-    const iVal = indices.i ?? indices.pass ?? details.i ?? "";
-    const jVal = indices.j ?? details.j ?? "";
-    const keyVal = details.key_value ?? details.key ?? "";
-    const arr = Array.isArray(state.array) ? JSON.stringify(state.array) : "";
-    const label =
-      ev?.messages?.de ||
-      ev?.messages?.fa ||
-      ev?.action?.type ||
-      ev?.type ||
-      "";
+  const startEvent = events.find((ev: any) => ev?.type === "start");
+  const baseArray = Array.isArray(startEvent?.state?.array) ? startEvent.state.array : [];
 
-    return {
-      step: typeof ev?.id === "number" ? ev.id : idx + 1,
-      type: String(ev?.type ?? ""),
-      i: String(iVal),
-      j: String(jVal),
-      key: String(keyVal),
-      array: arr,
-      note: String(label),
-    };
-  });
+  const passRows =
+    events
+      .filter((ev: any) => ev?.type === "pass_end")
+      .map((ev: any, idx: number) => {
+        const passIdx = typeof ev?.pass === "number" ? ev.pass : idx;
+        const state = (ev && typeof ev === "object" ? ev.state : {}) || {};
+        const arr = Array.isArray(state.array) ? JSON.stringify(state.array) : "";
+        const rangeEnd =
+          ev?.action?.details?.range_end ??
+          (Array.isArray(state.array) ? state.array.length - 2 - passIdx : "");
+        const range = rangeEnd === "" ? "" : `[0..${rangeEnd}]`;
+        const note = ev?.messages?.de || ev?.messages?.fa || "Pass abgeschlossen";
+
+        return {
+          step: idx,
+          pass: passIdx + 1,
+          range,
+          array: arr,
+          note: String(note),
+        };
+      }) || [];
+
+  const iterationRows =
+    events
+      .filter((ev: any) => {
+        if (ev?.type === "step" && ev?.state?.indices) return true;
+        if (ev?.type === "compare" && typeof ev?.state?.i === "number") return true;
+        return false;
+      })
+      .map((ev: any, idx: number) => {
+        const arr = baseArray.length > 0 ? JSON.stringify(baseArray) : "";
+
+        if (ev?.type === "step" && ev?.state?.indices) {
+          const indices = ev.state.indices || {};
+          const low = indices.low;
+          const high = indices.high;
+          const mid = indices.mid;
+          const range =
+            typeof low === "number" && typeof high === "number" ? `[${low}..${high}]` : "";
+          const noteParts = [
+            typeof mid === "number" ? `mid=${mid}` : "",
+            ev?.messages?.de || ev?.messages?.fa || "Iteration",
+          ].filter(Boolean);
+
+          return {
+            step: idx,
+            pass: idx + 1,
+            range,
+            array: arr,
+            note: noteParts.join(" | "),
+          };
+        }
+
+        const i = ev?.state?.i;
+        const value = ev?.state?.value;
+        return {
+          step: idx,
+          pass: idx + 1,
+          range: typeof i === "number" ? `[${i}..${i}]` : "",
+          array: arr,
+          note:
+            ev?.messages?.de ||
+            ev?.messages?.fa ||
+            (typeof i === "number" ? `compare i=${i}, value=${value}` : "Iteration"),
+        };
+      }) || [];
+
+  const rows =
+    examRows.length > 0
+      ? examRows.map((r: any, idx: number) => ({
+          step: typeof r?.step === "number" ? r.step : idx,
+          pass: typeof r?.pass === "number" ? r.pass : idx + 1,
+          range: String(r?.range ?? ""),
+          array: Array.isArray(r?.array) ? JSON.stringify(r.array) : String(r?.array ?? ""),
+          note: String(r?.note ?? ""),
+        }))
+      : passRows.length > 0
+      ? passRows
+      : iterationRows;
+
+  const hasPassRows = examRows.length > 0 || passRows.length > 0;
+  const summaryText = hasPassRows
+    ? "IHK desk-check style: pass summary only (after each pass)."
+    : "IHK desk-check style: iteration summary (for search/step-based traces).";
 
   return (
     <div>
       <div style={styles.header}>Schreibtischtest</div>
       <div style={styles.sectionsContainer}>
-        <div style={styles.sectionBody}>
-          Use this table to follow each step manually (IHK desk-check style).
-        </div>
+        <div style={styles.sectionBody}>{summaryText}</div>
         <div style={{ overflowX: "auto", marginTop: "12px" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                <th style={styles.examTableHeader}>Step</th>
-                <th style={styles.examTableHeader}>Type</th>
-                <th style={styles.examTableHeader}>i</th>
-                <th style={styles.examTableHeader}>j</th>
-                <th style={styles.examTableHeader}>key</th>
-                <th style={styles.examTableHeader}>Array</th>
+                <th style={styles.examTableHeader}>{hasPassRows ? "Pass" : "Iteration"}</th>
+                <th style={styles.examTableHeader}>Range</th>
+                <th style={styles.examTableHeader}>{hasPassRows ? "Array after pass" : "Array"}</th>
                 <th style={styles.examTableHeader}>Note</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
-                <tr key={`${r.step}-${r.type}-${r.i}-${r.j}`}>
-                  <td style={styles.examTableCell}>{r.step}</td>
-                  <td style={styles.examTableCell}>{r.type}</td>
-                  <td style={styles.examTableCell}>{r.i}</td>
-                  <td style={styles.examTableCell}>{r.j}</td>
-                  <td style={styles.examTableCell}>{r.key}</td>
+              {rows.map((r: any) => (
+                <tr key={`${r.step}-${r.pass}-${r.range}`}>
+                  <td style={styles.examTableCell}>{r.pass}</td>
+                  <td style={styles.examTableCell}>{r.range}</td>
                   <td style={{ ...styles.examTableCell, fontFamily: "monospace" }}>{r.array}</td>
                   <td style={styles.examTableCell}>{r.note}</td>
                 </tr>
@@ -1437,7 +843,6 @@ export function EventsRenderer({
 
   return (
     <div>
-      {/* Navigation */}
       <div style={styles.eventNav}>
         <button
           onClick={() => onEventChange(0)}
@@ -1451,7 +856,7 @@ export function EventsRenderer({
           disabled={eventIndex === 0}
           style={styles.navButton}
         >
-          â† Prev
+          ← Prev
         </button>
         <span style={styles.eventCounter}>
           Event {eventIndex + 1} / {events.length}
@@ -1461,7 +866,7 @@ export function EventsRenderer({
           disabled={eventIndex >= events.length - 1}
           style={styles.navButton}
         >
-          Next â†’
+          Next →
         </button>
         <button
           onClick={() => onEventChange(events.length - 1)}
@@ -1472,13 +877,11 @@ export function EventsRenderer({
         </button>
       </div>
 
-      {/* Current event */}
       <div style={styles.eventCard}>
         <div style={styles.eventHeader}>
           Event #{currentEvent.id || eventIndex + 1} - {currentEvent.type || "step"}
         </div>
 
-        {/* Messages */}
         {currentEvent.messages && currentEvent.messages[lang] && (
           <div style={styles.messagesContainer}>
             {Array.isArray(currentEvent.messages[lang]) &&
@@ -1490,12 +893,9 @@ export function EventsRenderer({
           </div>
         )}
 
-        {/* Event details */}
         <details style={{ marginTop: "1rem" }}>
           <summary style={styles.detailsSummary}>Show Details</summary>
-          <pre style={styles.detailsContent}>
-            {JSON.stringify(currentEvent, null, 2)}
-          </pre>
+          <pre style={styles.detailsContent}>{JSON.stringify(currentEvent, null, 2)}</pre>
         </details>
       </div>
     </div>
@@ -1542,7 +942,8 @@ function QuestionCard({ question, index }: { question: any; index: number }) {
                 ...(question.correct === optIdx ? styles.optionCorrect : {}),
               }}
             >
-              {String.fromCharCode(65 + optIdx)}) {typeof opt === "string" ? opt : opt.text || JSON.stringify(opt)}
+              {String.fromCharCode(65 + optIdx)}){" "}
+              {typeof opt === "string" ? opt : opt.text || JSON.stringify(opt)}
             </div>
           ))}
         </div>
@@ -1550,17 +951,10 @@ function QuestionCard({ question, index }: { question: any; index: number }) {
 
       {question.answer && (
         <div style={{ marginTop: "1rem" }}>
-          <button
-            onClick={() => setShowAnswer(!showAnswer)}
-            style={styles.toggleButton}
-          >
+          <button onClick={() => setShowAnswer(!showAnswer)} style={styles.toggleButton}>
             {showAnswer ? "Hide" : "Show"} Answer
           </button>
-          {showAnswer && (
-            <div style={styles.answer}>
-              {question.answer}
-            </div>
-          )}
+          {showAnswer && <div style={styles.answer}>{question.answer}</div>}
         </div>
       )}
     </div>
@@ -1601,10 +995,7 @@ export function RawJsonRenderer({ rawJson }: { rawJson: string | null }) {
 
   return (
     <div>
-      <button
-        onClick={() => navigator.clipboard.writeText(rawJson)}
-        style={styles.copyButton}
-      >
+      <button onClick={() => navigator.clipboard.writeText(rawJson)} style={styles.copyButton}>
         Copy JSON
       </button>
       <pre style={styles.jsonBlock}>{rawJson}</pre>
@@ -1960,12 +1351,6 @@ const styles = {
     fontWeight: "bold" as const,
     marginBottom: "8px",
   },
-  examText: {
-    color: "#e0e0ff",
-    fontSize: "15px",
-    lineHeight: "1.6",
-    whiteSpace: "pre-wrap" as const,
-  },
   examList: {
     margin: 0,
     paddingLeft: "20px",
@@ -1973,15 +1358,6 @@ const styles = {
   examListItem: {
     color: "#e0e0ff",
     marginBottom: "6px",
-  },
-  examSolution: {
-    marginTop: "8px",
-    padding: "12px",
-    background: "#1a1a0d",
-    color: "#ffcc66",
-    borderRadius: "4px",
-    borderLeft: "3px solid #00ff88",
-    whiteSpace: "pre-wrap" as const,
   },
   examTableHeader: {
     textAlign: "left" as const,
@@ -1996,18 +1372,4 @@ const styles = {
     color: "#e0e0ff",
     fontSize: "12px",
   },
-  answerInput: {
-    width: "100%",
-    minHeight: "80px",
-    padding: "10px",
-    borderRadius: "6px",
-    border: "1px solid #333",
-    background: "#0f0f0f",
-    color: "#e0e0ff",
-    fontSize: "14px",
-    lineHeight: "1.6",
-    fontFamily: "inherit",
-    resize: "vertical" as const,
-  },
 };
-

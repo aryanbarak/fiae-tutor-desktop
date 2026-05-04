@@ -14,6 +14,8 @@ import {
   formatValidationErrors 
 } from "../domain/paramValidator";
 
+const MAX_LOGS = 200;
+
 function mapTopicForCore(topic: string): string {
   if (topic === "master_patterns") return "pattern_detector";
   return topic;
@@ -43,16 +45,20 @@ function ensureMasterPatternsText(
   };
 }
 
-/**
- * Update function - pure state transitions (MVU pattern)
- * Returns new model and optional command
- */
-export function update(
-  model: AppModel,
-  msg: Msg
-): { model: AppModel; cmd: Cmd } {
-  console.log("[MSG]", msg);
-  
+export function update(model: AppModel, msg: Msg): { model: AppModel; cmd: Cmd } {
+  const result = updateInner(model, msg);
+  const logs = result.model.practice.logs;
+  if (logs.length <= MAX_LOGS) return result;
+  return {
+    ...result,
+    model: {
+      ...result.model,
+      practice: { ...result.model.practice, logs: logs.slice(-MAX_LOGS) },
+    },
+  };
+}
+
+function updateInner(model: AppModel, msg: Msg): { model: AppModel; cmd: Cmd } {
   switch (msg.type) {
     case "PracticeTopicChanged": {
       // When topic changes, validate current mode is allowed for new topic
