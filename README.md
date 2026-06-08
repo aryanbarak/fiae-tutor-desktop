@@ -1,130 +1,171 @@
-# FIAE Tutor Desktop
+# 🎓 FIAE Tutor Desktop
 
-Desktop application for **IHK Fachinformatiker für Anwendungsentwicklung (FIAE)** exam preparation, algorithm training, and structured learning.
+Desktop learning platform for German FIAE (IHK) exam preparation featuring algorithm training, topic registry, AP2 exam bank, desk-check simulations, PDF export and bilingual (German/Persian) learning content.
 
-Built with **React, TypeScript, Tauri and Vite**.
-
----
-
-## Overview
-
-FIAE Tutor Desktop is a desktop learning platform designed for students preparing for the German IHK FIAE exams.
-
-The application combines exam preparation, algorithm training, topic management, and structured learning content in a single desktop application.
-
-A special focus of the project is bilingual learning support:
-
-* 🇩🇪 German explanations for exam preparation
-* 🇮🇷 Persian (Farsi/Dari) explanations for better understanding
-* Side-by-side learning content
-* Exam-oriented exercises and examples
-
-The goal is to make FIAE exam preparation easier for learners with an international background while maintaining a strong focus on German IHK requirements.
-
+Built with React, TypeScript and Tauri.
 
 ---
 
-## Features
+## 📚 Why this project?
 
-### Topic Registry
+This application was created to support candidates preparing for the German IHK FIAE examination.
 
-* Structured topic management
-* Categorized learning content
-* Search and filtering support
-* Topic metadata validation
+It provides:
 
-### Algorithm Training
+- Algorithm understanding
+- Pseudocode practice
+- Desk-check simulations
+- AP2 exam bank
+- Structured exam preparation
+- PDF export for learning materials
 
-* Practice exercises
-* Exam-oriented preparation
-* Interactive learning workflow
-* Progress tracking
-
-### Exam Bank
-
-* JSON-based exam question storage
-* Organized AP2 exam content
-* Validation tools
-* HTML export generation
-
-### Export System
-
-* HTML export
-* Printable learning material
-* Automated content generation
-
-### Desktop Experience
-
-* Fast native desktop application
-* Cross-platform architecture
-* Lightweight deployment using Tauri
-
-### Bilingual Learning System
-
-* German and Persian learning content
-* Exam-oriented explanations
-* Simplified algorithm examples
-* Technical terminology in both languages
-* Support for FIAE exam preparation
+The content is available in German and Persian to help bilingual learners.
 
 ---
 
-## Technology Stack
+## 🚀 Features
+
+- Interactive algorithm training
+- Multiple algorithm variants
+- German pseudocode generation
+- Trace mode for step-by-step learning
+- Desk-check (Schreibtischtest) simulation
+- PDF export
+- AP2 Exam Bank
+- German and Persian learning content
+- Desktop application built with Tauri
+- Topic Registry architecture
+- Exam-oriented learning workflow
+
+---
+
+## 🛠 Tech Stack
 
 ### Frontend
 
-* React
-* TypeScript
-* Vite
+- React
+- TypeScript
+- Vite
 
 ### Desktop
 
-* Tauri
-* Rust
+- Tauri
+- Rust
 
-### Development Tools
+### Tools
 
-* Git
-* GitHub Actions
-* VS Code
+- Git
+- GitHub Actions
 
 ---
 
-## Project Structure
+## 📸 Screenshots
+
+### Topic Registry & Variants
+
+Each algorithm contains multiple exam-oriented variants used in IHK FIAE examinations.
+
+![Topic Registry](screenshots/variants.png)
+
+---
+
+### Algorithm Pseudocode
+
+Interactive pseudocode generation with multiple algorithm implementations.
+
+![Pseudocode](screenshots/dashboard.png)
+
+---
+
+### Desk Check Simulation
+
+Step-by-step algorithm tracing and exam-style desk-check training.
+
+![Desk Check](screenshots/practice-page.png)
+
+---
+
+### AP2 Exam Bank
+
+Integrated question bank for FIAE AP2 exam preparation.
+
+![Exam Bank](screenshots/topic-registry.png)
+
+---
+
+### PDF Export
+
+Generate printable learning materials and algorithm documentation.
+
+![PDF Export](screenshots/export-page.png)
+
+---
+
+## 🏗 Project Structure
 
 ```text
-src/                 React application
-src-tauri/           Tauri backend
-data/                Exam bank data
-exam_tools/          Conversion and validation tools
-assets/              Images and icons
-public/              Public resources
-docs/                Documentation
+src/
+├── domain/
+├── views/
+├── components/
+├── services/
+
+src-tauri/
+├── src/
+├── icons/
+
+data/
+└── exam_bank/
+
+exam_tools/
+├── json_to_html.py
+└── validate_exam_json.py
 ```
 
 ---
 
-## Screenshots
+## 🎯 Main Modules
 
-### Dashboard
+### Algorithm Tutor
 
-(Add screenshot here)
+- Selection Sort
+- Bubble Sort
+- Insertion Sort
+- Multiple exam variants
+- Pseudocode generation
 
-### Topic Registry
+### Schreibtischtest
 
-(Add screenshot here)
+- Step-by-step execution
+- Trace visualization
+- Exam preparation workflow
 
-### Practice Mode
+### AP2 Exam Bank
 
-(Add screenshot here)
+- Question collection
+- Categories
+- Difficulty filters
+- Search functionality
+- PDF export
 
-### Export Page
+### Export System
 
-(Add screenshot here)
+- HTML export
+- PDF generation
+- Printable learning material
 
 ---
 
-## Installation
+## 🌍 Languages
+
+Learning content is available in:
+
+- 🇩🇪 German
+- 🇮🇷 Persian (Farsi)
+
+---
+
+## 📦 Installation
 
 ```bash
 git clone https://github.com/aryanbarak/fiae-tutor-desktop.git
@@ -133,42 +174,36 @@ cd fiae-tutor-desktop
 
 npm install
 
+npm run dev
+```
+
+### Tauri Desktop
+
+```bash
 npm run tauri dev
 ```
 
 ---
 
-## Roadmap
+## 🎓 Target Audience
 
-### Completed
-
-* Topic Registry
-* Algorithm Training
-* Export System
-* Exam Bank Structure
-* Desktop Packaging
-
-### Planned
-
-* Additional AP2 exam content
-* Advanced search
-* Learning statistics
-* Progress tracking
-* AI-assisted explanations
+- FIAE (Fachinformatiker Anwendungsentwicklung) students
+- IHK exam candidates
+- Self-learners studying algorithms
+- German-speaking and Persian-speaking IT learners
 
 ---
 
-## Author
+## 👨‍💻 Author
 
-**Aryan Barakzai**
+Aryan Barakzai
 
-Fachinformatiker für Anwendungsentwicklung (IHK)
-
-* GitHub: https://github.com/aryanbarak
-* Portfolio: https://barakzai.cloud
+- Portfolio: https://barakzai.cloud
+- GitHub: https://github.com/aryanbarak
+- LinkedIn: https://www.linkedin.com/in/aryan-barakzai
 
 ---
 
-## License
+## 📄 License
 
-This project is provided for educational purposes.
+MIT License
