@@ -29,6 +29,30 @@ interface PracticePageProps {
 export function PracticePage({ model, dispatch }: PracticePageProps) {
   const topicEntry = getTopicEntry(model.topic);
   const hasErrors = !model.paramsValid || model.paramsErrors.length > 0;
+  const isBinarySearch = model.topic === "binarysearch";
+
+  const handleAutoSortParams = () => {
+    try {
+      const parsed = JSON.parse(model.paramsText || "{}");
+      const arr = Array.isArray(parsed.arr)
+        ? parsed.arr
+        : Array.isArray(parsed.array)
+        ? parsed.array
+        : null;
+      if (!arr) return;
+
+      const sortedAsc = [...arr].sort((a, b) => Number(a) - Number(b));
+      const next = { ...parsed, arr: sortedAsc };
+      if ("array" in next) delete next.array;
+
+      dispatch({
+        type: "PracticeParamsChanged",
+        paramsText: JSON.stringify(next, null, 2),
+      });
+    } catch {
+      // Ignore malformed JSON; validation panel already shows parse errors.
+    }
+  };
 
   // ESC key handler for fullscreen mode
   useEffect(() => {
@@ -68,7 +92,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
       {/* Controls Panel (left side, hidden when fullscreen) */}
       {!model.isFullscreen && (
         <div style={styles.controlsPanel}>
-          <h1 style={styles.title}>🎓 CodeZertifikat</h1>
+          <h1 style={styles.title}>🎓 FIAE Tutor</h1>
 
           {/* Controls */}
           <div style={styles.controlsSection}>
@@ -157,6 +181,17 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
 
             {model.paramsEditorOpen && (
               <>
+                {isBinarySearch && (
+                  <div style={{ marginBottom: "8px" }}>
+                    <button
+                      onClick={handleAutoSortParams}
+                      style={styles.secondaryButton}
+                      title="Sort arr ascending for Binary Search"
+                    >
+                      Auto sort arr
+                    </button>
+                  </div>
+                )}
                 <textarea
                   value={model.paramsText}
                   onChange={(e) =>
@@ -227,6 +262,8 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
                   model.topic
                 )}?lang=${encodeURIComponent(
                   model.lang
+                )}&mode=${encodeURIComponent(
+                  toCoreMode(model.mode)
                 )}&includeExplain=1&includePseudocode=1`;
                 window.location.assign(exportUrl);
               }}
@@ -296,7 +333,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
         {/* Fullscreen mode header */}
         {model.isFullscreen && (
           <div style={styles.fullscreenHeader}>
-            <h2 style={styles.fullscreenTitle}>🎓 CodeZertifikat</h2>
+            <h2 style={styles.fullscreenTitle}>🎓 FIAE Tutor</h2>
             <div style={styles.fullscreenControls}>
               <button
                 onClick={() => dispatch({ type: "PracticeRunRequested" })}
@@ -338,7 +375,7 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
         {model.status === "error" && model.error && (
           <div style={styles.errorPanel}>
             <div style={styles.errorHeader}>⚠️ ERROR</div>
-            {model.error.includes("E_NOT_TAURI") || 
+            {model.error.includes("E_NOT_TAURI") ||
              model.error.includes("npm run tauri dev") ? (
               // Friendly error for browser environment
               <div style={styles.errorText}>
@@ -348,9 +385,9 @@ export function PracticePage({ model, dispatch }: PracticePageProps) {
                 <div style={{ marginBottom: "12px" }}>
                   This app requires the Tauri desktop environment to communicate with the Python backend.
                 </div>
-                <div style={{ 
-                  backgroundColor: "#2a2a2a", 
-                  padding: "12px", 
+                <div style={{
+                  backgroundColor: "#2a2a2a",
+                  padding: "12px",
                   borderRadius: "4px",
                   fontFamily: "monospace",
                   marginBottom: "12px"
@@ -436,8 +473,8 @@ function renderTabContent(model: PracticeModel, dispatch: (msg: Msg) => void) {
             </div>
           }
         >
-          <ResultRenderer 
-            response={model.response} 
+          <ResultRenderer
+            response={model.response}
             lang={model.lang}
             availableVariants={model.availableVariants}
             selectedVariantId={model.selectedVariantId}

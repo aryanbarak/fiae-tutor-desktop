@@ -18,6 +18,7 @@ export type TopicId =
   | "search_contains"
   | "count_condition"
   | "minmax_avg"
+  | "ap2_patterns"
   | "master_patterns"
   | "maxperiod"
   | "checksum"
@@ -41,8 +42,8 @@ export const TOPIC_REGISTRY: Record<TopicId, TopicRegistryEntry> = {
     label: "Minimum",
     description: "Find minimum value in array starting from given index",
     allowedModes: ["pseudocode", "trace", "trace_exam", "explain", "exam_session"],
-    requiredParams: [],
-    defaultParams: { arr: [64, 25, 12, 22, 11], start: 0 },
+    requiredParams: ["arr", "start_index"],
+    defaultParams: { arr: [64, 25, 12, 22, 11], start_index: 0 },
   },
 
   selectionsort: {
@@ -115,6 +116,15 @@ export const TOPIC_REGISTRY: Record<TopicId, TopicRegistryEntry> = {
     allowedModes: ["pseudocode", "trace", "trace_exam", "explain", "exam_session"],
     requiredParams: ["arr"],
     defaultParams: { arr: [64, 25, 12, 22, 11] },
+  },
+
+  ap2_patterns: {
+    id: "ap2_patterns",
+    label: "AP2 Patterns",
+    description: "Mind-map of 5 golden AP2 algorithm patterns (DE+FA)",
+    allowedModes: ["pseudocode", "explain"],
+    requiredParams: [],
+    defaultParams: {},
   },
 
   master_patterns: {

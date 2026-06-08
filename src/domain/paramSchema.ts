@@ -26,13 +26,13 @@ export const PARAM_SCHEMAS: Record<TopicId, {
   minimum: {
     params: [
       { key: "arr", labelDe: "Array", labelFa: "آرایه", type: "array" },
-      { key: "start", labelDe: "Startindex", labelFa: "شاخص شروع", type: "number" },
+      { key: "start_index", labelDe: "Startindex", labelFa: "شاخص شروع", type: "number", aliases: ["start"] },
     ],
     modeDefaults: {
-      trace: { arr: [64, 25, 12, 22, 11], start: 0 },
-      trace_exam: { arr: [64, 25, 12, 22, 11], start: 0 },
-      pseudocode: { arr: [64, 25, 12, 22, 11], start: 0 },
-      explain: { arr: [64, 25, 12, 22, 11], start: 0 },
+      trace: { arr: [64, 25, 12, 22, 11], start_index: 0 },
+      trace_exam: { arr: [64, 25, 12, 22, 11], start_index: 0 },
+      pseudocode: { arr: [64, 25, 12, 22, 11], start_index: 0 },
+      explain: { arr: [64, 25, 12, 22, 11], start_index: 0 },
     },
   },
 
@@ -139,6 +139,14 @@ export const PARAM_SCHEMAS: Record<TopicId, {
       trace_exam: { arr: [64, 25, 12, 22, 11] },
       pseudocode: { arr: [64, 25, 12, 22, 11] },
       explain: { arr: [64, 25, 12, 22, 11] },
+    },
+  },
+
+  ap2_patterns: {
+    params: [],
+    modeDefaults: {
+      pseudocode: {},
+      explain: {},
     },
   },
 
