@@ -55,7 +55,7 @@ export function defaultParams(topic: string): Record<string, any> {
       return { code: "12345", weights: [2, 1, 2, 1], case: "compute" };
 
     case "minimum":
-      return { arr: [64, 25, 12, 22, 11], start: 2 };
+      return { arr: [64, 25, 12, 22, 11], start_index: 2 };
 
     default:
       return { arr: [64, 25, 12, 22, 11] };

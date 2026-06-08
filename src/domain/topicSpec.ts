@@ -40,9 +40,9 @@ const TOPIC_SPECS: Record<TopicId, TopicSpec> = {
     description: "Find minimum value in array starting from given index",
     params: [
       { name: "arr", type: "number[]", required: true, description: "Input array", example: [64, 25, 12, 22, 11] },
-      { name: "start", type: "number", required: true, description: "Start index", example: 0 },
+      { name: "start_index", type: "number", required: true, description: "Start index", example: 0 },
     ],
-    exampleParams: { arr: [64, 25, 12, 22, 11], start: 0 },
+    exampleParams: { arr: [64, 25, 12, 22, 11], start_index: 0 },
   },
 
   selectionsort: {

@@ -15,7 +15,14 @@ type ExportVariant = {
 type ExportState =
   | { status: "loading" }
   | { status: "error"; error: string }
-  | { status: "ready"; variants: ExportVariant[]; topicTitle: string; langLabel: string };
+  | {
+      status: "ready";
+      variants: ExportVariant[];
+      topicTitle: string;
+      langLabel: string;
+      mode: string;
+      traceExamRows?: Array<{ pass: number; range: string; array: any[]; note?: string }>;
+    };
 
 function parseBoolean(value: string | null, fallback: boolean): boolean {
   if (value === null || value === undefined) return fallback;
@@ -100,7 +107,7 @@ function renderMixedText(text: string, rtl: boolean): ReactNode[] {
 }
 
 export function ExportPage() {
-  const { topic, lang, includeExplain, includePseudocode } = useMemo(() => {
+  const { topic, lang, mode, includeExplain, includePseudocode } = useMemo(() => {
     const pathSegments = window.location.pathname.split("/").filter(Boolean);
     const exportIndex = pathSegments.indexOf("export");
     const topicSegment =
@@ -109,9 +116,11 @@ export function ExportPage() {
     const rawLang = (searchParams.get("lang") || "de").toLowerCase();
     const resolvedLang: ExportLang =
       rawLang === "fa" || rawLang === "bi" ? rawLang : "de";
+    const resolvedMode = (searchParams.get("mode") || "pseudocode").trim();
     return {
       topic: decodeURIComponent(topicSegment || ""),
       lang: resolvedLang,
+      mode: resolvedMode,
       includeExplain: parseBoolean(
         searchParams.get("includeExplain"),
         true
@@ -143,9 +152,9 @@ export function ExportPage() {
         const request = {
           version: "1.0",
           topic,
-          mode: "pseudocode",
+          mode,
           lang,
-          params: getPreset(topic, "pseudocode"),
+          params: getPreset(topic, mode),
         };
 
         const raw = await runTutorRaw(request);
@@ -185,7 +194,10 @@ export function ExportPage() {
             : lang;
 
         if (!cancelled) {
-          setState({ status: "ready", variants, topicTitle, langLabel });
+          const traceExamRows = Array.isArray(response?.result?.trace_exam_rows)
+            ? response.result.trace_exam_rows
+            : undefined;
+          setState({ status: "ready", variants, topicTitle, langLabel, mode, traceExamRows });
         }
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
@@ -200,7 +212,7 @@ export function ExportPage() {
     return () => {
       cancelled = true;
     };
-  }, [topic, lang]);
+  }, [topic, lang, mode]);
 
   if (state.status === "loading") {
     return (
@@ -221,6 +233,7 @@ export function ExportPage() {
   }
 
   const variants = state.variants;
+  const traceExamRows = state.traceExamRows || [];
 
   return (
     <div className="export-root">
@@ -270,28 +283,62 @@ export function ExportPage() {
             <section dir="rtl" className="rtl">
               <h2 className="export-section-title">Table of Contents</h2>
               <ol className="export-toc-list">
-                {variants.map((variant, index) => (
-                  <li key={variant.id || index}>
-                    {renderMixedText(getVariantLabel(variant, index), isRtl)}
-                  </li>
-                ))}
+                {state.mode === "trace_exam" ? (
+                  <li>{renderMixedText("Schreibtischtest (Pass Summary)", isRtl)}</li>
+                ) : (
+                  variants.map((variant, index) => (
+                    <li key={variant.id || index}>
+                      {renderMixedText(getVariantLabel(variant, index), isRtl)}
+                    </li>
+                  ))
+                )}
               </ol>
             </section>
           ) : (
             <>
               <h2 className="export-section-title">Table of Contents</h2>
               <ol className="export-toc-list">
-                {variants.map((variant, index) => (
-                  <li key={variant.id || index}>
-                    {renderAutoDirection(getVariantLabel(variant, index))}
-                  </li>
-                ))}
+                {state.mode === "trace_exam" ? (
+                  <li>{renderAutoDirection("Schreibtischtest (Pass Summary)")}</li>
+                ) : (
+                  variants.map((variant, index) => (
+                    <li key={variant.id || index}>
+                      {renderAutoDirection(getVariantLabel(variant, index))}
+                    </li>
+                  ))
+                )}
               </ol>
             </>
           )}
         </section>
 
-        {variants.map((variant, index) => (
+        {state.mode === "trace_exam" ? (
+          <section className="export-variant page-break">
+            <h2 className="export-section-title">Schreibtischtest (Trace Exam)</h2>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Pass</th>
+                  <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Range</th>
+                  <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Array after pass</th>
+                  <th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "8px" }}>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {traceExamRows.map((row, idx) => (
+                  <tr key={`${row.pass}-${idx}`}>
+                    <td style={{ borderBottom: "1px solid #eee", padding: "8px" }}>{row.pass}</td>
+                    <td style={{ borderBottom: "1px solid #eee", padding: "8px" }}>{row.range}</td>
+                    <td style={{ borderBottom: "1px solid #eee", padding: "8px", fontFamily: "monospace" }}>
+                      {JSON.stringify(row.array)}
+                    </td>
+                    <td style={{ borderBottom: "1px solid #eee", padding: "8px" }}>{row.note || ""}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        ) : variants.map((variant, index) => (
           <section className="export-variant page-break" key={variant.id || index}>
             {isRtl ? (
               <section dir="rtl" className="rtl">

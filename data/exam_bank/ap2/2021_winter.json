@@ -1,0 +1,151 @@
+{
+  "schema_name": "exam_bank.de.v1",
+  "version": "1.0",
+  "lang": "de",
+  "source_note": "Basierend auf IHK AP2 FIAE Winter 2021/2022. Bei Aufgabe 4a wurden die Datentypen für die Tabelle 'Hersteller' im Lösungsansatz ergänzt (fachlich sinnvolle Rekonstruktion), da diese im Quellmaterial nicht explizit vorgegeben waren. Bei Aufgabe 3 enthalten Teile des normalisierten Schemas fachlich sinnvolle Rekonstruktionen auf Basis der Beispieldaten.",
+  "doc_title": "AP2 Fachinformatiker Anwendungsentwicklung - Winter 2021/2022",
+  "tasks": [
+    {
+      "task_id": "Aufgabe 1",
+      "title": "Prozessmodellierung und Algorithmenanalyse",
+      "topic": "software_process_modeling",
+      "difficulty": "exam",
+      "question_de": "In dieser Aufgabe geht es um die Planung einer Software zur Online-Terminvergabe in Arztpraxen. Dabei sollen ein Prozess modelliert, die Praxistauglichkeit zweier Varianten bewertet und ein fehlerhafter Passwort-Prüfalgorithmus analysiert werden.",
+      "sub_questions": [
+        {
+          "id": "a",
+          "question_de": "Sie arbeiten im Projekt zur Entwicklung einer Software zur Terminvergabe in Arztpraxen. Die Online-Terminvergabe soll geplant werden. Es gibt zwei Varianten, wobei Variante 1 wie folgt abläuft:\nDas Programm zeigt den Monat an, in dem der 1. freie Termin liegt, zusammen mit allen freien Terminen in diesem Zeitraum. Der Anwender wählt einen freien Termin. Das System versucht nun, den Termin zu blockieren. Wenn der Termin noch frei ist, kann er final reserviert und parallel dazu der Anwender informiert werden. Danach ist die Aktivität beendet. Ist der Termin inzwischen nicht mehr verfügbar, wird eine entsprechende Meldung ausgegeben und erneut der 1. freie Termin gesucht, um dem Anwender die Auswahl anzuzeigen.\n\nStellen Sie den Ablauf der Variante 1 mit einem UML-Aktivitätsdiagramm dar. Verwenden Sie dabei zwingend die vorgegebenen Swimlanes 'Anwender' und 'Terminvergabesystem'.",
+          "solution_de": "Swimlane [Anwender]:\n- Startknoten\n- Terminreservierung aufrufen\n- Arzt und Terminart auswählen\n\nSwimlane [Terminvergabesystem]:\n- 1. freien Termin suchen\n- Monat und freie Termine anzeigen\n\nSwimlane [Anwender]:\n- Freien Termin auswählen\n\nSwimlane [Terminvergabesystem]:\n- Versuchen, Termin zu blockieren\n- Entscheidungsknoten: [Ist Termin noch frei?]\n  - [Nein]: Meldung ausgeben -> Zurück zu Aktion '1. freien Termin suchen'\n  - [Ja]: Termin final reservieren\n- Parallelisierungs-Knoten (Fork):\n  - (Pfad 1 in Swimlane Anwender): Anwender informieren\n  - (Pfad 2 in Swimlane System): Aktivität intern abschließen\n- Synchronisations-Knoten (Join)\n- Endknoten",
+          "explain_fa": "موضوع سؤال:\nرسم نمودار فعالیت (Activity Diagram) در زبان UML برای سیستم رزرو نوبت با استفاده از مسیرهای شنا (Swimlanes).\n\nخواسته سؤال:\nتبدیل سناریوی متنی گزینه ۱ به یک نمودار فعالیت گرافیکی با رعایت دقیق نقش‌های کاربر و سیستم، حلقه‌های تکرار و عملیات موازی.\n\nمنطق پاسخ درست:\nکنشگرها باید در Swimlane های مجزا قرار گیرند. فرآیند دارای یک لوزی تصمیم‌گیری (Decision Node) است؛ اگر نوبت پر شده باشد، باید خط جریان به مرحله جستجوی نوبت برگردد (حلقه). از آنجایی که در متن صریحاً به کلمه «parallel» اشاره شده است، عملیات رزرو نهایی و اطلاع به کاربر باید با استفاده از گره‌های انشعاب و همگام‌سازی (Fork/Join) به صورت موازی نشان داده شوند.\n\nنکات امتحانی / دام‌ها:\n- فراموش کردن گره‌های الزامی شروع و پایان.\n- عدم رسم لوزی تصمیم برای بازگشت در صورت عدم موفقیت رزرو.\n- نادیده گرفتن کلمه «موازی» و عدم استفاده از Fork/Join.",
+          "exam_tips_de": [
+            "Immer Start- und Endknoten einzeichnen.",
+            "Aktivitäten den richtigen Swimlanes zuordnen.",
+            "Wörter wie 'parallel' erfordern zwingend Fork/Join-Balken.",
+            "Rücksprünge (Schleifen) müssen über eine Raute (Decision Node) laufen."
+          ]
+        },
+        {
+          "id": "b",
+          "question_de": "Wählen Sie für die zu erstellende Terminvergabe eine Variante aus und begründen Sie Ihre Wahl im Hinblick auf die Praxistauglichkeit. \nHinweis zu Variante 2: Die Software ermittelt den Monat des 1. freien Termins und blockiert sofort alle Termine dieses ermittelten Monats. Danach wählt der Anwender, der Termin wird reserviert und die restlichen Termine werden wieder freigegeben.",
+          "solution_de": "Es sollte Variante 1 gewählt werden.\n\nBegründung:\nVariante 2 nutzt ein pessimistisches Sperrverfahren (Pessimistic Locking) in extremer Form. Wenn ein Anwender nach Terminen sucht, wird der gesamte Monat für alle anderen potenziellen Nutzer gesperrt. Bei einer Gemeinschaftspraxis mit vielen gleichzeitigen Nutzern führt dies zu massiven Blockaden und Frustration, da andere Anwender in dieser Zeit keine Termine im selben Monat buchen können. Variante 1 nutzt ein optimistisches Sperrverfahren (Optimistic Locking) – der Termin wird erst beim tatsächlichen Buchungsversuch geprüft und gesperrt, was die Nebenläufigkeit und Praxistauglichkeit deutlich erhöht.",
+          "explain_fa": "موضوع سؤال:\nتحلیل رویکردهای همزمانی و قفل‌گذاری (Concurrency & Locking) در سیستم‌های نرم‌افزاری.\n\nخواسته سؤال:\nانتخاب بین دو سناریوی رزرو نوبت و ارائه دلیل منطقی از نظر کاربردپذیری در دنیای واقعی.\n\nمنطق پاسخ درست:\nسناریوی ۲ از رویکرد قفل‌گذاری بدبینانه استفاده می‌کند؛ با ورود یک بیمار، کل نوبت‌های یک ماه مسدود می‌شود! در یک کلینیک واقعی با صدها کاربر همزمان، این کار باعث می‌شود هیچ‌کس نتواند نوبتی بگیرد. سناریوی ۱ از رویکرد قفل‌گذاری خوش‌بینانه استفاده می‌کند؛ تنها هنگام تأیید نهایی وضعیت نوبت چک می‌شود، که برای نرم‌افزارهای چندکاربره استاندارد است.\n\nنکات امتحانی / دام‌ها:\n- عدم تمرکز بر تأثیر سیستم چندکاربره (Multi-user).\n- انتخاب سناریوی ۲ صرفاً به خاطر 'ساده‌تر بودن' منطق آن بدون در نظر گرفتن واژه Praxistauglichkeit (کاربرد عملی).",
+          "exam_tips_de": [
+            "Fokus auf 'Praxistauglichkeit' bedeutet: Wie verhält sich das System bei vielen gleichzeitigen Nutzern?",
+            "Fachbegriffe wie 'Optimistic/Pessimistic Locking' oder 'Nebenläufigkeit' (Concurrency) bringen sichere Punkte."
+          ]
+        },
+        {
+          "id": "c",
+          "question_de": "Die Online-Terminvergabe soll ein Login mit folgenden Passwort-Kriterien erhalten:\n- mindestens zehn Zeichen lang\n- mindestens ein Buchstabe, eine Ziffer und ein Sonderzeichen.\n\nEs liegt ein fehlerhaftes Struktogramm (Nassi-Shneiderman) zur Überprüfung des Passwortes vor. Der Rückgabewert soll wahr (true) oder falsch (false) sein. Finden Sie die drei Fehler in diesem Algorithmus und geben Sie eine Korrektur an.",
+          "solution_de": "Fehler 1: Die Längenprüfung lautet `password.length > 10`. Da mindestens 10 Zeichen gefordert sind, schließt dies Passwörter mit genau 10 Zeichen fälschlicherweise aus.\nKorrektur 1: Die Bedingung muss `password.length >= 10` lauten.\n\nFehler 2: Die Schleifenbedingung lautet `solange i <= password.length`. Da der Index bei Strings bei 0 beginnt, greift der letzte Durchlauf auf einen Index zu, der außerhalb der Array-Grenzen liegt (Out-of-Bounds).\nKorrektur 2: Die Bedingung muss `solange i < password.length` lauten.\n\nFehler 3: In der Schleife wird im Nein-Zweig der Prüfung `isDigit` die Variable `digit := false` gesetzt. Wenn zuvor bereits eine Ziffer gefunden wurde (`digit = true`), wird dieses Ergebnis beim nächsten Buchstaben wieder fälschlicherweise überschrieben.\nKorrektur 3: Die Zuweisung `digit := false` im Nein-Zweig von `isDigit` muss ersatzlos gestrichen werden.",
+          "explain_fa": "موضوع سؤال:\nدیباگ و خطایابی یک الگوریتم اعتبارسنجی رمز عبور با استفاده از نمودار ساختارنما (Struktogramm).\n\nخواسته سؤال:\nشناسایی ۳ خطای منطقی در الگوریتم ارائه‌شده و نوشتن روش اصلاح برای هرکدام.\n\nمنطق پاسخ درست:\nخطای اول در مقایسه طول است؛ «حداقل ۱۰» یعنی شرط باید `>= 10` باشد نه `> 10`. خطای دوم مربوط به اندیس‌گذاری (Zero-based indexing) است؛ شرط `<= length` باعث می‌شود اندیس از حد رشته خارج شود (باید `< length` باشد). خطای سوم در نحوه استفاده از متغیرهای پرچم (Flags) است؛ اگر رقمی پیدا شود و پرچم `true` شود، با بررسی کاراکتر بعدی (که ممکن است حرف باشد)، پرچم نباید دوباره `false` شود، وگرنه فقط آخرین کاراکتر رشته ملاک قرار می‌گیرد.\n\nنکات امتحانی / دام‌ها:\n- عدم دقت به تفاوت عملگرهای > و >=.\n- فراموشی ساختار Zero-based در اندیس‌گذاری آرایه‌ها/رشته‌ها.\n- درک نکردن مشکل بازنویسی مقادیر Flag Variable ها درون حلقه‌ها.",
+          "exam_tips_de": [
+            "Immer die Randbedingungen prüfen (>= vs >).",
+            "Bei Arrays/Strings in Schleifen immer an den Index 0 denken (i < length).",
+            "Einmal gefundene positive Eigenschaften (Flags) dürfen in Suchschleifen nicht überschrieben werden."
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "Aufgabe 2",
+      "title": "Algorithmenentwurf zur Terminfindung",
+      "topic": "array_search_pseudocode",
+      "difficulty": "exam",
+      "question_de": "In dieser Aufgabe soll für eine Gemeinschaftspraxis eine Funktion zur Terminfindung entworfen werden. Grundlage ist ein zweidimensionales Array je Arzt, in dem für jeden Tag die Belegung von acht Zeitslots gespeichert ist.",
+      "sub_questions": [
+        {
+          "id": "a",
+          "question_de": "Für jeden Arzt liegt ein Terminplan als zweidimensionales Array vor. Jede Zeile speichert für einen Tag die Belegung von acht Zeitslots (Slot 0 bis Slot 7).\nWerte: 1 = belegt, 0 = nicht belegt.\n\nVorgegebene Funktion: `getTimeTable(id: Integer): 2-dim-Integer-Array`\n\nErstellen Sie folgende Funktion in Pseudocode:\n`getAppointment(month: Integer, day: Integer, id: Integer, slot: Integer) : boolean`\n- Falls kein bestimmter Zeitslot ausgewählt werden muss, hat der Parameter 'slot' den Wert -1.\n- Die Funktion soll 'true' zurückgeben, falls ein freier Termin gefunden wird, andernfalls 'false'.",
+          "solution_de": "FUNKTION getAppointment(month: Integer, day: Integer, id: Integer, slot: Integer) : boolean\n  plan = getTimeTable(id)\n\n  FUER i = 0 BIS LAENGE(plan)-1\n    WENN plan[i][0] == month UND plan[i][1] == day DANN\n      WENN slot != -1 DANN\n        WENN plan[i][slot+2] == 0 DANN\n          GIB true ZURUECK\n        SONST\n          GIB false ZURUECK\n        ENDE WENN\n      SONST\n        FUER s = 0 BIS 7\n          WENN plan[i][s+2] == 0 DANN\n            GIB true ZURUECK\n          ENDE WENN\n        ENDE FUER\n        GIB false ZURUECK\n      ENDE WENN\n    ENDE WENN\n  ENDE FUER\n\n  GIB false ZURUECK\nENDE FUNKTION",
+          "explain_fa": "موضوع سؤال:\nطراحی الگوریتم برای جستجو در یک آرایه دو بعدی.\n\nخواسته سؤال:\nنوشتن شبه‌کد برای تابعی که بررسی می‌کند آیا نوبت آزادی (مقدار 0) در یک روز مشخص برای یک پزشک وجود دارد یا خیر. باید شرط مقدار 1- برای اسلات (به معنای پیدا کردن هر نوبت آزاد) پیاده‌سازی شود.\n\nمنطق پاسخ درست:\nابتدا آرایه پزشک دریافت می‌شود. با یک حلقه روی سطرها حرکت می‌کنیم تا ماه و روز تطبیق پیدا کند. سپس بررسی می‌کنیم آیا اسلات خاصی خواسته شده یا مقدار آن 1- است. اگر مشخص بود، فقط همان خانه آرایه چک می‌شود. اگر 1- بود، یک حلقه داخلی از 0 تا 7 اجرا شده و به محض یافتن اولین صفر، `true` بازگردانده می‌شود.\n\nنکات امتحانی / دام‌ها:\n- فراموش کردن فراخوانی تابع `getTimeTable`.\n- استفاده نکردن از خروج زودهنگام (Return/RUECKGABE).\n- تفکیک نکردن منطق اسلات مشخص (مقدار معتبر) از اسلات نامشخص (1-).",
+          "exam_tips_de": [
+            "Nutzen Sie die IHK-Schlüsselwörter: FUNKTION, FUER, WENN, ENDE.",
+            "Return (RUECKGABE) beendet die Funktion sofort, was effiziente Suchalgorithmen ermöglicht.",
+            "Achten Sie darauf, die Spaltenverschiebung wegen Monat und Tag korrekt zu berücksichtigen (slot+2)."
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "Aufgabe 3",
+      "title": "Datenmodellierung und Normalisierung",
+      "topic": "database_normalization",
+      "difficulty": "exam",
+      "question_de": "In dieser Aufgabe soll ein bestehendes relationales Datenmodell auf Basis gegebener Rohdaten ergänzt und in die 3. Normalform überführt werden. Zusätzlich sind Beziehungen, Kardinalitäten sowie Primär- und Fremdschlüssel anzugeben.",
+      "sub_questions": [
+        {
+          "id": "a",
+          "question_de": "Zwei unstrukturierte Tabellen (Untersuchungstermine und Patientendiagnose) sollen in ein relationales Datenmodell in der 3. Normalform (3. NF) überführt werden.\nHinweis: Untersuchungstermine und Patientendiagnose sind voneinander unabhängig. Die Tabelle 'Diagnose' (DiagnoseID, ICD_10_GM_Code, Kurzbeschreibung) ist bereits vorgegeben.\nErweitern Sie das Modell um die notwendigen Tabellen inkl. Attribute. Zeichnen Sie Beziehungen ein, bestimmen Sie Kardinalitäten und kennzeichnen Sie Primär- (PK) und Fremdschlüssel (FK).",
+          "solution_de": "Fachlich sinnvolle Rekonstruktion auf Basis der Beispieldaten:\n\nNormalisierte Tabellen:\n\n1. Patient\n- PatientID (PK)\n- Name\n- Vorname\n- Strasse\n- PLZ\n- Ort\n\n2. Arzt\n- ArztID (PK)\n- Name\n- Vorname\n\n3. Raum\n- RaumID (PK)\n- Bezeichnung\n\n4. Diagnose (vorgegeben)\n- DiagnoseID (PK)\n- ICD_10_GM_Code\n- Kurzbeschreibung\n\n5. Untersuchungstermin\n- UTNr (PK)\n- DatumUhrzeit\n- PatientID (FK)\n- ArztID (FK)\n- RaumID (FK)\n\n6. Patientendiagnose\n- PDNr (PK)\n- Datum\n- Bemerkungen\n- PatientID (FK)\n- ArztID (FK)\n- DiagnoseID (FK)\n\nBeziehungen und Kardinalitäten:\nPatient (1) -- (n) Untersuchungstermin\nArzt (1) -- (n) Untersuchungstermin\nRaum (1) -- (n) Untersuchungstermin\nPatient (1) -- (n) Patientendiagnose\nArzt (1) -- (n) Patientendiagnose\nDiagnose (1) -- (n) Patientendiagnose",
+          "explain_fa": "موضوع سؤال:\nنرمال‌سازی پایگاه داده تا فرم نرمال سوم (3. NF) و تعیین روابط و کاردینالیتی.\n\nخواسته سؤال:\nاستخراج جداول موجودیت‌های پایه (مثل بیمار، پزشک، اتاق) از داده‌های ترکیبی، مشخص کردن کلیدهای اصلی و خارجی، و رسم شمای ارتباطی (مدل رابطه‌ای).\n\nمنطق پاسخ درست:\nداده‌های خام دارای افزونگی هستند. آدرس بیمار باید به اجزای سازنده (خیابان، کدپستی، شهر) شکسته شود (فرم اول). داده‌های تکراری مثل نام پزشک و اتاق باید در جداول مستقلی قرار گیرند و شناسه آن‌ها به عنوان کلید خارجی استفاده شود (فرم دوم و سوم). طبق راهنمای سؤال، جدول تشخیص بیمار مستقل از نوبت معاینه است، بنابراین کلیدهای خارجی بیمار و پزشک مستقیماً در جدول تشخیص قرار می‌گیرند.\n\nنکات امتحانی / دام‌ها:\n- عدم تجزیه فیلد ترکیبی آدرس.\n- ایجاد ارتباط مستقیم بین 'نوبت' و 'تشخیص' با وجود هشدار صریح صورت سؤال.\n- فراموش کردن ذکر (1) و (n) برای نشان دادن کاردینالیتی.",
+          "exam_tips_de": [
+            "Zusammengesetzte Attribute wie Adressen oder Vor-/Nachname immer atomisieren (1. NF).",
+            "Abhängigkeiten strikt trennen: Entitäten wie Arzt oder Raum bekommen eigene Tabellen (3. NF).",
+            "Hinweise in der Aufgabenstellung ('sind voneinander unabhängig') strikt befolgen."
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "Aufgabe 4",
+      "title": "SQL-Abfragen für Arzneimitteldatenbank",
+      "topic": "sql_queries",
+      "difficulty": "exam",
+      "question_de": "In dieser Aufgabe sollen zu einem gegebenen Datenbankschema SQL-Anweisungen formuliert werden. Gefordert sind DDL-, SELECT-, UPDATE-, GROUP-BY- und JOIN-Abfragen auf einer Arzneimitteldatenbank.",
+      "sub_questions": [
+        {
+          "id": "a",
+          "question_de": "Erstellen Sie auf Basis des gegebenen Datenbankschemas eine SQL-Anweisung. Legen Sie die Tabelle „Hersteller“ an. \nHinweis: Das Attribut 'rezeptpflichtig' hat den Datentyp Boolean. Datentypen für die Hersteller-Tabelle sind nicht explizit vorgegeben (als fachlich sinnvolle Rekonstruktion anzunehmen).",
+          "solution_de": "Fachlich sinnvolle Musterlösung:\n\nCREATE TABLE Hersteller (\n  HerstellerID INT PRIMARY KEY,\n  Name VARCHAR(255)\n);",
+          "explain_fa": "موضوع سؤال:\nدستورات تعریف داده (DDL) در SQL.\n\nخواسته سؤال:\nنوشتن دستور ساخت جدول (CREATE TABLE) برای موجودیت Hersteller.\n\nمنطق پاسخ درست:\nبر اساس نمودار، جدول دو فیلد دارد: کلید اصلی (HerstellerID) و نام (Name). چون نوع داده صراحتاً در سؤال ذکر نشده، باید از انواع استاندارد و منطقی (مثلاً INT برای شناسه و VARCHAR برای نام) استفاده کرد. کلمه کلیدی PRIMARY KEY ضروری است.\n\nنکات امتحانی / دام‌ها:\n- ننوشتن کلمه کلیدی PRIMARY KEY.\n- انتخاب نوع داده نامناسب.",
+          "exam_tips_de": [
+            "Die Angabe des PRIMARY KEY Constraints ist essenziell.",
+            "Fehlen konkrete Datentypen, wähle gängige Standards (INT, VARCHAR)."
+          ]
+        },
+        {
+          "id": "b",
+          "question_de": "Zeigen Sie per SQL an, ob das Arzneimittel mit der Bezeichnung „abc“ rezeptpflichtig ist.",
+          "solution_de": "SELECT rezeptpflichtig\nFROM Arzneimittel\nWHERE Bezeichnung = 'abc';",
+          "explain_fa": "موضوع سؤال:\nدستور واکشی داده (SELECT) ساده.\n\nخواسته سؤال:\nبرگرداندن وضعیت نسخه‌دار بودن برای دارویی با نام مشخص.\n\nمنطق پاسخ درست:\nنیاز به یک جستجوی ساده است که فقط یک ستون (`rezeptpflichtig`) را از جدول دارو بازگرداند. شرط مقایسه نام باید در قسمت WHERE با استفاده از کوتیشن‌های تکی نوشته شود.\n\nنکات امتحانی / دام‌ها:\n- استفاده از * به جای مشخص کردن صریح ستون.\n- فراموش کردن کوتیشن برای رشته 'abc'.",
+          "exam_tips_de": [
+            "Nur das anfordern, was gefragt ist (nicht SELECT *).",
+            "Zeichenketten in einfachen Anführungszeichen ('...') schreiben."
+          ]
+        },
+        {
+          "id": "c",
+          "question_de": "Erhöhen Sie den Preis aller Arzneimittel vom Hersteller „CCC“ um fünf Prozent (SQL).",
+          "solution_de": "UPDATE Arzneimittel\nSET Preis = Preis * 1.05\nWHERE HerstellerID = (\n  SELECT HerstellerID\n  FROM Hersteller\n  WHERE Name = 'CCC'\n);",
+          "explain_fa": "موضوع سؤال:\nبروزرسانی داده‌ها (UPDATE) همراه با زیرپرس‌وجو (Subquery).\n\nخواسته سؤال:\nافزایش ۵ درصدی قیمت برای تمامی داروهای مربوط به یک شرکت خاص.\n\nمنطق پاسخ درست:\nاز دستور UPDATE برای جدول داروها استفاده می‌شود. مقدار جدید با ضرب قیمت در 1.05 محاسبه می‌شود. از آنجا که نام شرکت مستقیماً در جدول دارو نیست، کلید خارجی آن باید از طریق یک ساب‌کوئری (جستجوی تو در تو) روی جدول تولیدکننده استخراج شود.\n\nنکات امتحانی / دام‌ها:\n- محاسبه اشتباه درصد (مثلاً جمع زدن جای ضرب کردن).\n- عدم اتصال صحیح جداول (تلاش برای اعمال شرط نام به صورت مستقیم روی جدول دارو).",
+          "exam_tips_de": [
+            "Preiserhöhungen immer mathematisch korrekt abbilden (Preis * 1.05 für +5%).",
+            "Beziehungen zwischen Tabellen für Updates mittels Subselect oder UPDATE...FROM herstellen."
+          ]
+        },
+        {
+          "id": "d",
+          "question_de": "Listen Sie per SQL alle Hersteller auf, von denen mehr als 50 nicht-rezeptpflichtige Arzneimittel in der Datenbank erfasst sind. Die Ausgabe soll folgende Daten auflisten: Hersteller | Anzahl.",
+          "solution_de": "SELECT h.Name AS Hersteller, COUNT(a.AMID) AS Anzahl\nFROM Hersteller h\nJOIN Arzneimittel a ON h.HerstellerID = a.HerstellerID\nWHERE a.rezeptpflichtig = false\nGROUP BY h.Name\nHAVING COUNT(a.AMID) > 50;",
+          "explain_fa": "موضوع سؤال:\nتوابع تجمعی و گروه‌بندی شرطی در SQL (GROUP BY / HAVING).\n\nخواسته سؤال:\nنمایش نام شرکت و تعداد داروهای بدون نسخه، مشروط بر اینکه تعداد این داروها بیش از ۵۰ باشد.\n\nمنطق پاسخ درست:\nابتدا دو جدول JOIN می‌شوند. شرط «بدون نسخه» در WHERE بررسی می‌شود تا رکوردهای اولیه فیلتر شوند. سپس بر اساس نام شرکت با GROUP BY گروه‌بندی انجام می‌شود. شرطِ روی تعداد (جمع‌بندی) باید حتماً درون بلاک HAVING قرار گیرد.\n\nنکات امتحانی / دام‌ها:\n- استفاده از توابع تجمعی (COUNT) در بخش WHERE به جای HAVING.\n- عدم تطابق ستون‌های بخش SELECT و GROUP BY.",
+          "exam_tips_de": [
+            "Aggregatfunktionen (wie COUNT) zur Filterung dürfen niemals im WHERE, sondern immer nur im HAVING stehen.",
+            "Alle nicht-aggregierten Spalten im SELECT müssen im GROUP BY aufgeführt sein."
+          ]
+        },
+        {
+          "id": "e",
+          "question_de": "Listen Sie per SQL die Bezeichnung, die Menge, den Preis und den Hersteller aller Arzneimittel auf, welche den Wirkstoff „Y34“ in der Menge von 100 oder 200 Einheiten enthalten. Das Ergebnis soll absteigend nach der Menge und dann aufsteigend nach dem Preis sortiert sein.",
+          "solution_de": "SELECT a.Bezeichnung, aw.Menge, a.Preis, h.Name AS Hersteller\nFROM Arzneimittel a\nJOIN Arzneimittelwirkstoffe aw ON a.AMID = aw.AMID\nJOIN Wirkstoff w ON aw.WirkstoffID = w.WirkstoffID\nJOIN Hersteller h ON a.HerstellerID = h.HerstellerID\nWHERE w.Bezeichnung = 'Y34'\n  AND aw.Menge IN (100, 200)\nORDER BY aw.Menge DESC, a.Preis ASC;",
+          "explain_fa": "موضوع سؤال:\nاتصال چندگانه جداول (Multi-JOIN) و مرتب‌سازی داده‌ها (ORDER BY).\n\nخواسته سؤال:\nاستخراج اطلاعات خاص از چهار جدول مختلف با اعمال شرط‌های مقداری و نامی، همراه با مرتب‌سازی اولویت‌دار و صعودی/نزولی.\n\nمنطق پاسخ درست:\nبرای استخراج اطلاعات باید هر ۴ جدول پایگاه داده با کلیدهای اصلی و خارجی JOIN شوند. فیلتر شرطی روی ماده مؤثره اعمال شده و برای فیلتر مقدار ۱۰۰ یا ۲۰۰ از IN استفاده می‌شود. برای مرتب‌سازی، از دستور ORDER BY با کلمات کلیدی DESC (نزولی) برای مقدار و ASC (صعودی) برای قیمت استفاده می‌شود.\n\nنکات امتحانی / دام‌ها:\n- فراموش کردن جدول واسط `Arzneimittelwirkstoffe` در فرآیند JOIN.\n- استفاده اشتباه از عملگر BETWEEN (که شامل مقادیر بین ۱۰۰ تا ۲۰۰ هم می‌شود) به جای IN.\n- مرتب‌سازی اشتباه و جابجا نوشتن DESC/ASC.",
+          "exam_tips_de": [
+            "Bei m:n Beziehungen immer an die Zwischentabelle beim JOIN denken.",
+            "'Oder' bei exakten Werten (100 oder 200) am besten mit IN (100, 200) abbilden.",
+            "Die Reihenfolge im ORDER BY bestimmt die Priorität der Sortierung."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -158,6 +158,12 @@ export function autoPopulateParams(
 ): Record<string, any> {
   // Get fresh mode defaults
   const modeDefaults = getModeDefaults(topicId, mode);
+  const schema = PARAM_SCHEMAS[topicId];
+
+  // For topics with no declared params, do not carry over stale params from previous topics.
+  if (schema && schema.params.length === 0) {
+    return { ...modeDefaults };
+  }
   
   // Normalize current params in case they have old aliases
   const normalized = normalizeParamKeys(topicId, currentParams);
