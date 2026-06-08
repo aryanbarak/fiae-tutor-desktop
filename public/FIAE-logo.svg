@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <!-- Background gradient -->
+    <radialGradient id="bgGlow" cx="50%" cy="65%" r="50%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="100%" stop-color="#040810"/>
+    </radialGradient>
+
+    <!-- Main letter gradient: cyan top → deep blue bottom -->
+    <linearGradient id="letterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00d4ff"/>
+      <stop offset="45%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+
+    <!-- Subtle inner highlight for letters -->
+    <linearGradient id="letterHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#1e3a8a" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Glow filter for letters -->
+    <filter id="letterGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Soft glow filter for dots and nodes -->
+    <filter id="dotGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Bottom horizon glow -->
+    <radialGradient id="horizonGlow" cx="50%" cy="0%" r="80%">
+      <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Circuit line gradient -->
+    <linearGradient id="circuitGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.2"/>
+      <stop offset="50%" stop-color="#00d4ff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Dark background -->
+  <rect width="800" height="600" fill="url(#bgGlow)"/>
+
+  <!-- Horizon glow line at bottom -->
+  <ellipse cx="400" cy="520" rx="280" ry="18" fill="url(#horizonGlow)"/>
+  <line x1="120" y1="520" x2="680" y2="520" stroke="#0ea5e9" stroke-width="0.5" stroke-opacity="0.4"/>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--   LETTER A (LEFT)                       -->
+  <!-- Custom path: tall triangle with feet    -->
+  <!-- ═══════════════════════════════════════ -->
+  <g filter="url(#letterGlow)">
+    <!-- Left A body -->
+    <path d="
+      M 148 470
+      L 148 455
+      L 218 175
+      L 248 175
+      L 178 455
+      L 193 455
+      L 193 470
+      Z
+    " fill="url(#letterGrad)"/>
+    <!-- Right leg of left A -->
+    <path d="
+      M 248 175
+      L 278 175
+      L 320 340
+      L 305 340
+      Z
+    " fill="url(#letterGrad)"/>
+    <!-- Crossbar left A -->
+    <rect x="178" y="318" width="110" height="22" rx="3" fill="url(#letterGrad)"/>
+
+    <!-- Foot arc left A (connecting to B) -->
+    <path d="M 163 462 Q 260 510 340 472" fill="none" stroke="url(#letterGrad)" stroke-width="14" stroke-linecap="round"/>
+  </g>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--   LETTER B (CENTER)                     -->
+  <!-- ═══════════════════════════════════════ -->
+  <g filter="url(#letterGlow)">
+    <!-- Spine -->
+    <rect x="318" y="175" width="32" height="295" rx="4" fill="url(#letterGrad)"/>
+
+    <!-- Top bump outer -->
+    <path d="M 350 175 Q 450 175 450 240 Q 450 305 350 305 L 350 175Z" fill="url(#letterGrad)"/>
+    <!-- Top bump cutout (dark) -->
+    <path d="M 354 195 Q 424 195 424 240 Q 424 285 354 285 L 354 195Z" fill="#040d1a"/>
+
+    <!-- Bottom bump outer -->
+    <path d="M 350 305 Q 465 305 465 385 Q 465 470 350 470 L 350 305Z" fill="url(#letterGrad)"/>
+    <!-- Bottom bump cutout (dark) -->
+    <path d="M 354 325 Q 438 325 438 385 Q 438 448 354 448 L 354 325Z" fill="#040d1a"/>
+
+    <!-- ── Circuit lines inside bottom bump ── -->
+    <!-- Line 1 -->
+    <line x1="370" y1="348" x2="418" y2="348" stroke="url(#circuitGrad)" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="418" cy="348" r="3.5" fill="#00d4ff" filter="url(#dotGlow)"/>
+    <line x1="418" y1="348" x2="418" y2="338" stroke="#00d4ff" stroke-width="1.4" stroke-linecap="round"/>
+
+    <!-- Line 2 -->
+    <line x1="370" y1="368" x2="410" y2="368" stroke="url(#circuitGrad)" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="410" cy="368" r="3.5" fill="#00d4ff" filter="url(#dotGlow)"/>
+    <line x1="410" y1="368" x2="410" y2="358" stroke="#00d4ff" stroke-width="1.4" stroke-linecap="round"/>
+
+    <!-- Line 3 -->
+    <line x1="370" y1="388" x2="400" y2="388" stroke="url(#circuitGrad)" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="400" cy="388" r="3.5" fill="#00d4ff" filter="url(#dotGlow)"/>
+    <line x1="400" y1="388" x2="400" y2="378" stroke="#00d4ff" stroke-width="1.4" stroke-linecap="round"/>
+
+    <!-- Line 4 -->
+    <line x1="370" y1="408" x2="392" y2="408" stroke="url(#circuitGrad)" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="392" cy="408" r="3.5" fill="#00d4ff" filter="url(#dotGlow)"/>
+    <line x1="392" y1="408" x2="392" y2="398" stroke="#00d4ff" stroke-width="1.4" stroke-linecap="round"/>
+
+    <!-- Line 5 -->
+    <line x1="370" y1="428" x2="385" y2="428" stroke="url(#circuitGrad)" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="385" cy="428" r="3.5" fill="#00d4ff" filter="url(#dotGlow)"/>
+    <line x1="385" y1="428" x2="385" y2="418" stroke="#00d4ff" stroke-width="1.4" stroke-linecap="round"/>
+
+    <!-- Vertical bus line connecting all circuit lines -->
+    <line x1="370" y1="344" x2="370" y2="434" stroke="#00d4ff" stroke-width="1.2" stroke-opacity="0.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--   LETTER A (RIGHT)                      -->
+  <!-- ═══════════════════════════════════════ -->
+  <g filter="url(#letterGlow)">
+    <!-- Left leg of right A -->
+    <path d="
+      M 480 340
+      L 522 175
+      L 552 175
+      L 482 470
+      L 467 470
+      L 467 455
+      L 480 455
+      Z
+    " fill="url(#letterGrad)"/>
+    <!-- Right leg of right A -->
+    <path d="
+      M 552 175
+      L 582 175
+      L 652 455
+      L 637 455
+      L 637 470
+      L 607 470
+      L 607 455
+      L 622 455
+      Z
+    " fill="url(#letterGrad)"/>
+    <!-- Crossbar right A -->
+    <rect x="512" y="318" width="110" height="22" rx="3" fill="url(#letterGrad)"/>
+
+    <!-- Foot arc right A (connecting from B) -->
+    <path d="M 460 472 Q 540 510 637 462" fill="none" stroke="url(#letterGrad)" stroke-width="14" stroke-linecap="round"/>
+  </g>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--   SEPARATOR DOTS  A · B · A             -->
+  <!-- ═══════════════════════════════════════ -->
+  <!-- Left dot (between left A and B) -->
+  <circle cx="308" cy="320" r="10" fill="#0ea5e9" filter="url(#dotGlow)"/>
+  <circle cx="308" cy="320" r="5" fill="#7dd3fc"/>
+
+  <!-- Right dot (between B and right A) -->
+  <circle cx="492" cy="320" r="10" fill="#0ea5e9" filter="url(#dotGlow)"/>
+  <circle cx="492" cy="320" r="5" fill="#7dd3fc"/>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--   TOP NODE (above B, representing       -->
+  <!--   the three connected founders)         -->
+  <!-- ═══════════════════════════════════════ -->
+  <!-- Connecting line from top node -->
+  <line x1="400" y1="140" x2="400" y2="173" stroke="#0ea5e9" stroke-width="1.5" stroke-opacity="0.6"/>
+
+  <!-- Top node outer ring -->
+  <circle cx="400" cy="118" r="22" fill="none" stroke="#0ea5e9" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="3 2"/>
+  <!-- Top node fill -->
+  <circle cx="400" cy="118" r="16" fill="#0a1f3d" stroke="#0ea5e9" stroke-width="1.5"/>
+  <!-- Top node inner dot -->
+  <circle cx="400" cy="118" r="7" fill="#00d4ff" filter="url(#dotGlow)"/>
+
+</svg>
