@@ -1,209 +1,140 @@
-# 🎓 FIAE Tutor Desktop
+<div align="center">
 
-Desktop learning platform for German FIAE (IHK) exam preparation featuring algorithm training, topic registry, AP2 exam bank, desk-check simulations, PDF export and bilingual (German/Persian) learning content.
+# FIAE Tutor Desktop
 
-Built with React, TypeScript and Tauri.
+**Desktop learning platform for German IHK FIAE exam preparation**
 
----
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tauri](https://img.shields.io/badge/Tauri-2.x-FFC131?style=for-the-badge&logo=tauri&logoColor=black)](https://tauri.app/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 
-## 📚 Why this project?
+*Algorithm training · Pseudocode practice · Desk-check simulations · AP2 exam bank · Bilingual (German / Persian)*
 
-This application was created to support candidates preparing for the German IHK FIAE examination.
-
-It provides:
-
-- Algorithm understanding
-- Pseudocode practice
-- Desk-check simulations
-- AP2 exam bank
-- Structured exam preparation
-- PDF export for learning materials
-
-The content is available in German and Persian to help bilingual learners.
+</div>
 
 ---
 
-## 🚀 Features
+## Why this project?
 
-- Interactive algorithm training
-- Multiple algorithm variants
-- German pseudocode generation
-- Trace mode for step-by-step learning
-- Desk-check (Schreibtischtest) simulation
-- PDF export
-- AP2 Exam Bank
-- German and Persian learning content
-- Desktop application built with Tauri
-- Topic Registry architecture
-- Exam-oriented learning workflow
+Preparing for the IHK FIAE exam requires understanding algorithms, pseudocode and desk-check (Schreibtischtest) techniques — but there were no tools that combined all of this with bilingual support for German and Persian learners.
+
+FIAE Tutor Desktop fills that gap: a focused, offline-capable desktop app built specifically for FIAE exam candidates.
 
 ---
 
-## 🛠 Tech Stack
+## Screenshots
 
-### Frontend
-
-- React
-- TypeScript
-- Vite
-
-### Desktop
-
-- Tauri
-- Rust
-
-### Tools
-
-- Git
-- GitHub Actions
-
----
-
-## 📸 Screenshots
-
-### Topic Registry & Variants
-
-Each algorithm contains multiple exam-oriented variants used in IHK FIAE examinations.
-
+### Topic Registry & Algorithm Variants
 ![Topic Registry](screenshots/variants.png)
+*Each algorithm contains multiple exam-oriented variants used in IHK FIAE examinations.*
 
----
-
-### Algorithm Pseudocode
-
-Interactive pseudocode generation with multiple algorithm implementations.
-
+### Pseudocode Generation
 ![Pseudocode](screenshots/dashboard.png)
+*Interactive pseudocode generation with German IHK-style keyword formatting.*
 
----
-
-### Desk Check Simulation
-
-Step-by-step algorithm tracing and exam-style desk-check training.
-
+### Desk-Check Simulation (Schreibtischtest)
 ![Desk Check](screenshots/practice-page.png)
-
----
+*Step-by-step algorithm tracing and exam-style desk-check training.*
 
 ### AP2 Exam Bank
-
-Integrated question bank for FIAE AP2 exam preparation.
-
 ![Exam Bank](screenshots/topic-registry.png)
-
----
+*Integrated question bank with categories, difficulty filters and search.*
 
 ### PDF Export
-
-Generate printable learning materials and algorithm documentation.
-
 ![PDF Export](screenshots/export-page.png)
+*Generate printable learning materials and algorithm documentation.*
 
 ---
 
-## 🏗 Project Structure
+## Features
 
-```text
+- **Algorithm Tutor** — Selection Sort, Bubble Sort, Insertion Sort with multiple exam variants
+- **German Pseudocode** — IHK-style keyword generation (`FUER`, `BIS`, `WENN`, `AUSGABE`)
+- **Schreibtischtest** — step-by-step trace visualization for desk-check practice
+- **AP2 Exam Bank** — searchable question bank with difficulty tags and PDF export
+- **Topic Registry** — structured architecture organizing all learning modules
+- **Bilingual content** — German and Persian (Farsi) learning materials
+- **Offline-capable** — desktop app via Tauri, no internet required
+
+---
+
+## Technology Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18, TypeScript, Vite |
+| Desktop runtime | Tauri 2.x (Rust) |
+| Styling | Tailwind CSS |
+| Export | HTML → PDF generation |
+| CI | GitHub Actions |
+
+---
+
+## Project Structure
+
+```
 src/
-├── domain/
-├── views/
-├── components/
-├── services/
+├── domain/          # Core algorithm logic and exam data models
+├── views/           # Page-level components
+├── components/      # Reusable UI components
+└── services/        # PDF export, data loading
 
 src-tauri/
-├── src/
-├── icons/
+├── src/             # Rust backend (window management, file system)
+└── icons/
 
 data/
-└── exam_bank/
+└── exam_bank/       # AP2 exam questions (JSON)
 
 exam_tools/
-├── json_to_html.py
-└── validate_exam_json.py
+├── json_to_html.py       # Convert exam JSON to HTML preview
+└── validate_exam_json.py # Validate exam bank structure
 ```
 
 ---
 
-## 🎯 Main Modules
-
-### Algorithm Tutor
-
-- Selection Sort
-- Bubble Sort
-- Insertion Sort
-- Multiple exam variants
-- Pseudocode generation
-
-### Schreibtischtest
-
-- Step-by-step execution
-- Trace visualization
-- Exam preparation workflow
-
-### AP2 Exam Bank
-
-- Question collection
-- Categories
-- Difficulty filters
-- Search functionality
-- PDF export
-
-### Export System
-
-- HTML export
-- PDF generation
-- Printable learning material
-
----
-
-## 🌍 Languages
-
-Learning content is available in:
-
-- 🇩🇪 German
-- 🇮🇷 Persian (Farsi)
-
----
-
-## 📦 Installation
+## Getting Started
 
 ```bash
+# Clone the repository
 git clone https://github.com/aryanbarak/fiae-tutor-desktop.git
-
 cd fiae-tutor-desktop
 
+# Install dependencies
 npm install
 
+# Run in browser (dev mode)
 npm run dev
-```
 
-### Tauri Desktop
-
-```bash
+# Run as desktop app (requires Rust + Tauri CLI)
 npm run tauri dev
 ```
 
+> **Note:** Tauri requires Rust to be installed. See [tauri.app/start](https://tauri.app/start/) for setup instructions.
+
 ---
 
-## 🎓 Target Audience
+## Target Audience
 
-- FIAE (Fachinformatiker Anwendungsentwicklung) students
-- IHK exam candidates
-- Self-learners studying algorithms
+- Fachinformatiker Anwendungsentwicklung (FIAE) candidates
+- IHK AP1 / AP2 exam candidates
+- Self-learners studying algorithms and pseudocode
 - German-speaking and Persian-speaking IT learners
 
 ---
 
-## 👨‍💻 Author
+## Author
 
-Aryan Barakzai
+**Aryan Barakzai**
+Fachinformatiker Anwendungsentwicklung (IHK) · Germany
 
-- Portfolio: https://barakzai.cloud
-- GitHub: https://github.com/aryanbarak
-- LinkedIn: https://www.linkedin.com/in/aryan-barakzai
+[![Portfolio](https://img.shields.io/badge/Portfolio-barakzai.cloud-DAA520?style=flat)](https://barakzai.cloud)
+[![GitHub](https://img.shields.io/badge/GitHub-aryanbarak-181717?style=flat&logo=github)](https://github.com/aryanbarak)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Aryan_Barakzai-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/aryan-barakzai)
 
 ---
 
-## 📄 License
+## License
 
-MIT License
+MIT License — see [LICENSE](./LICENSE) for details.
